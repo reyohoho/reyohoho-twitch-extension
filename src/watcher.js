@@ -9,9 +9,7 @@ class Watcher extends SafeEventEmitter {
 
     const platform = getPlatform();
 
-    if (platform === PlatformTypes.YOUTUBE) {
-      (await import('./watchers/youtube.js')).default(this);
-    } else if (platform === PlatformTypes.TWITCH_CLIPS) {
+   if (platform === PlatformTypes.TWITCH_CLIPS) {
       (await import('./watchers/clips.js')).default(this);
     } else if (platform === PlatformTypes.TWITCH) {
       (await import('./watchers/chat.js')).default(this);

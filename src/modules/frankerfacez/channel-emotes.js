@@ -4,6 +4,8 @@ import settings from '../../settings.js';
 import api from '../../utils/api.js';
 import {getCurrentChannel} from '../../utils/channel.js';
 import {hasFlag} from '../../utils/flags.js';
+import {getProxyUrl} from '../../utils/proxy.js';
+import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import AbstractEmotes from '../emotes/abstract-emotes.js';
 import Emote from '../emotes/emote.js';
@@ -13,6 +15,24 @@ const category = {
   provider: EmoteProviders.FRANKERFACEZ,
   displayName: formatMessage({defaultMessage: 'FrankerFaceZ Channel Emotes'}),
 };
+
+function proxyImages(images) {
+  if (!images) return images;
+
+  const proxyUrl = getProxyUrl();
+  const proxiedImages = {};
+
+  Object.keys(images).forEach((key) => {
+    const imageUrl = images[key];
+    if (imageUrl && typeof imageUrl === 'string') {
+      proxiedImages[key] = `${proxyUrl}${imageUrl}`;
+    } else {
+      proxiedImages[key] = imageUrl;
+    }
+  });
+
+  return proxiedImages;
+}
 
 class FrankerFaceZChannelEmotes extends AbstractEmotes {
   constructor() {
@@ -45,14 +65,18 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
               category: this.category,
               channel: user,
               code,
-              images,
+              images: proxyImages(images),
               animated,
               modifier,
             })
           );
         })
       )
-      .then(() => watcher.emit('emotes.updated'));
+      .then(() => {
+        // Send system message for FFZ emotes update
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'FrankerFaceZ emotes have been updated'}), true);
+        watcher.emit('emotes.updated');
+      });
   }
 }
 

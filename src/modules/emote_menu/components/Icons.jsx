@@ -1,5 +1,4 @@
 import * as faTwitch from '@fortawesome/free-brands-svg-icons/faTwitch';
-import * as faYoutube from '@fortawesome/free-brands-svg-icons/faYoutube';
 import * as faBasketballBall from '@fortawesome/free-solid-svg-icons/faBasketballBall';
 import * as faBox from '@fortawesome/free-solid-svg-icons/faBox';
 import * as faClock from '@fortawesome/free-solid-svg-icons/faClock';
@@ -55,7 +54,6 @@ export default {
   BULB: <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faLightbulb} />,
   TWITCH: <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faTwitch} />,
   TWITCH_GAMING: <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={twitchGamingLogo} />,
-  YOUTUBE: <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faYoutube} />,
   IMAGE: (brandSrc, alt, src = null) =>
     src != null ? (
       <BrandedImage src={src} alt="" brandSrc={brandSrc} />

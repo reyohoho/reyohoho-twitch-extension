@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import React, {useState} from 'react';
 import {EmoteTypeFlags, SettingIds} from '../../constants.js';
 import {hasFlag} from '../../utils/flags.js';
+import {getEmotePageUrl} from '../../utils/emote.js';
 import {createSrcSet, createSrc, DEFAULT_SIZES} from '../../utils/image.js';
 import useStorageState from '../hooks/StorageState.jsx';
 import styles from './Emote.module.css';
@@ -35,6 +36,26 @@ export default function Emote({emote, className, locked, sizes = DEFAULT_SIZES, 
     setIsMouseOver(false);
   }
 
+  function handleMouseDown(e) {
+    if (e.button === 1) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const pageUrl = getEmotePageUrl(emote);
+      if (pageUrl) {
+        console.log('Opening emote page:', pageUrl);
+        const originalOpacity = e.target.style.opacity;
+        e.target.style.opacity = '0.5';
+
+        setTimeout(() => {
+          e.target.style.opacity = originalOpacity;
+        }, 200);
+
+        window.open(pageUrl, '_blank');
+      }
+    }
+  }
+
   const showAnimatedEmotes = hasFlag(emotesSettingValue, EmoteTypeFlags.ANIMATED_EMOTES);
   const shouldRenderStatic = !animating && !showAnimatedEmotes && !isMouseOver;
 
@@ -53,6 +74,8 @@ export default function Emote({emote, className, locked, sizes = DEFAULT_SIZES, 
       onBlur={handleMouseOut}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
+      onMouseDown={handleMouseDown}
+      onClick={handleMouseDown}
     />
   );
 

@@ -104,6 +104,28 @@ img.emoji.yt-live-chat-text-message-renderer + .bttv-emote-overlay {
   margin-left: -32px;
 }
 
+/* Zero-width emotes positioning */
+.bttv-emote[data-zero-width="true"] {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  opacity: 0.8 !important;
+  transition: transform 0.1s ease-in-out !important;
+}
+
+.bttv-emote[data-zero-width="true"] img {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Container for zero-width emotes */
+.bttv-emote-container {
+  position: relative !important;
+  display: inline-block !important;
+}
+
 .bttv-emote.seventv-channel img {
   max-height: 28px;
   width: auto;

@@ -1,7 +1,7 @@
 import {EmoteCategories, EmoteTypeFlags, SettingIds} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
-import {getCanonicalEmoteId} from '../../utils/emote.js';
+import {getCanonicalEmoteId, getEmotePageUrl} from '../../utils/emote.js';
 import {hasFlag} from '../../utils/flags.js';
 import {createSrc, createSrcSet} from '../../utils/image.js';
 
@@ -64,6 +64,11 @@ export default class Emote {
       container.classList.add('bttv-emote-overlay');
     }
 
+    // Add zero-width attribute for proper positioning
+    if (this.metadata?.isZeroWidth === true) {
+      container.setAttribute('data-zero-width', 'true');
+    }
+
     const image = new Image();
     image.classList.add('chat-line__message--emote', 'bttv-emote-image');
     image.src = createSrc(this.images, shouldRenderStatic);
@@ -77,6 +82,29 @@ export default class Emote {
       image.__bttvAnimatedSrc = createSrc(this.images);
       image.__bttvAnimatedSrcSet = createSrcSet(this.images);
     }
+
+    const handleMiddleClick = (e) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const pageUrl = getEmotePageUrl(this);
+        if (pageUrl) {
+          console.log('Opening emote page:', pageUrl);
+          const originalOpacity = image.style.opacity;
+          image.style.opacity = '0.5';
+
+          setTimeout(() => {
+            image.style.opacity = originalOpacity;
+          }, 200);
+
+          window.open(pageUrl, '_blank');
+        }
+      }
+    };
+
+    image.addEventListener('click', handleMiddleClick);
+    image.addEventListener('mousedown', handleMiddleClick);
     container.appendChild(image);
 
     const tooltipImage = new Image();
@@ -94,6 +122,14 @@ export default class Emote {
     tooltip.appendChild(tooltipText);
 
     container.appendChild(tooltip);
+
+    // For zero-width emotes, wrap in a container for proper positioning
+    if (this.metadata?.isZeroWidth === true) {
+      const wrapper = document.createElement('span');
+      wrapper.classList.add('bttv-emote-container');
+      wrapper.appendChild(container);
+      return wrapper;
+    }
 
     return container;
   }

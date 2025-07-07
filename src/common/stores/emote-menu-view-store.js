@@ -14,7 +14,6 @@ import Icons from '../../modules/emote_menu/components/Icons.jsx';
 import emoteStorage from '../../modules/emote_menu/stores/emote-menu-store.js';
 import {getEmojiCategories} from '../../modules/emote_menu/utils/emojis.js';
 import {loadTwitchEmotes} from '../../modules/emote_menu/utils/twitch-emotes.js';
-import {loadYouTubeEmotes} from '../../modules/emote_menu/utils/youtube-emotes.js';
 import emotes from '../../modules/emotes/index.js';
 import settings from '../../settings.js';
 import storage from '../../storage.js';
@@ -118,7 +117,7 @@ class EmoteMenuViewStore extends SafeEventEmitter {
   }
 
   async updatePlatformProviders() {
-    platformCategories = getPlatform() === PlatformTypes.YOUTUBE ? await loadYouTubeEmotes() : await loadTwitchEmotes();
+    platformCategories = await loadTwitchEmotes();
     this.markDirty(false);
   }
 

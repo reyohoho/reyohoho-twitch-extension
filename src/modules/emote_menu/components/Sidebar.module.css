@@ -49,20 +49,6 @@
   color: var(--bttv-rs-navs-selected);
 }
 
-:global(.bttv-youtube) {
-  .active {
-    border-right: 2px solid var(--yt-spec-call-to-action);
-    color: var(--yt-spec-call-to-action);
-  }
-}
-
-:global(html[dark] .bttv-youtube) {
-  .active {
-    border-right: 2px solid rgb(255, 255, 255);
-    color: rgb(255, 255, 255);
-  }
-}
-
 .dragging {
   border-radius: 4px;
   display: flex;

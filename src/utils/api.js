@@ -1,4 +1,5 @@
 import HTTPError from './http-error.js';
+import {getProxyUrl} from './proxy.js';
 
 const API_ENDPOINT = 'https://api.betterttv.net/3/';
 
@@ -6,7 +7,10 @@ function request(method, path, options = {}) {
   const {searchParams} = options;
   delete options.searchParams;
 
-  return fetch(`${API_ENDPOINT}${path}${searchParams ? `?${new URLSearchParams(searchParams).toString()}` : ''}`, {
+  const proxyUrl = getProxyUrl();
+  const fullUrl = `${proxyUrl}${API_ENDPOINT}${path}${searchParams ? `?${new URLSearchParams(searchParams).toString()}` : ''}`;
+
+  return fetch(fullUrl, {
     method,
     ...options,
   }).then(async (response) => {

@@ -10,9 +10,7 @@ export function getPlatform() {
 
   const {hostname} = window.location;
 
-  if (hostname.endsWith('.youtube.com')) {
-    platform = PlatformTypes.YOUTUBE;
-  } else if (hostname === 'clips.twitch.tv') {
+  if (hostname === 'clips.twitch.tv') {
     platform = PlatformTypes.TWITCH_CLIPS;
   } else if (hostname.endsWith('.twitch.tv')) {
     platform = PlatformTypes.TWITCH;
@@ -53,10 +51,6 @@ export function isStandaloneWindow() {
 
   if (currentPlatform === PlatformTypes.TWITCH) {
     return window.location.pathname.endsWith('/chat');
-  }
-
-  if (currentPlatform === PlatformTypes.YOUTUBE) {
-    return window.location.pathname.endsWith('/live_chat');
   }
 
   return false;

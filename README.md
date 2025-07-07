@@ -1,6 +1,12 @@
-# <img src="src/assets/logos/logo.svg" height="40" style="margin-bottom: -1px;"> BetterTTV
+# <img src="src/assets/logos/reyohoho_logo.jpg" height="40" style="margin-bottom: -1px;"> ReYohoho Twitch Extension
 
 [![Build Status](https://github.com/night/betterttv/actions/workflows/ci.yml/badge.svg)](https://github.com/night/betterttv/actions/workflows/ci.yml) [![Discord](https://img.shields.io/discord/229471495087194112?color=5865F2&label=discord)](https://discord.gg/nightdev) [![Crowdin](https://badges.crowdin.net/betterttv/localized.svg)](https://crowdin.com/project/betterttv)
+
+> **Forked from [@night/betterttv](https://github.com/night/betterttv)**
+
+## Support the Original Authors
+
+This project is a fork of BetterTTV. Please consider supporting the original authors by visiting [betterttv.com](https://betterttv.com/) and using their official extension.
 
 # Building BetterTTV
 
@@ -29,7 +35,6 @@ A webserver will start and you are able to use the development version of Better
 // @icon         https://cdn.betterttv.net/assets/logos/bttv_logo.png
 // @version      0.0.1
 // @match        https://*.twitch.tv/*
-// @match        https://*.youtube.com/*
 // @grant        none
 // ==/UserScript==
 
@@ -76,3 +81,26 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 1. Get ESLint using `npm install eslint`
 2. Install the ESLint extension from the extensions marketplace
+
+## TODO
+
+- Player restart button (similar to FFZ)
+- WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
+- Integration with 1080p proxy, possibly with 1440p support
+- Integrate copypasta search?
+- FFZ giant emote
+- 7TV cosmetics
+- Custom badges
+- Moderator functions like in 7TV
+- Our badge - choice of any emote
+
+## Changes compared to the original BetterTTV
+
+- Support for zero-width 7TV emotes (bugs possible)
+- Message copy button
+- Video mirror button
+- Audio compressor in player (similar to FFZ)
+- Proxying requests to API and image fetching for Russia
+- Proxying 7TV emote updates (add/remove/rename)
+- Middle mouse button on emote opens its page
+- System message added to chat about emote updates in channel

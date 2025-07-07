@@ -1,11 +1,15 @@
 import {hasFlag} from '../../utils/flags.js';
+import settings from '../../settings.js';
+import {SettingIds} from '../../constants.js';
 import Emote from '../emotes/emote.js';
 
 function emoteUrl(url, version, static_ = false) {
-  return `${url}/${version}${static_ ? '_static' : ''}.webp`;
+  const proxyUrl = settings.get(SettingIds.PROXY_ENABLED) ? 'https://starege.rhhhhhhh.live/' : '';
+  const finalUrl = url.startsWith('https://') ? `${proxyUrl}${url}` : `${proxyUrl}https:${url}`;
+  return `${finalUrl}/${version}${static_ ? '_static' : ''}.webp`;
 }
 
-export function createEmote(id, code, animated, owner, category, overlay, url) {
+export function createEmote(id, code, animated, owner, category, overlay, url, zeroWidth = false) {
   return new Emote({
     id,
     category,
@@ -26,6 +30,7 @@ export function createEmote(id, code, animated, owner, category, overlay, url) {
     },
     metadata: {
       isOverlay: overlay,
+      isZeroWidth: zeroWidth,
     },
   });
 }
@@ -36,4 +41,13 @@ export function isOverlay(flags, isLegacy = false) {
   }
 
   return hasFlag(flags, isLegacy ? 1 << 7 : 1 << 8);
+}
+
+export function isZeroWidth(flags) {
+  if (flags == null) {
+    return false;
+  }
+  
+  // SevenTV zero-width flag is 256 (1 << 8)
+  return hasFlag(flags, 256);
 }

@@ -85,105 +85,62 @@ function About({onClose}) {
     <>
       <div className={header.content}>
         <PanelGroup>
-          <Panel className={styles.largeBlurb}>
-            {formatMessage(
-              {
-                defaultMessage:
-                  'Drop a Review on the <chromeReviewLink>Chrome Webstore</chromeReviewLink> or <firefoxReviewLink>Firefox Add-ons</firefoxReviewLink> site or maybe even Subscribe to <proLink>BetterTTV Pro</proLink>!',
-              },
-              {
-                // eslint-disable-next-line react/no-unstable-nested-components
-                chromeReviewLink: (children) => (
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://chrome.google.com/webstore/detail/betterttv/ajopnjidmegmdimjlfnijceegpefgped">
-                    {children}
-                  </a>
-                ),
-                // eslint-disable-next-line react/no-unstable-nested-components
-                firefoxReviewLink: (children) => (
-                  <a target="_blank" rel="noreferrer" href="https://addons.mozilla.org/firefox/addon/betterttv/">
-                    {children}
-                  </a>
-                ),
-                // eslint-disable-next-line react/no-unstable-nested-components
-                proLink: (children) => (
-                  <a target="_blank" rel="noreferrer" href="https://betterttv.com/dashboard/pro">
-                    {children}
-                  </a>
-                ),
-              }
-            )}
-          </Panel>
-          <Panel>
+          <Panel header={formatMessage({defaultMessage: 'ReYohoho'})}>
             <div className={styles.socials}>
               <ul>
                 <li>
                   <p className={classNames(header.heading, header.upper)}>
-                    {formatMessage({defaultMessage: 'Explore'})}
+                    {formatMessage({defaultMessage: 'Version'})}
+                  </p>
+                </li>
+                <li>
+                  <p className={header.description}>
+                    BetterTTV Version {EXT_VER}
+                  </p>
+                </li>
+                <li>
+                  <p className={header.description}>
+                    ReYohoho Version 1.0.7
+                  </p>
+                </li>
+                <li>
+                  <a target="_blank" rel="noreferrer" href="https://github.com/reyohoho/reyohoho-betterttv">
+                    GitHub Repository
+                  </a>
+                </li>
+              </ul>
+              <ul>
+
+                <li>
+                  <a target="_blank" rel="noreferrer" href="https://boosty.to/sentryward/donate">
+                    Boosty
+                  </a>
+                </li>
+                <li>
+                  <a target="_blank" rel="noreferrer" href="https://t.me/send?start=IV7outCFI5B0">
+                    Crypto
+                  </a>
+                </li>
+                <li>
+                  <p className={header.description}>
+                    USDT TRON – TRC20: TYH7kvPryhSCFWjdRVw68VZ1advYaZw3yJ
+                  </p>
+                </li>
+              </ul>
+              <ul>
+                <li>
+                  <p className={header.description}>
+                    This is a fork of BetterTTV
                   </p>
                 </li>
                 <li>
                   <a target="_blank" rel="noreferrer" href="https://betterttv.com/">
-                    {formatMessage({defaultMessage: 'Website'})}
+                    Support Original Authors
                   </a>
                 </li>
                 <li>
-                  <a target="_blank" rel="noreferrer" href="https://github.com/night/betterttv/issues">
-                    {formatMessage({defaultMessage: 'Report Bugs'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://github.com/night/betterttv/discussions">
-                    {formatMessage({defaultMessage: 'Submit Ideas'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://crowdin.com/project/betterttv">
-                    {formatMessage({defaultMessage: 'Submit Translations'})}
-                  </a>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <p className={classNames(header.heading, header.upper)}>
-                    {formatMessage({defaultMessage: 'Community'})}
-                  </p>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://discord.gg/nightdev">
-                    {formatMessage({defaultMessage: 'Discord'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://twitter.com/betterttv">
-                    {formatMessage({defaultMessage: 'Twitter'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://community.nightdev.com/c/betterttv">
-                    {formatMessage({defaultMessage: 'Forums'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://www.nightdev.com/contact">
-                    {formatMessage({defaultMessage: 'Email Us'})}
-                  </a>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <p className={classNames(header.heading, header.upper)}>{formatMessage({defaultMessage: 'Legal'})}</p>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://betterttv.com/terms">
-                    {formatMessage({defaultMessage: 'Terms of Service'})}
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" rel="noreferrer" href="https://betterttv.com/privacy">
-                    {formatMessage({defaultMessage: 'Privacy Policy'})}
+                  <a target="_blank" rel="noreferrer" href="https://github.com/night/betterttv">
+                    Original Repository
                   </a>
                 </li>
               </ul>

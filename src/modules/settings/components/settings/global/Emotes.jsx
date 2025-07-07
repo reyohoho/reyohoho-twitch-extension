@@ -171,15 +171,23 @@ function EmotesModule() {
             </p>
           </Checkbox>
           {hasFlag(emotes, EmoteTypeFlags.SEVENTV_EMOTES) ? (
-            <Checkbox
-              key="seventvUnlistedEmotes"
-              value={EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES}
-              onClick={(event) => handleSafetyWarning(event, EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)}>
-              <p className={styles.heading}>{formatMessage({defaultMessage: 'Unlisted 7TV Emotes'})}</p>
-              <p className={styles.settingDescription}>
-                {formatMessage({defaultMessage: 'Enables unlisted emotes from the third party 7TV extension'})}
-              </p>
-            </Checkbox>
+            <>
+              <Checkbox
+                key="seventvUnlistedEmotes"
+                value={EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES}
+                onClick={(event) => handleSafetyWarning(event, EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)}>
+                <p className={styles.heading}>{formatMessage({defaultMessage: 'Unlisted 7TV Emotes'})}</p>
+                <p className={styles.settingDescription}>
+                  {formatMessage({defaultMessage: 'Enables unlisted emotes from the third party 7TV extension'})}
+                </p>
+              </Checkbox>
+              <Checkbox key="seventvZeroWidthEmotes" value={EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES}>
+                <p className={styles.heading}>{formatMessage({defaultMessage: '7TV Zero-Width Emotes'})}</p>
+                <p className={styles.settingDescription}>
+                  {formatMessage({defaultMessage: 'Enables zero-width emotes from 7TV that overlap with other emotes'})}
+                </p>
+              </Checkbox>
+            </>
           ) : null}
         </CheckboxGroup>
       </div>

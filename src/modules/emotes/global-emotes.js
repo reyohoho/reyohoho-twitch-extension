@@ -2,6 +2,7 @@ import {EmoteCategories, EmoteProviders} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import api from '../../utils/api.js';
 import cdn from '../../utils/cdn.js';
+import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import subscribers from '../subscribers/index.js';
 import AbstractEmotes from './abstract-emotes.js';
@@ -59,7 +60,11 @@ class GlobalEmotes extends AbstractEmotes {
           );
         })
       )
-      .then(() => watcher.emit('emotes.updated'));
+      .then(() => {
+        // Send system message for BTTV global emotes update
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'BetterTTV global emotes have been updated'}), true);
+        watcher.emit('emotes.updated');
+      });
   }
 }
 

@@ -2,6 +2,7 @@ import {EmoteCategories, EmoteTypeFlags, SettingIds} from '../../../constants.js
 import dom from '../../../observers/dom.js';
 import settings from '../../../settings.js';
 import {hasFlag} from '../../../utils/flags.js';
+import {getEmotePageUrl} from '../../../utils/emote.js';
 import {createSrcSet, createSrc} from '../../../utils/image.js';
 import twitch from '../../../utils/twitch.js';
 import {getCurrentUser} from '../../../utils/user.js';
@@ -154,6 +155,27 @@ function patchEmoteImage(image, isConnected) {
   if (image.src) {
     image.src = createSrc(emote.images, shouldRenderStatic);
   }
+
+  const handleMiddleClick = (e) => {
+    if (e.button === 1) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const pageUrl = getEmotePageUrl(emote);
+      if (pageUrl) {
+        const originalOpacity = image.style.opacity;
+        image.style.opacity = '0.5';
+
+        setTimeout(() => {
+          image.style.opacity = originalOpacity;
+        }, 200);
+
+        window.open(pageUrl, '_blank');
+      }
+    }
+  };
+
+  image.addEventListener('mousedown', handleMiddleClick);
 
   if (shouldRenderStatic) {
     image.addEventListener('mouseenter', () => {

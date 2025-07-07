@@ -7,16 +7,16 @@ import formatMessage from '../../../../../i18n/index.js';
 import styles from '../../../styles/header.module.css';
 import {registerComponent} from '../../Store.jsx';
 
-const SETTING_NAME = formatMessage({defaultMessage: 'Emote Autocomplete'});
+const SETTING_NAME = formatMessage({defaultMessage: 'Video Mirror'});
 
-function EmoteAutocomplete() {
-  const [value, setValue] = useStorageState(SettingIds.EMOTE_AUTOCOMPLETE);
+function VideoMirror() {
+  const [value, setValue] = useStorageState(SettingIds.VIDEO_MIRROR);
 
   return (
     <Panel header={SETTING_NAME}>
       <div className={styles.settingRow}>
         <p className={styles.settingDescription}>
-          {formatMessage({defaultMessage: 'Typing : before text will attempt to autocomplete your emote'})}
+          {formatMessage({defaultMessage: 'Add a button to horizontally flip the video player'})}
         </p>
         <Toggle checked={value} onChange={(state) => setValue(state)} />
       </div>
@@ -24,9 +24,11 @@ function EmoteAutocomplete() {
   );
 }
 
-export default registerComponent(EmoteAutocomplete, {
-  settingId: SettingIds.EMOTE_AUTOCOMPLETE,
+registerComponent(VideoMirror, {
+  settingId: SettingIds.VIDEO_MIRROR,
   name: SETTING_NAME,
-  category: CategoryTypes.CHAT,
-  keywords: ['auto', 'autocomplete', 'emote', ':'],
+  category: CategoryTypes.CHANNEL,
+  keywords: ['video', 'mirror', 'flip', 'horizontal', 'reyohoho'],
 });
+
+export default VideoMirror; 

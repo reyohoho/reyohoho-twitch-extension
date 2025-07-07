@@ -36,13 +36,13 @@ function BTTVSidenav({value, onChange}) {
               icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faHouseUser} />}>
               <p>{formatMessage({defaultMessage: 'Channel Settings'})}</p>
             </Nav.Item>
-            <Nav.Item
+            {/* <Nav.Item
               href="https://betterttv.com/dashboard/emotes"
               target="_blank"
               rel="noreferrer"
               icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faColumns} />}>
               <p>{formatMessage({defaultMessage: 'Emote Dashboard'})}</p>
-            </Nav.Item>
+            </Nav.Item> */}
             <Nav.Item eventKey={PageTypes.CHANGELOG} icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faBox} />}>
               <p>{formatMessage({defaultMessage: 'Changelog'})}</p>
             </Nav.Item>

@@ -109,3 +109,32 @@
     bttv-emote-modifier-party 1.5s linear infinite,
     bttv-emote-modifier-shake 500ms step-start infinite;
 }
+
+.bttv-copy-message-button {
+  display: none;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(30, 31, 34, 0.8);
+  border: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: #fff;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.bttv-copy-message-button:hover {
+  background: rgba(60, 61, 64, 1);
+}
+
+.chat-line__message:hover .bttv-copy-message-button,
+[data-a-target="chat-line"]:hover .bttv-copy-message-button {
+  display: inline-flex;
+}
+
+.chat-line__message, [data-a-target="chat-line"] {
+  position: relative;
+}

@@ -149,7 +149,7 @@ class ChatModule {
       }
     });
 
-    api.get(`cached/badges/${getPlatform() === PlatformTypes.YOUTUBE ? 'youtube' : 'twitch'}`).then((badges) => {
+    api.get(`cached/badges/${getPlatform() === 'twitch'}`).then((badges) => {
       badges.forEach(({providerId, badge}) => badgeUsers.set(providerId, badge));
     });
   }
@@ -276,6 +276,8 @@ class ChatModule {
     const emoteModifiersEnabled = hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.EMOTE_MODIFIERS);
 
     let cappedEmoteCount = 0;
+    let lastEmoteContainer = null; // Track the last emote container for zero-width emotes
+
     for (let i = 0; i < tokens.length; i++) {
       const node = tokens[i];
 
@@ -292,6 +294,8 @@ class ChatModule {
       const partMetadata = [];
       let hasModifiers = false;
       let modified = false;
+      let zeroWidthEmotes = []; // Collect zero-width emotes to attach later
+
       for (let j = 0; j < parts.length; j++) {
         const part = parts[j];
         if (part == null || typeof part !== 'string') {
@@ -356,7 +360,20 @@ class ChatModule {
 
         if (emote != null) {
           const emoteHasModifiers = modifiers.length > 0;
-          parts[emoteIndex] =
+
+          // Check if this is a zero-width emote
+          if (emote.metadata?.isZeroWidth === true) {
+            // Store zero-width emote to attach to the next regular emote
+            zeroWidthEmotes.push({
+              emote,
+              modifiers: emoteHasModifiers ? modifiers.map(({modifier}) => modifier) : null,
+              classNames: emoteHasModifiers ? modifiers.map(({modifier}) => EMOTE_MODIFIERS[modifier]) : null,
+            });
+            parts[emoteIndex] = null; // Don't render zero-width emotes as separate elements
+            continue;
+          }
+
+          const renderedEmote =
             EMOTES_TO_CAP.includes(emote.id) && ++cappedEmoteCount > MAX_EMOTES_WHEN_CAPPED
               ? null
               : emote.render(
@@ -369,7 +386,59 @@ class ChatModule {
                   emoteHasModifiers ? modifiers.map(({modifier}) => EMOTE_MODIFIERS[modifier]) : null
                 );
 
+          // Attach any pending zero-width emotes to this emote
+          if (renderedEmote && zeroWidthEmotes.length > 0) {
+            const emoteContainer = renderedEmote.querySelector('.bttv-emote') || renderedEmote;
+            if (emoteContainer) {
+              // Create a wrapper if the emote doesn't have one
+              let wrapper = emoteContainer.parentElement;
+              if (!wrapper || !wrapper.classList.contains('bttv-emote-container')) {
+                wrapper = document.createElement('span');
+                wrapper.classList.add('bttv-emote-container');
+                emoteContainer.parentNode.insertBefore(wrapper, emoteContainer);
+                wrapper.appendChild(emoteContainer);
+              }
+
+              // Add zero-width emotes to the wrapper
+              zeroWidthEmotes.forEach(({emote: zeroWidthEmote, modifiers, classNames}) => {
+                const zeroWidthElement = zeroWidthEmote.render(
+                  modifiers ? modifiers.filter((m) => PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
+                  modifiers ? modifiers.filter((m) => !PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
+                  classNames
+                );
+                wrapper.appendChild(zeroWidthElement);
+              });
+            }
+            zeroWidthEmotes = []; // Clear the queue
+          }
+
+          parts[emoteIndex] = renderedEmote;
+          lastEmoteContainer = renderedEmote;
           modified = true;
+        }
+      }
+
+      // If we have zero-width emotes but no regular emotes to attach them to,
+      // render them as standalone emotes
+      if (zeroWidthEmotes.length > 0 && lastEmoteContainer) {
+        const emoteContainer = lastEmoteContainer.querySelector('.bttv-emote') || lastEmoteContainer;
+        if (emoteContainer) {
+          let wrapper = emoteContainer.parentElement;
+          if (!wrapper || !wrapper.classList.contains('bttv-emote-container')) {
+            wrapper = document.createElement('span');
+            wrapper.classList.add('bttv-emote-container');
+            emoteContainer.parentNode.insertBefore(wrapper, emoteContainer);
+            wrapper.appendChild(emoteContainer);
+          }
+
+          zeroWidthEmotes.forEach(({emote: zeroWidthEmote, modifiers, classNames}) => {
+            const zeroWidthElement = zeroWidthEmote.render(
+              modifiers ? modifiers.filter((m) => PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
+              modifiers ? modifiers.filter((m) => !PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
+              classNames
+            );
+            wrapper.appendChild(zeroWidthElement);
+          });
         }
       }
 
@@ -467,6 +536,35 @@ class ChatModule {
       element.style.display = 'none';
     }
 
+    // --- КОПИРОВАНИЕ СООБЩЕНИЯ ---
+    // Сохраняем оригинальный текст
+    if (messageObj && messageObj.messageBody) {
+      element.setAttribute('data-original-text', messageObj.messageBody);
+    }
+
+    // Добавляем кнопку копирования, если её ещё нет
+    if (!element.querySelector('.bttv-copy-message-button')) {
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'bttv-copy-message-button';
+      copyBtn.title = 'Скопировать сообщение';
+      copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5h12v13H9zM3 13V2h12v2H5v11H3z"/></svg>`;
+      copyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const text = element.getAttribute('data-original-text') || (messageObj && messageObj.messageBody) || '';
+        if (!text) return;
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+        } else {
+          fallbackCopy(text);
+        }
+      });
+      // Вставляем кнопку справа (после сообщения)
+      element.appendChild(copyBtn);
+    }
+
+    // --- END ---
+
     this.messageReplacer(messageParts, user);
 
     element.__bttvParsed = true;
@@ -493,3 +591,21 @@ class ChatModule {
 }
 
 export default new ChatModule();
+
+// Fallback для копирования (textarea)
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  textArea.style.opacity = '0';
+  textArea.style.pointerEvents = 'none';
+  document.body.appendChild(textArea);
+  try {
+    textArea.focus();
+    textArea.select();
+    document.execCommand('copy');
+  } catch (err) {}
+  document.body.removeChild(textArea);
+}

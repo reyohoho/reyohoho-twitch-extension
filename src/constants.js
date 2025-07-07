@@ -48,6 +48,12 @@ export const SettingIds = {
   AUTO_LIVE_CHAT_VIEW: 'autoLiveChatView',
   EMOTE_MENU_WIDTH: 'emoteMenuWidth',
   HYPE_CHAT: 'hypeChat',
+  PROXY_ENABLED: 'proxyEnabled',
+  PROXY_URL: 'proxyUrl',
+  VIDEO_MIRROR: 'videoMirror',
+  AUDIO_COMPRESSOR: 'audioCompressor',
+  AUDIO_COMPRESSOR_STATE: 'audioCompressorState',
+  SEVENTV_ZERO_WIDTH: 'seventvZeroWidth',
 };
 
 export const CategoryTypes = {
@@ -93,6 +99,7 @@ export const EmoteTypeFlags = {
   SEVENTV_EMOTES: 1 << 4,
   EMOTE_MODIFIERS: 1 << 5,
   SEVENTV_UNLISTED_EMOTES: 1 << 6,
+  SEVENTV_ZERO_WIDTH_EMOTES: 1 << 7,
 };
 
 export const ChatFlags = {
@@ -147,7 +154,6 @@ export const EmoteProviders = {
   BETTERTTV: 'bttv',
   FRANKERFACEZ: 'ffz',
   TWITCH: 'twitch',
-  YOUTUBE: 'youtube',
   SEVENTV: 'seventv',
 };
 
@@ -173,8 +179,6 @@ export const EmoteCategories = {
   TWITCH_TURBO: 'twitch-turbo',
   TWITCH_UNLOCKED: 'twitch-unlocked',
   TWITCH_CHANNEL: (channelId) => `twitch-${channelId}`,
-  YOUTUBE_GLOBAL: 'youtube-global',
-  YOUTUBE_CHANNEL: (channelId) => `youtube-${channelId}`,
   SEVENTV_GLOBAL: 'seventv-global',
   SEVENTV_CHANNEL: 'seventv-channel',
 };
@@ -241,7 +245,9 @@ export const SettingDefaultValues = {
     EmoteTypeFlags.BTTV_EMOTES |
       EmoteTypeFlags.ANIMATED_EMOTES |
       EmoteTypeFlags.FFZ_EMOTES |
-      EmoteTypeFlags.EMOTE_MODIFIERS,
+      EmoteTypeFlags.EMOTE_MODIFIERS |
+      EmoteTypeFlags.SEVENTV_EMOTES |
+      EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES,
     0,
   ],
   [SettingIds.CHAT]: [
@@ -267,6 +273,12 @@ export const SettingDefaultValues = {
   [SettingIds.LIVE_CHAT_VIEW]: false,
   [SettingIds.EMOTE_MENU_WIDTH]: 380,
   [SettingIds.HYPE_CHAT]: true,
+  [SettingIds.PROXY_ENABLED]: true,
+  [SettingIds.PROXY_URL]: 'https://starege.rhhhhhhh.live/',
+  [SettingIds.VIDEO_MIRROR]: true,
+  [SettingIds.AUDIO_COMPRESSOR]: true,
+  [SettingIds.AUDIO_COMPRESSOR_STATE]: false,
+  [SettingIds.SEVENTV_ZERO_WIDTH]: true,
 };
 
 export const FlagSettings = [
@@ -282,7 +294,6 @@ export const FlagSettings = [
 export const PlatformTypes = {
   TWITCH: 1,
   TWITCH_CLIPS: 2,
-  YOUTUBE: 3,
 };
 
 export const EMOTE_MENU_SIDEBAR_ROW_HEIGHT = 36;

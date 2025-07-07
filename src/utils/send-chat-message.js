@@ -14,18 +14,5 @@ export default loadModuleForPlatforms(
         twitch.sendChatAdminMessage(message, true);
       };
     },
-  ],
-  [
-    PlatformTypes.YOUTUBE,
-    () => {
-      let sendEphemeralMessage;
-      return async (message) => {
-        if (sendEphemeralMessage == null) {
-          const module = await import('./youtube-ephemeral-messages.js');
-          sendEphemeralMessage = module.sendEphemeralMessage;
-        }
-        return sendEphemeralMessage(message);
-      };
-    },
   ]
 );

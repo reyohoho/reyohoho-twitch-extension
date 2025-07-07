@@ -22,18 +22,11 @@ class PersonalEmotes extends AbstractEmotes {
 
     socketClient.on(EventNames.LOOKUP_USER, (s) => this.updatePersonalEmotes(s));
     watcher.on('load.chat', () => this.joinChannel());
-    watcher.on('load.youtube', () => this.joinChannel());
     watcher.on('load.user', () => this.broadcastMe());
     watcher.on('conversation.new', (threadId) => this.joinConversation(threadId));
     watcher.on('conversation.message', (threadId, element, messageObj) =>
       this.broadcastMeConversation(threadId, messageObj)
     );
-    watcher.on('youtube.message', (element, messageObj) => {
-      if (messageObj.authorExternalChannelId !== getCurrentUser()?.id) {
-        return;
-      }
-      this.broadcastMe();
-    });
   }
 
   get category() {

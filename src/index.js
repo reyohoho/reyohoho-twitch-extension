@@ -9,8 +9,6 @@
       'clips.twitch.tv',
       'dashboard.twitch.tv',
       'embed.twitch.tv',
-      'www.youtube.com',
-      'studio.youtube.com',
     ].includes(window.location.hostname) &&
     !window.location.hostname.endsWith('.release.twitch.tv')
   )
@@ -42,15 +40,13 @@
     const {default: extension} = await import('./utils/extension.js');
     await extension.setCurrentScript(currentScript);
 
-    const {default: globalCSS} = await import('./modules/global_css/index.js');
-    const globalCSSLoadPromise = globalCSS.loadGlobalCSS();
-
     const {default: debug} = await import('./utils/debug.js');
     const {default: watcher} = await import('./watcher.js');
     const {EXT_VER, NODE_ENV, GIT_REV} = await import('./constants.js');
 
-    // wait until styles load to prevent flashing
-    await globalCSSLoadPromise;
+    // Initialize player button manager
+    const {default: playerButtonManager} = await import('./utils/player-button-manager.js');
+    playerButtonManager.initialize();
 
     // eslint-disable-next-line import/no-unresolved
     await import('./modules/**/index.js');
