@@ -54,6 +54,7 @@ export const SettingIds = {
   AUDIO_COMPRESSOR: 'audioCompressor',
   AUDIO_COMPRESSOR_STATE: 'audioCompressorState',
   SEVENTV_ZERO_WIDTH: 'seventvZeroWidth',
+  EMOTE_SIZE: 'emoteSize',
 };
 
 export const CategoryTypes = {
@@ -279,6 +280,7 @@ export const SettingDefaultValues = {
   [SettingIds.AUDIO_COMPRESSOR]: true,
   [SettingIds.AUDIO_COMPRESSOR_STATE]: false,
   [SettingIds.SEVENTV_ZERO_WIDTH]: true,
+  [SettingIds.EMOTE_SIZE]: 128,
 };
 
 export const FlagSettings = [
