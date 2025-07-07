@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import Button from 'rsuite/Button';
 import Checkbox from 'rsuite/Checkbox';
 import CheckboxGroup from 'rsuite/CheckboxGroup';
-import InputNumber from 'rsuite/InputNumber';
 import Modal from 'rsuite/Modal';
 import Panel from 'rsuite/Panel';
 import Tag from 'rsuite/Tag';
@@ -91,7 +90,6 @@ function EmoteModifiersModal({open, onClose}) {
 
 function EmotesModule() {
   const [emotes, setEmotes] = useStorageState(SettingIds.EMOTES);
-  const [emoteSize, setEmoteSize] = useStorageState(SettingIds.EMOTE_SIZE);
   const [safetyModalFlagValue, setSafetyModalFlagValue] = useState(0);
   const [modifiersModalOpen, setModifiersModalOpen] = useState(false);
 
@@ -192,20 +190,6 @@ function EmotesModule() {
             </>
           ) : null}
         </CheckboxGroup>
-      </div>
-      <div className={styles.setting}>
-        <p className={styles.heading}>{formatMessage({defaultMessage: 'Emote Size'})}</p>
-        <p className={styles.settingDescription}>
-          {formatMessage({defaultMessage: 'Size of emotes displayed in chat (in pixels)'})}
-        </p>
-        <InputNumber
-          value={emoteSize}
-          onChange={setEmoteSize}
-          min={16}
-          max={128}
-          step={16}
-          style={{width: '100px'}}
-        />
       </div>
       <SafetyWarningModal open={safetyModalFlagValue > 0} onClose={(allow) => handleSafetyWarningClose(allow)} />
       <EmoteModifiersModal open={modifiersModalOpen} onClose={setModifiersModalOpen} />
