@@ -51,12 +51,23 @@ function getAutocompleteEmoteProvider() {
 
 function createTwitchEmoteSet(allEmotes) {
   return {
-    emotes: allEmotes.map((emote) => ({
-      id: serializeEmoteId(emote),
-      modifiers: null,
-      setID: CUSTOM_SET_ID,
-      token: emote.code,
-    })),
+    emotes: allEmotes.map((emote) => {
+      const emotesSettingValue = settings.get(SettingIds.EMOTES);
+      const showAnimatedEmotes =
+        emote.category.id === EmoteCategories.BETTERTTV_PERSONAL
+          ? hasFlag(emotesSettingValue, EmoteTypeFlags.ANIMATED_PERSONAL_EMOTES)
+          : hasFlag(emotesSettingValue, EmoteTypeFlags.ANIMATED_EMOTES);
+      const shouldRenderStatic = emote.animated && !showAnimatedEmotes;
+
+      return {
+        id: serializeEmoteId(emote),
+        modifiers: null,
+        setID: CUSTOM_SET_ID,
+        token: emote.code,
+        srcSet: createSrcSet(emote.images, shouldRenderStatic),
+        src: createSrc(emote.images, shouldRenderStatic),
+      };
+    }),
     id: CUSTOM_SET_ID,
   };
 }
