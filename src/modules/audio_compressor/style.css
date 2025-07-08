@@ -37,6 +37,26 @@
   opacity: 0.5;
 }
 
+.bttv-compressor-icon.loading {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.bttv-compressor-icon.loading svg {
+  filter: grayscale(100%);
+}
+
+.bttv-compressor-icon[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.bttv-compressor-icon[disabled] svg {
+  filter: grayscale(100%);
+}
+
 .bttv-compressor-icon svg {
   fill: currentColor;
   width: 20px;
