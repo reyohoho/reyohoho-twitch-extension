@@ -9,7 +9,7 @@ import IconButton from 'rsuite/IconButton';
 import Panel from 'rsuite/Panel';
 import PanelGroup from 'rsuite/PanelGroup';
 import FontAwesomeSvgIcon from '../../../common/components/FontAwesomeSvgIcon.jsx';
-import {EXT_VER} from '../../../constants.js';
+import {EXT_VER, REYOHOHO_VER} from '../../../constants.js';
 import formatMessage from '../../../i18n/index.js';
 import {SETTINGS_STORAGE_KEY} from '../../../settings.js';
 import storage from '../../../storage.js';
@@ -100,7 +100,7 @@ function About({onClose}) {
                 </li>
                 <li>
                   <p className={header.description}>
-                    ReYohoho Version 1.0.8
+                    ReYohoho Version {REYOHOHO_VER}
                   </p>
                 </li>
                 <li>

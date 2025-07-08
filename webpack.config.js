@@ -76,6 +76,7 @@ export default async (env, argv) => {
   const CDN_ENDPOINT = PROD ? PROD_ENDPOINT : DEV_ENDPOINT;
 
   const {version} = JSON.parse(await fs.readFile('./package.json'));
+  const {version: reyohohoVersion} = JSON.parse(await fs.readFile('./ext/manifest.json'));
   const emotes = JSON.parse(await fs.readFile('./node_modules/emoji-toolkit/emoji.json'));
 
   return {
@@ -217,6 +218,7 @@ export default async (env, argv) => {
         DEV_CDN_ENDPOINT: DEV_ENDPOINT,
         PROD_CDN_ENDPOINT: PROD_ENDPOINT,
         EXT_VER: version,
+        REYOHOHO_VER: reyohohoVersion,
         GIT_REV: process.env.GIT_REV || git.long(),
         SENTRY_URL:
           process.env.SENTRY_URL || 'https://b289038a9b004560bcb58396066ee847@o23210.ingest.sentry.io/5730387',
