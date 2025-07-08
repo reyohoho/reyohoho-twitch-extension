@@ -54,6 +54,10 @@ class AudioCompressor {
     });
   }
 
+  isClipPage() {
+    return window.location.hostname === 'clips.twitch.tv' || window.location.pathname.includes('/clip/');
+  }
+
   getAudioSupport() {
     return {
       AudioContext: !!window.AudioContext,
@@ -65,6 +69,10 @@ class AudioCompressor {
   }
 
   createCompressor(video) {
+    if (this.isClipPage()) {
+      console.log('BTTV: Compressor not available on clips due to CORS.');
+      return null;
+    }
     if (!HAS_COMPRESSOR || !video) {
       console.log('BTTV: Cannot create compressor:', {
         HAS_COMPRESSOR,
@@ -88,6 +96,15 @@ class AudioCompressor {
         }
       }, 1000);
 
+      return null;
+    }
+
+    if (video.paused || video.ended || video.currentTime === 0) {
+      console.log('BTTV: Video is not playing, deferring compressor creation:', {
+        paused: video.paused,
+        ended: video.ended,
+        currentTime: video.currentTime,
+      });
       return null;
     }
 
@@ -151,6 +168,10 @@ class AudioCompressor {
   }
 
   toggleCompressor(video) {
+    if (this.isClipPage()) {
+      console.log('BTTV: Compressor cannot be toggled on clips due to CORS.');
+      return false;
+    }
     console.log('BTTV: Toggling compressor for video:', video);
     if (!video || !HAS_COMPRESSOR) {
       console.log('BTTV: Cannot toggle compressor:', {
@@ -164,6 +185,16 @@ class AudioCompressor {
 
     if (!compressorData) {
       console.log('BTTV: No existing compressor, creating new one');
+
+      if (video.paused || video.ended || video.currentTime === 0) {
+        console.log('BTTV: Video is not playing, cannot create compressor:', {
+          paused: video.paused,
+          ended: video.ended,
+          currentTime: video.currentTime,
+        });
+        return false;
+      }
+
       const result = this.createCompressor(video);
       if (!result) return false;
 
@@ -238,6 +269,18 @@ class AudioCompressor {
       }
     });
 
+    video.addEventListener('playing', () => {
+      console.log('BTTV: Video playing event, creating compressor if needed');
+      if (this.isCompressorActive && settings.get(SettingIds.AUDIO_COMPRESSOR_STATE)) {
+        const compressorData = this.videoElements.get(video);
+        if (!compressorData) {
+          console.log('BTTV: Creating compressor on playing event');
+          this.createCompressor(video);
+          this.updateUI();
+        }
+      }
+    });
+
     video.addEventListener('loadedmetadata', () => {
       console.log('BTTV: Video metadata loaded, checking compressor state:', this.isCompressorActive);
       if (this.isCompressorActive && settings.get(SettingIds.AUDIO_COMPRESSOR_STATE)) {
@@ -265,8 +308,15 @@ class AudioCompressor {
     const tooltip = document.querySelector('.bttv-compressor-tooltip');
 
     if (icon && tooltip) {
+      if (this.isClipPage()) {
+        icon.classList.add('off');
+        icon.setAttribute('disabled', 'disabled');
+        tooltip.textContent = 'Audio Compressor unavailable in clips due to CORS.';
+        return;
+      }
       const isActive = this.isCompressorActive;
       icon.classList.toggle('off', !isActive);
+      icon.removeAttribute('disabled');
       tooltip.textContent = `Audio Compressor: ${isActive ? 'On' : 'Off'}`;
       console.log('BTTV: Updated UI - compressor state:', isActive);
     }
@@ -330,6 +380,10 @@ class AudioCompressor {
     if (!this.isCompressorActive) {
       button.classList.add('off');
     }
+    if (this.isClipPage()) {
+      button.classList.add('off');
+      button.setAttribute('disabled', 'disabled');
+    }
     console.log('BTTV: Created compressor button with state:', this.isCompressorActive);
 
     // SVG icon for compressor
@@ -342,12 +396,20 @@ class AudioCompressor {
 
     const tooltip = document.createElement('div');
     tooltip.className = 'bttv-compressor-tooltip';
-    tooltip.textContent = `Audio Compressor: ${this.isCompressorActive ? 'On' : 'Off'}`;
+    if (this.isClipPage()) {
+      tooltip.textContent = 'Audio Compressor unavailable in clips due to CORS.';
+    } else {
+      tooltip.textContent = `Audio Compressor: ${this.isCompressorActive ? 'On' : 'Off'}`;
+    }
 
     iconContainer.appendChild(button);
     iconContainer.appendChild(tooltip);
 
     button.addEventListener('click', () => {
+      if (this.isClipPage()) {
+        tooltip.textContent = 'Audio Compressor unavailable in clips due to CORS.';
+        return;
+      }
       const video =
         document.querySelector('.video-player__container video') ||
         document.querySelector('.video-ref video') ||
@@ -429,8 +491,14 @@ class AudioCompressor {
     domObserver.on('video', (video) => {
       this.addVideoListener(video);
 
-      if (this.isCompressorActive && settings.get(SettingIds.AUDIO_COMPRESSOR_STATE)) {
-        console.log('BTTV: Restoring compressor state for new video');
+      if (
+        this.isCompressorActive &&
+        settings.get(SettingIds.AUDIO_COMPRESSOR_STATE) &&
+        !video.paused &&
+        !video.ended &&
+        video.currentTime > 0
+      ) {
+        console.log('BTTV: Restoring compressor state for new playing video');
         this.createCompressor(video);
         // Update UI after a delay to ensure everything is set up
         setTimeout(() => {
@@ -444,8 +512,14 @@ class AudioCompressor {
     existingVideos.forEach((video) => {
       this.addVideoListener(video);
 
-      if (this.isCompressorActive && settings.get(SettingIds.AUDIO_COMPRESSOR_STATE)) {
-        console.log('BTTV: Restoring compressor state for existing video');
+      if (
+        this.isCompressorActive &&
+        settings.get(SettingIds.AUDIO_COMPRESSOR_STATE) &&
+        !video.paused &&
+        !video.ended &&
+        video.currentTime > 0
+      ) {
+        console.log('BTTV: Restoring compressor state for existing playing video');
         this.createCompressor(video);
       }
     });
@@ -461,8 +535,14 @@ class AudioCompressor {
     setTimeout(() => {
       const videos = document.querySelectorAll('video');
       videos.forEach((video) => {
-        if (!this.videoElements.has(video) && this.isCompressorActive) {
-          console.log('BTTV: Late initialization - creating compressor for video');
+        if (
+          !this.videoElements.has(video) &&
+          this.isCompressorActive &&
+          !video.paused &&
+          !video.ended &&
+          video.currentTime > 0
+        ) {
+          console.log('BTTV: Late initialization - creating compressor for playing video');
           this.createCompressor(video);
         }
       });
