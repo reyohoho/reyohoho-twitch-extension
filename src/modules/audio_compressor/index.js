@@ -23,6 +23,8 @@ class AudioCompressor {
     this.initialized = false;
     this.isLoading = false;
     this.lastPageType = null;
+    this.audioContextState = 'unknown';
+    this.userInteractionRequired = false;
 
     console.log('BTTV: Audio compressor initialized with icon setting:', this.isIconEnabled);
     console.log('BTTV: Audio compressor state setting:', this.isCompressorActive);
@@ -79,7 +81,51 @@ class AudioCompressor {
     };
   }
 
-  createCompressor(video) {
+  async checkAudioContextState() {
+    if (!HAS_COMPRESSOR) {
+      this.audioContextState = 'unsupported';
+      return;
+    }
+
+    try {
+      const testContext = new AudioContext();
+      this.audioContextState = testContext.state;
+
+      if (testContext.state === 'suspended') {
+        this.userInteractionRequired = true;
+        console.log('BTTV: AudioContext is suspended, user interaction required');
+      } else {
+        this.userInteractionRequired = false;
+        console.log('BTTV: AudioContext is ready:', testContext.state);
+      }
+
+      await testContext.close();
+    } catch (err) {
+      console.error('BTTV: Error checking AudioContext state:', err);
+      this.audioContextState = 'error';
+      this.userInteractionRequired = true;
+    }
+  }
+
+  isAudioPlaying(video) {
+    if (!video) return false;
+
+    return (
+      !video.paused &&
+      !video.ended &&
+      video.currentTime > 0 &&
+      video.volume > 0 &&
+      !video.muted &&
+      video.readyState >= 2
+    );
+  }
+
+  hasUserInteractedWithAudio() {
+    const videos = document.querySelectorAll('video');
+    return Array.from(videos).some((video) => this.isAudioPlaying(video));
+  }
+
+  async createCompressor(video) {
     if (this.isClipPage()) {
       console.log('BTTV: Compressor not available on clips due to CORS.');
       return null;
@@ -90,6 +136,17 @@ class AudioCompressor {
         hasVideo: !!video,
       });
       return null;
+    }
+
+    if (this.userInteractionRequired && !this.hasUserInteractedWithAudio()) {
+      console.log(
+        'BTTV: User interaction required for AudioContext and no audio playing, deferring compressor creation'
+      );
+      return null;
+    }
+
+    if (this.userInteractionRequired && this.hasUserInteractedWithAudio()) {
+      console.log('BTTV: User interaction required but audio is playing, attempting to create compressor');
     }
 
     this.isLoading = true;
@@ -103,13 +160,13 @@ class AudioCompressor {
       });
 
       // Retry after a delay if video is not ready
-      setTimeout(() => {
+      setTimeout(async () => {
         if (
           (this.isCompressorActive || settings.get(SettingIds.AUDIO_COMPRESSOR_STATE)) &&
           !this.videoElements.has(video)
         ) {
           console.log('BTTV: Retrying compressor creation for video');
-          this.createCompressor(video);
+          await this.createCompressor(video);
         }
       }, 1000);
 
@@ -133,9 +190,15 @@ class AudioCompressor {
       console.log('BTTV: Creating new AudioContext');
       const ctx = new AudioContext();
 
-      if (ctx.state === 'suspended') {
-        console.log('BTTV: AudioContext suspended, attempting to resume');
-        ctx.resume().catch((err) => console.error('BTTV: Failed to resume AudioContext:', err));
+      // Try to resume AudioContext if it's suspended and audio is playing
+      if (ctx.state === 'suspended' && this.hasUserInteractedWithAudio()) {
+        console.log('BTTV: Attempting to resume suspended AudioContext');
+        try {
+          await ctx.resume();
+          console.log('BTTV: AudioContext resumed successfully, state:', ctx.state);
+        } catch (resumeErr) {
+          console.warn('BTTV: Failed to resume AudioContext:', resumeErr);
+        }
       }
 
       console.log('BTTV: Creating audio nodes');
@@ -151,10 +214,6 @@ class AudioCompressor {
         release: COMPRESSOR_DEFAULTS.release,
       });
 
-      console.log('BTTV: Connecting audio nodes');
-      source.connect(compressor);
-      compressor.connect(ctx.destination);
-
       const compressorData = {
         context: ctx,
         source: source,
@@ -166,7 +225,6 @@ class AudioCompressor {
       video._bttv_compressed = false;
 
       // Always start with compressor disabled, then activate if needed
-      source.disconnect(compressor);
       source.connect(ctx.destination);
 
       if (this.isCompressorActive) {
@@ -192,7 +250,7 @@ class AudioCompressor {
     }
   }
 
-  toggleCompressor(video) {
+  async toggleCompressor(video) {
     if (this.isClipPage()) {
       console.log('BTTV: Compressor cannot be toggled on clips due to CORS.');
       return false;
@@ -225,11 +283,22 @@ class AudioCompressor {
         return false;
       }
 
-      const result = this.createCompressor(video);
+      const result = await this.createCompressor(video);
       if (!result) return false;
 
-      // The compressor was created but not activated, so activate it
       const newCompressorData = this.videoElements.get(video);
+      if (newCompressorData && newCompressorData.context.state === 'suspended') {
+        console.log('BTTV: AudioContext suspended, resuming after user interaction');
+        newCompressorData.context
+          .resume()
+          .then(() => {
+            console.log('BTTV: AudioContext resumed successfully');
+          })
+          .catch((err) => {
+            console.error('BTTV: Failed to resume AudioContext:', err);
+          });
+      }
+
       if (newCompressorData && !newCompressorData.isActive) {
         const {source, compressor, context} = newCompressorData;
         source.disconnect(context.destination);
@@ -247,6 +316,18 @@ class AudioCompressor {
     } else {
       console.log('BTTV: Existing compressor found, toggling state');
       const {source, compressor, context, isActive} = compressorData;
+
+      if (context.state === 'suspended') {
+        console.log('BTTV: AudioContext suspended, resuming after user interaction');
+        context
+          .resume()
+          .then(() => {
+            console.log('BTTV: AudioContext resumed successfully');
+          })
+          .catch((err) => {
+            console.error('BTTV: Failed to resume AudioContext:', err);
+          });
+      }
 
       if (isActive) {
         console.log('BTTV: Disabling compressor');
@@ -278,7 +359,7 @@ class AudioCompressor {
     video._bttv_has_listener = true;
     console.log('BTTV: Adding play event listener to video');
 
-    video.addEventListener('play', () => {
+    video.addEventListener('play', async () => {
       console.log('BTTV: Video play event, checking compressor state:', this.isCompressorActive);
 
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
@@ -295,38 +376,36 @@ class AudioCompressor {
           video._bttv_compressed = true;
           console.log('BTTV: Compressor activated on play');
         } else if (!compressorData) {
-          console.log('BTTV: Creating compressor on play');
-          this.createCompressor(video);
+          console.log('BTTV: Attempting to create compressor on play');
+          await this.createCompressor(video);
         }
         this.updateUI();
       } else if (compressorStateSetting && !this.isCompressorActive) {
         console.log('BTTV: Restoring compressor state from settings on play');
         this.isCompressorActive = true;
-        this.createCompressor(video);
+        await this.createCompressor(video);
         this.updateUI();
       }
     });
 
-    video.addEventListener('playing', () => {
-      console.log('BTTV: Video playing event, creating compressor if needed');
+    video.addEventListener('playing', async () => {
+      console.log('BTTV: Video playing event, checking compressor state');
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
       if (this.isCompressorActive && compressorStateSetting) {
         const compressorData = this.videoElements.get(video);
         if (!compressorData) {
-          console.log('BTTV: Creating compressor on playing event');
-          this.createCompressor(video);
-          this.updateUI();
+          console.log('BTTV: Attempting to create compressor on playing');
+          await this.createCompressor(video);
         }
       } else if (compressorStateSetting && !this.isCompressorActive) {
         console.log('BTTV: Restoring compressor state from settings on playing');
         this.isCompressorActive = true;
-        this.createCompressor(video);
-        this.updateUI();
+        await this.createCompressor(video);
       }
     });
 
-    video.addEventListener('loadedmetadata', () => {
+    video.addEventListener('loadedmetadata', async () => {
       console.log('BTTV: Video metadata loaded, checking compressor state:', this.isCompressorActive);
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
@@ -342,19 +421,19 @@ class AudioCompressor {
           video._bttv_compressed = true;
           console.log('BTTV: Compressor activated on metadata load');
         } else if (!compressorData) {
-          console.log('BTTV: Creating compressor on metadata load');
-          this.createCompressor(video);
+          console.log('BTTV: Attempting to create compressor on metadata load');
+          await this.createCompressor(video);
         }
         this.updateUI();
       } else if (compressorStateSetting && !this.isCompressorActive) {
         console.log('BTTV: Restoring compressor state from settings on metadata load');
         this.isCompressorActive = true;
-        this.createCompressor(video);
+        await this.createCompressor(video);
         this.updateUI();
       }
     });
 
-    video.addEventListener('canplay', () => {
+    video.addEventListener('canplay', async () => {
       console.log('BTTV: Video can play, checking compressor state:', this.isCompressorActive);
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
@@ -370,14 +449,14 @@ class AudioCompressor {
           video._bttv_compressed = true;
           console.log('BTTV: Compressor activated on canplay');
         } else if (!compressorData) {
-          console.log('BTTV: Creating compressor on canplay');
-          this.createCompressor(video);
+          console.log('BTTV: Attempting to create compressor on canplay');
+          await this.createCompressor(video);
         }
         this.updateUI();
       } else if (compressorStateSetting && !this.isCompressorActive) {
         console.log('BTTV: Restoring compressor state from settings on canplay');
         this.isCompressorActive = true;
-        this.createCompressor(video);
+        await this.createCompressor(video);
         this.updateUI();
       }
     });
@@ -388,6 +467,9 @@ class AudioCompressor {
     const tooltip = document.querySelector('.bttv-compressor-tooltip');
 
     if (icon && tooltip) {
+      const videos = document.querySelectorAll('video');
+      const hasPlayingVideo = Array.from(videos).some((video) => this.isAudioPlaying(video));
+
       if (this.isClipPage()) {
         icon.classList.add('off');
         icon.classList.remove('loading');
@@ -404,7 +486,6 @@ class AudioCompressor {
         return;
       }
 
-      const videos = document.querySelectorAll('video');
       let hasActiveCompressor = false;
 
       videos.forEach((video) => {
@@ -414,9 +495,25 @@ class AudioCompressor {
         }
       });
 
-      const hasPlayingVideo = Array.from(videos).some(
-        (video) => !video.paused && !video.ended && video.currentTime > 0
-      );
+      if (this.isCompressorActive && hasPlayingVideo && !hasActiveCompressor) {
+        if (this.userInteractionRequired && !this.hasUserInteractedWithAudio()) {
+          icon.classList.add('off');
+          icon.classList.remove('loading');
+          icon.removeAttribute('disabled');
+          tooltip.textContent = 'Audio Compressor: Click to activate (requires user interaction)';
+        } else if (this.userInteractionRequired && this.hasUserInteractedWithAudio()) {
+          icon.classList.add('loading');
+          icon.classList.remove('off');
+          icon.setAttribute('disabled', 'disabled');
+          tooltip.textContent = 'Audio Compressor: Starting... (Firefox mode)';
+        } else {
+          icon.classList.add('loading');
+          icon.classList.remove('off');
+          icon.setAttribute('disabled', 'disabled');
+          tooltip.textContent = 'Audio Compressor: Starting...';
+        }
+        return;
+      }
 
       if (this.isCompressorActive && !hasActiveCompressor && hasPlayingVideo) {
         console.log(
@@ -527,10 +624,13 @@ class AudioCompressor {
     iconContainer.appendChild(button);
     iconContainer.appendChild(tooltip);
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
       if (this.isClipPage() || this.isLoading) {
         return;
       }
+
+      await this.checkAudioContextState();
+
       const video =
         document.querySelector('.video-player__container video') ||
         document.querySelector('.video-ref video') ||
@@ -544,7 +644,23 @@ class AudioCompressor {
       }
 
       try {
-        const isCompressed = this.toggleCompressor(video);
+        // In Firefox, if AudioContext is suspended but audio is playing,
+        // we need to force resume the context
+        if (this.userInteractionRequired && this.hasUserInteractedWithAudio()) {
+          console.log('BTTV: Firefox mode - audio is playing but AudioContext suspended, attempting to resume');
+          const testContext = new AudioContext();
+          if (testContext.state === 'suspended') {
+            try {
+              await testContext.resume();
+              console.log('BTTV: AudioContext resumed successfully in Firefox');
+            } catch (resumeErr) {
+              console.warn('BTTV: Failed to resume AudioContext in Firefox:', resumeErr);
+            }
+          }
+          await testContext.close();
+        }
+
+        const isCompressed = await this.toggleCompressor(video);
         console.log('BTTV: Compressor toggled:', isCompressed);
 
         // Update UI after a short delay to ensure state is synced
@@ -596,7 +712,7 @@ class AudioCompressor {
     }
   }
 
-  initialize() {
+  async initialize() {
     if (this.initialized) return;
 
     console.log('BTTV: Audio API Support:', this.getAudioSupport());
@@ -606,6 +722,8 @@ class AudioCompressor {
 
     this.lastPageType = this.getPageType();
     console.log('BTTV: Current page type:', this.lastPageType);
+
+    await this.checkAudioContextState();
 
     // Register button with player button manager
     playerButtonManager.registerButton('audio-compressor', {
@@ -619,20 +737,14 @@ class AudioCompressor {
 
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
-      if (this.isCompressorActive && compressorStateSetting && !video.paused && !video.ended && video.currentTime > 0) {
-        console.log('BTTV: Restoring compressor state for new playing video');
-        this.createCompressor(video);
-        // Update UI after a delay to ensure everything is set up
-        setTimeout(() => {
-          this.updateUI();
-        }, 100);
-      } else if (
-        compressorStateSetting &&
-        !this.isCompressorActive &&
-        !video.paused &&
-        !video.ended &&
-        video.currentTime > 0
-      ) {
+      if (this.isCompressorActive && compressorStateSetting && this.isAudioPlaying(video)) {
+        console.log('BTTV: Attempting to create compressor for new playing video');
+        this.createCompressor(video).then(() => {
+          setTimeout(() => {
+            this.updateUI();
+          }, 100);
+        });
+      } else if (compressorStateSetting && !this.isCompressorActive && this.isAudioPlaying(video)) {
         console.log('BTTV: Restoring compressor state from settings for new playing video');
         this.isCompressorActive = true;
         this.createCompressor(video);
@@ -646,16 +758,10 @@ class AudioCompressor {
 
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
-      if (this.isCompressorActive && compressorStateSetting && !video.paused && !video.ended && video.currentTime > 0) {
-        console.log('BTTV: Restoring compressor state for existing playing video');
+      if (this.isCompressorActive && compressorStateSetting && this.isAudioPlaying(video)) {
+        console.log('BTTV: Attempting to create compressor for existing playing video');
         this.createCompressor(video);
-      } else if (
-        compressorStateSetting &&
-        !this.isCompressorActive &&
-        !video.paused &&
-        !video.ended &&
-        video.currentTime > 0
-      ) {
+      } else if (compressorStateSetting && !this.isCompressorActive && this.isAudioPlaying(video)) {
         console.log('BTTV: Restoring compressor state from settings for existing playing video');
         this.isCompressorActive = true;
         this.createCompressor(video);
@@ -679,19 +785,15 @@ class AudioCompressor {
           !this.videoElements.has(video) &&
           this.isCompressorActive &&
           compressorStateSetting &&
-          !video.paused &&
-          !video.ended &&
-          video.currentTime > 0
+          this.isAudioPlaying(video)
         ) {
-          console.log('BTTV: Late initialization - creating compressor for playing video');
+          console.log('BTTV: Late initialization - attempting to create compressor');
           this.createCompressor(video);
         } else if (
           !this.videoElements.has(video) &&
           !this.isCompressorActive &&
           compressorStateSetting &&
-          !video.paused &&
-          !video.ended &&
-          video.currentTime > 0
+          this.isAudioPlaying(video)
         ) {
           console.log('BTTV: Late initialization - restoring compressor state from settings');
           this.isCompressorActive = true;
@@ -706,6 +808,10 @@ class AudioCompressor {
         this.checkAndFixState();
       }
     }, 5000);
+
+    setInterval(async () => {
+      await this.checkAudioContextState();
+    }, 10000);
 
     setInterval(() => {
       this.checkPageTransition();
@@ -750,7 +856,7 @@ class AudioCompressor {
       }
     });
 
-    const hasPlayingVideo = Array.from(videos).some((video) => !video.paused && !video.ended && video.currentTime > 0);
+    const hasPlayingVideo = Array.from(videos).some((video) => this.isAudioPlaying(video));
 
     if (this.isCompressorActive !== hasActiveCompressor) {
       if (hasPlayingVideo) {
@@ -777,9 +883,7 @@ class AudioCompressor {
         if (
           this.isCompressorActive &&
           compressorStateSetting &&
-          !video.paused &&
-          !video.ended &&
-          video.currentTime > 0 &&
+          this.isAudioPlaying(video) &&
           !this.videoElements.has(video)
         ) {
           console.log(`BTTV: Retrying compressor creation for ${reason} after loading`);
@@ -787,9 +891,7 @@ class AudioCompressor {
         } else if (
           !this.isCompressorActive &&
           compressorStateSetting &&
-          !video.paused &&
-          !video.ended &&
-          video.currentTime > 0 &&
+          this.isAudioPlaying(video) &&
           !this.videoElements.has(video)
         ) {
           console.log(`BTTV: Retrying compressor restoration for ${reason} after loading`);
@@ -825,8 +927,8 @@ class AudioCompressor {
           setTimeout(() => {
             const videos = document.querySelectorAll('video');
             videos.forEach((video) => {
-              if (!video.paused && !video.ended && video.currentTime > 0 && !this.videoElements.has(video)) {
-                console.log('BTTV: Creating compressor for playing video after page transition');
+              if (this.isAudioPlaying(video) && !this.videoElements.has(video)) {
+                console.log('BTTV: Attempting to create compressor after page transition');
                 this.createCompressor(video);
               }
             });
@@ -841,9 +943,9 @@ class AudioCompressor {
 
 export default loadModuleForPlatforms([
   PlatformTypes.TWITCH,
-  () => {
+  async () => {
     const audioCompressor = new AudioCompressor();
-    audioCompressor.initialize();
+    await audioCompressor.initialize();
     return audioCompressor;
   },
 ]);
