@@ -7,7 +7,7 @@ import Toggle from 'rsuite/Toggle';
 import useStorageState from '../../../../../common/hooks/StorageState.jsx';
 import {CategoryTypes, SettingIds} from '../../../../../constants.js';
 import formatMessage from '../../../../../i18n/index.js';
-import {getDefaultProxyUrl, resetProxyUrl} from '../../../../../utils/proxy.js';
+import {getDefaultProxyUrl, resetProxyUrl, initializeProxyCheck} from '../../../../../utils/proxy.js';
 import styles from '../../../styles/header.module.css';
 import {registerComponent} from '../../Store.jsx';
 
@@ -21,13 +21,27 @@ function ProxySettings() {
     resetProxyUrl();
   };
 
+  const handleToggleChange = async (state) => {
+    setEnabled(state);
+    if (state) {
+      await initializeProxyCheck();
+    }
+  };
+
+  const handleUrlChange = async (value) => {
+    setUrl(value);
+    if (enabled && value) {
+      await initializeProxyCheck();
+    }
+  };
+
   return (
     <Panel header={SETTING_NAME}>
       <div className={styles.settingRow}>
         <p className={styles.settingDescription}>
           {formatMessage({defaultMessage: 'Enable proxy for emote providers to bypass regional restrictions'})}
         </p>
-        <Toggle checked={enabled} onChange={(state) => setEnabled(state)} />
+        <Toggle checked={enabled} onChange={handleToggleChange} />
       </div>
       {enabled && (
         <div className={styles.settingRow}>
@@ -37,7 +51,7 @@ function ProxySettings() {
           <InputGroup>
             <Input
               value={url || ''}
-              onChange={(value) => setUrl(value)}
+              onChange={handleUrlChange}
               placeholder={getDefaultProxyUrl()}
             />
             <InputGroup.Button>

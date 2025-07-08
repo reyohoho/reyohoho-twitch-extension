@@ -51,6 +51,12 @@
     // eslint-disable-next-line import/no-unresolved
     await import('./modules/**/index.js');
 
+    // Initialize proxy check
+    const {initializeProxyCheck} = await import('./utils/proxy.js');
+    initializeProxyCheck().catch((error) => {
+      debug.log('Failed to initialize proxy check:', error);
+    });
+
     watcher.setup();
 
     debug.log(`BetterTTV v${EXT_VER} loaded. ${NODE_ENV} @ ${GIT_REV}`);

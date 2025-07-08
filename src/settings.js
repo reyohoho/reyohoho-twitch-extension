@@ -37,6 +37,18 @@ class Settings extends SafeEventEmitter {
     }
 
     this.upgrade(settings.version);
+
+    this.on(`changed.${SettingIds.PROXY_ENABLED}`, this.handleProxySettingChange.bind(this));
+    this.on(`changed.${SettingIds.PROXY_URL}`, this.handleProxySettingChange.bind(this));
+  }
+
+  async handleProxySettingChange() {
+    try {
+      const {initializeProxyCheck} = await import('./utils/proxy.js');
+      await initializeProxyCheck();
+    } catch (error) {
+      console.warn('Failed to handle proxy setting change:', error);
+    }
   }
 
   get(id) {
