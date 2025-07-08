@@ -61,7 +61,6 @@ class GlobalEmotes extends AbstractEmotes {
         })
       )
       .then(() => {
-        // Send system message for BTTV global emotes update
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'BetterTTV global emotes have been updated'}), true);
         watcher.emit('emotes.updated');
       });

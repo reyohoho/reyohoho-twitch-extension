@@ -188,7 +188,10 @@ class SevenTVChannelEmotes extends AbstractEmotes {
           watcher.emit('emotes.updated');
         });
       })
-      .then(() => watcher.emit('emotes.updated'));
+      .then(() => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV channel emotes have been updated'}), true);
+        watcher.emit('emotes.updated');
+      });
   }
 }
 

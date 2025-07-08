@@ -71,7 +71,6 @@ class GlobalEmotes extends AbstractEmotes {
         })
       )
       .then(() => {
-        // Send system message for FFZ global emotes update
         twitch.sendChatAdminMessage(
           formatMessage({defaultMessage: 'FrankerFaceZ global emotes have been updated'}),
           true

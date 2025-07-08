@@ -3,6 +3,7 @@ import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import {hasFlag} from '../../utils/flags.js';
 import {getProxyUrl} from '../../utils/proxy.js';
+import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import AbstractEmotes from '../emotes/abstract-emotes.js';
 import {createEmote, isOverlay} from './utils.js';
@@ -59,7 +60,10 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
           this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
         }
       })
-      .then(() => watcher.emit('emotes.updated'));
+      .then(() => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV global emotes have been updated'}), true);
+        watcher.emit('emotes.updated');
+      });
   }
 }
 
