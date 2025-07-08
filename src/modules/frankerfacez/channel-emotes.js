@@ -75,6 +75,10 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
       .then(() => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'FrankerFaceZ emotes have been updated'}), true);
         watcher.emit('emotes.updated');
+      })
+      .catch((error) => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading FrankerFaceZ channel emotes'}), true);
+        console.error('Error loading FrankerFaceZ channel emotes:', error);
       });
   }
 }

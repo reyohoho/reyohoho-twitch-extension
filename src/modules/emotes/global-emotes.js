@@ -63,6 +63,10 @@ class GlobalEmotes extends AbstractEmotes {
       .then(() => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'BetterTTV global emotes have been updated'}), true);
         watcher.emit('emotes.updated');
+      })
+      .catch((error) => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading BetterTTV global emotes'}), true);
+        console.error('Error loading BetterTTV global emotes:', error);
       });
   }
 }

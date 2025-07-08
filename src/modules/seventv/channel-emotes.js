@@ -50,7 +50,12 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       : `https://7tv.io/v3/users/${encodeURIComponent(currentChannel.provider)}/${encodeURIComponent(currentChannel.id)}`;
 
     fetch(apiUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(({emote_set: emoteSet}) => {
         const {emotes} = emoteSet ?? {};
         if (emotes == null) {
@@ -191,6 +196,10 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       .then(() => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV channel emotes have been updated'}), true);
         watcher.emit('emotes.updated');
+      })
+      .catch((error) => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading 7TV channel emotes'}), true);
+        console.error('Error loading 7TV channel emotes:', error);
       });
   }
 }

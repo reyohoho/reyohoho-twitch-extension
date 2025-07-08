@@ -76,6 +76,10 @@ class GlobalEmotes extends AbstractEmotes {
           true
         );
         watcher.emit('emotes.updated');
+      })
+      .catch((error) => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading FrankerFaceZ global emotes'}), true);
+        console.error('Error loading FrankerFaceZ global emotes:', error);
       });
   }
 }

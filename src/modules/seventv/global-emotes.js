@@ -36,7 +36,12 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
     const apiUrl = proxyUrl ? `${proxyUrl}https://7tv.io/v3/emote-sets/global` : 'https://7tv.io/v3/emote-sets/global';
 
     fetch(apiUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(({emotes: globalEmotes}) => {
         if (globalEmotes == null) {
           return;
@@ -63,6 +68,10 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
       .then(() => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV global emotes have been updated'}), true);
         watcher.emit('emotes.updated');
+      })
+      .catch((error) => {
+        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading 7TV global emotes'}), true);
+        console.error('Error loading 7TV global emotes:', error);
       });
   }
 }

@@ -121,6 +121,7 @@ class ChannelEmotes extends AbstractEmotes {
       this.emotes.set(emote.code, createEmote(emote.id, emote.code, emote.animated, emote.user));
     }
 
+    twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'BetterTTV channel emotes have been updated'}), true);
     setTimeout(() => watcher.emit('emotes.updated'), 0);
   }
 }
