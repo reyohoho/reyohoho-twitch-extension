@@ -96,6 +96,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
             return;
           }
 
+          const username = body.actor?.username || 'Unknown';
+
           // Handle removed emotes (pulled array)
           if (body.pulled && Array.isArray(body.pulled)) {
             body.pulled.forEach((item) => {
@@ -106,8 +108,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
                 // Send system message for emote removal
                 twitch.sendChatAdminMessage(
                   formatMessage(
-                    {defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat'},
-                    {emoteCode: `\u200B${emoteCode}\u200B`}
+                    {defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat by {username}'},
+                    {emoteCode: `\u200B${emoteCode}\u200B`, username}
                   ),
                   true
                 );
@@ -141,8 +143,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
                 // Send system message for emote addition
                 twitch.sendChatAdminMessage(
                   formatMessage(
-                    {defaultMessage: '7TV Emotes: {emoteCode} has been added to chat'},
-                    {emoteCode: `${code} \u200B \u200B${code}\u200B`}
+                    {defaultMessage: '7TV Emotes: {emoteCode} has been added to chat by {username}'},
+                    {emoteCode: `${code} \u200B \u200B${code}\u200B`, username}
                   ),
                   true
                 );
@@ -181,8 +183,12 @@ class SevenTVChannelEmotes extends AbstractEmotes {
                 // Send system message for emote rename
                 twitch.sendChatAdminMessage(
                   formatMessage(
-                    {defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode}'},
-                    {oldCode: `\u200B${oldEmoteCode}\u200B`, newCode: `${newCode} \u200B \u200B${newCode}\u200B`}
+                    {defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode} by {username}'},
+                    {
+                      oldCode: `\u200B${oldEmoteCode}\u200B`,
+                      newCode: `${newCode} \u200B \u200B${newCode}\u200B`,
+                      username,
+                    }
                   ),
                   true
                 );
