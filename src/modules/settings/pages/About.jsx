@@ -100,7 +100,7 @@ function About({onClose}) {
                 </li>
                 <li>
                   <p className={header.description}>
-                    ReYohoho Version 1.0.7
+                    ReYohoho Version 1.0.8
                   </p>
                 </li>
                 <li>
