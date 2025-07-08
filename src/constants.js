@@ -100,7 +100,6 @@ export const EmoteTypeFlags = {
   SEVENTV_EMOTES: 1 << 4,
   EMOTE_MODIFIERS: 1 << 5,
   SEVENTV_UNLISTED_EMOTES: 1 << 6,
-  SEVENTV_ZERO_WIDTH_EMOTES: 1 << 7,
 };
 
 export const ChatFlags = {
@@ -247,8 +246,7 @@ export const SettingDefaultValues = {
       EmoteTypeFlags.ANIMATED_EMOTES |
       EmoteTypeFlags.FFZ_EMOTES |
       EmoteTypeFlags.EMOTE_MODIFIERS |
-      EmoteTypeFlags.SEVENTV_EMOTES |
-      EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES,
+      EmoteTypeFlags.SEVENTV_EMOTES,
     0,
   ],
   [SettingIds.CHAT]: [

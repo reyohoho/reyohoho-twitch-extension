@@ -8,7 +8,7 @@ import {getCurrentChannel} from '../../utils/channel.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import AbstractEmotes from '../emotes/abstract-emotes.js';
-import {createEmote, isOverlay, isZeroWidth} from './utils.js';
+import {createEmote, isOverlay} from './utils.js';
 
 const category = {
   id: EmoteCategories.SEVENTV_CHANNEL,
@@ -72,17 +72,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
             continue;
           }
 
-          const zeroWidth = isZeroWidth(flags);
-          const zeroWidthEnabled = hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES);
-
-          // If zero-width emotes are disabled, treat them as regular emotes
-          const shouldBeZeroWidth = zeroWidth && zeroWidthEnabled;
-          const shouldBeOverlay = isOverlay(flags) && zeroWidthEnabled;
-
-          this.emotes.set(
-            code,
-            createEmote(id, code, animated, owner, category, shouldBeOverlay, url, shouldBeZeroWidth)
-          );
+          this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
         }
 
         eventSource = new ReconnectingEventSource(
@@ -141,19 +131,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
                   return;
                 }
 
-                const zeroWidth = isZeroWidth(flags);
-                const zeroWidthEnabled = hasFlag(
-                  settings.get(SettingIds.EMOTES),
-                  EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES
-                );
-
-                const shouldBeZeroWidth = zeroWidth && zeroWidthEnabled;
-                const shouldBeOverlay = isOverlay(flags) && zeroWidthEnabled;
-
-                this.emotes.set(
-                  code,
-                  createEmote(id, code, animated, owner, category, shouldBeOverlay, url, shouldBeZeroWidth)
-                );
+                this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
 
                 // Send system message for emote addition
                 twitch.sendChatAdminMessage(
@@ -192,20 +170,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
                 // Remove old emote code
                 this.emotes.delete(oldEmoteCode);
 
-                const zeroWidth = isZeroWidth(flags);
-                const zeroWidthEnabled = hasFlag(
-                  settings.get(SettingIds.EMOTES),
-                  EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES
-                );
-
-                const shouldBeZeroWidth = zeroWidth && zeroWidthEnabled;
-                const shouldBeOverlay = isOverlay(flags) && zeroWidthEnabled;
-
                 // Add new emote code
-                this.emotes.set(
-                  newCode,
-                  createEmote(id, newCode, animated, owner, category, shouldBeOverlay, url, shouldBeZeroWidth)
-                );
+                this.emotes.set(newCode, createEmote(id, newCode, animated, owner, category, isOverlay(flags), url));
 
                 // Send system message for emote rename
                 twitch.sendChatAdminMessage(

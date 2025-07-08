@@ -64,11 +64,6 @@ export default class Emote {
       container.classList.add('bttv-emote-overlay');
     }
 
-    // Add zero-width attribute for proper positioning
-    if (this.metadata?.isZeroWidth === true) {
-      container.setAttribute('data-zero-width', 'true');
-    }
-
     const image = new Image();
     image.classList.add('chat-line__message--emote', 'bttv-emote-image');
     image.src = createSrc(this.images, shouldRenderStatic);
@@ -122,14 +117,6 @@ export default class Emote {
     tooltip.appendChild(tooltipText);
 
     container.appendChild(tooltip);
-
-    // For zero-width emotes, wrap in a container for proper positioning
-    if (this.metadata?.isZeroWidth === true) {
-      const wrapper = document.createElement('span');
-      wrapper.classList.add('bttv-emote-container');
-      wrapper.appendChild(container);
-      return wrapper;
-    }
 
     return container;
   }

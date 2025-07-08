@@ -30,7 +30,6 @@ export function createEmote(id, code, animated, owner, category, overlay, url, z
     },
     metadata: {
       isOverlay: overlay,
-      isZeroWidth: zeroWidth,
     },
   });
 }
@@ -40,14 +39,5 @@ export function isOverlay(flags, isLegacy = false) {
     return false;
   }
 
-  return hasFlag(flags, isLegacy ? 1 << 7 : 1 << 8);
-}
-
-export function isZeroWidth(flags) {
-  if (flags == null) {
-    return false;
-  }
-  
-  // SevenTV zero-width flag is 256 (1 << 8)
   return hasFlag(flags, 256);
 }

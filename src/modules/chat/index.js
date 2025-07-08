@@ -504,6 +504,11 @@ class ChatModule {
       color = fromNode.style.color;
     }
 
+    if (fromNode) {
+      fromNode.style.position = 'relative';
+      fromNode.style.zIndex = '1';
+    }
+
     if (subscribers.hasGlow(user.id) && settings.get(SettingIds.DARKENED_MODE) === true) {
       const rgbColor = colors.getRgb(color);
       fromNode.style.textShadow = `0 0 20px rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, 0.8)`;
@@ -566,6 +571,74 @@ class ChatModule {
     // --- END ---
 
     this.messageReplacer(messageParts, user);
+
+    setTimeout(() => {
+      if (!element.isConnected) {
+        return;
+      }
+      const allEmotes = Array.from(element.querySelectorAll('.bttv-emote, div[data-test-selector="emote-button"]'));
+
+      const emoteGroups = [];
+      let currentGroup = null;
+
+      for (const emote of allEmotes) {
+        if (emote.classList.contains('bttv-emote-overlay')) {
+          if (currentGroup) {
+            currentGroup.overlays.push(emote);
+          } else {
+            emote.classList.remove('bttv-emote-overlay');
+            currentGroup = {base: emote, overlays: []};
+            emoteGroups.push(currentGroup);
+          }
+        } else {
+          currentGroup = {base: emote, overlays: []};
+          emoteGroups.push(currentGroup);
+        }
+      }
+
+      for (const group of emoteGroups) {
+        if (group.overlays.length > 0) {
+          const container = document.createElement('span');
+          container.classList.add('bttv-emote-container', 'bttv-tooltip-wrapper');
+
+          group.base.replaceWith(container);
+          container.appendChild(group.base);
+
+          const newTooltip = document.createElement('div');
+          newTooltip.classList.add('bttv-tooltip', 'bttv-tooltip--up', 'bttv-tooltip--align-center');
+          newTooltip.style.width = 'max-content';
+
+          for (const emote of [group.base, ...group.overlays]) {
+            const originalTooltip = emote.querySelector('.bttv-tooltip');
+            if (originalTooltip) {
+              const image = originalTooltip.querySelector('.bttv-tooltip-emote-image');
+              if (image) {
+                newTooltip.appendChild(image.cloneNode(true));
+              }
+
+              const textDiv = originalTooltip.querySelector('div:not([class])');
+              if (textDiv) {
+                const newTextDiv = textDiv.cloneNode(true);
+                newTextDiv.style.whiteSpace = 'pre-wrap';
+                newTooltip.appendChild(newTextDiv);
+              }
+            }
+          }
+          container.appendChild(newTooltip);
+
+          group.base.querySelector('.bttv-tooltip')?.remove();
+
+          for (const overlay of group.overlays) {
+            overlay.querySelector('.bttv-tooltip')?.remove();
+            container.appendChild(overlay);
+            const overlayParent = overlay.closest('span.text-fragment');
+            if (overlayParent && overlayParent.textContent.trim() === '') {
+              overlayParent.remove();
+            }
+          }
+        }
+      }
+    }, 0);
 
     element.__bttvParsed = true;
   }

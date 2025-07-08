@@ -5,7 +5,7 @@ import {hasFlag} from '../../utils/flags.js';
 import {getProxyUrl} from '../../utils/proxy.js';
 import watcher from '../../watcher.js';
 import AbstractEmotes from '../emotes/abstract-emotes.js';
-import {createEmote, isOverlay, isZeroWidth} from './utils.js';
+import {createEmote, isOverlay} from './utils.js';
 
 const category = {
   id: EmoteCategories.SEVENTV_GLOBAL,
@@ -32,9 +32,7 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_EMOTES)) return;
 
     const proxyUrl = getProxyUrl();
-    const apiUrl = proxyUrl
-      ? `${proxyUrl}https://7tv.io/v3/emote-sets/global`
-      : 'https://7tv.io/v3/emote-sets/global';
+    const apiUrl = proxyUrl ? `${proxyUrl}https://7tv.io/v3/emote-sets/global` : 'https://7tv.io/v3/emote-sets/global';
 
     fetch(apiUrl)
       .then((response) => response.json())
@@ -58,17 +56,7 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
             continue;
           }
 
-          const zeroWidth = isZeroWidth(flags);
-          const zeroWidthEnabled = hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_ZERO_WIDTH_EMOTES);
-
-          // If zero-width emotes are disabled, treat them as regular emotes
-          const shouldBeZeroWidth = zeroWidth && zeroWidthEnabled;
-          const shouldBeOverlay = isOverlay(flags) && zeroWidthEnabled;
-
-          this.emotes.set(
-            code,
-            createEmote(id, code, animated, owner, category, shouldBeOverlay, url, shouldBeZeroWidth)
-          );
+          this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
         }
       })
       .then(() => watcher.emit('emotes.updated'));
