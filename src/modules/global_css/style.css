@@ -9,6 +9,11 @@
   &:hover .bttv-tooltip {
     display: block;
   }
+
+  &[class*="bttv-emoji"] {
+    display: inline;
+    vertical-align: middle;
+  }
 }
 
 .bttv-tooltip {

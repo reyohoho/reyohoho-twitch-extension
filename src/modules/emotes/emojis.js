@@ -2,6 +2,7 @@ import twemoji from 'twemoji';
 import {CDN_ENDPOINT, EmoteCategories, EmoteProviders} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import blacklistedEmoji from '../../utils/emoji-blacklist.js';
+import {getProxyUrl} from '../../utils/proxy.js';
 
 import AbstractEmotes from './abstract-emotes.js';
 // file gets created during bundle
@@ -13,6 +14,7 @@ const category = {
   id: EmoteCategories.BETTERTTV_EMOJI,
   provider: EmoteProviders.BETTERTTV,
   displayName: formatMessage({defaultMessage: 'BetterTTV Emojis'}),
+  autocompleteCategory: true,
 };
 
 function countEmojis(emoji) {
@@ -63,7 +65,8 @@ class Emojis extends AbstractEmotes {
                 break;
             }
 
-            url = ''.concat(options.base, options.size, '/', icon, options.ext);
+            const proxyUrl = getProxyUrl();
+            url = ''.concat(proxyUrl, options.base, options.size, '/', icon, options.ext);
 
             return false;
           },
@@ -78,6 +81,11 @@ class Emojis extends AbstractEmotes {
           code,
           images: {
             '1x': url,
+          },
+          metadata: {
+            isEmoji: true,
+            inlineEmoji: true,
+            autocomplete: true,
           },
         });
 

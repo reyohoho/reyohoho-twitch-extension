@@ -52,8 +52,34 @@ export default class Emote {
         : hasFlag(emotesSettingValue, EmoteTypeFlags.ANIMATED_EMOTES);
     const shouldRenderStatic = this.animated && !showAnimatedEmotes;
 
+    if (this.metadata?.inlineEmoji) {
+      const container = document.createElement('span');
+      container.classList.add('bttv-tooltip-wrapper', 'bttv-emoji-container');
+
+      const image = new Image();
+      image.classList.add('chat-line__message--emote', 'bttv-emoji-image');
+      image.src = createSrc(this.images, shouldRenderStatic);
+      image.srcset = createSrcSet(this.images, shouldRenderStatic);
+      image.alt = this.code;
+      container.appendChild(image);
+
+      const tooltip = document.createElement('div');
+      tooltip.classList.add('bttv-tooltip', 'bttv-tooltip--up', 'bttv-tooltip--align-center');
+
+      const tooltipText = document.createElement('div');
+      tooltipText.textContent = `${this.code}\nBTTV Emoji`;
+      tooltip.appendChild(tooltipText);
+
+      container.appendChild(tooltip);
+
+      return container;
+    }
+
     const container = document.createElement('div');
     container.classList.add('bttv-tooltip-wrapper', 'bttv-emote', categoryClass, idClass);
+    if (this.category.className) {
+      container.classList.add(this.category.className);
+    }
     if (classNames != null && classNames.length > 0) {
       container.classList.add(...classNames);
     }

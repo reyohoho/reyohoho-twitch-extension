@@ -98,6 +98,44 @@ img.emoji.yt-live-chat-text-message-renderer + .bttv-global-emo-5e76d399d6581c37
   margin: -0.5rem 0;
 }
 
+.bttv-emoji-container {
+  display: inline !important;
+  position: relative;
+}
+
+.bttv-emoji-image {
+  display: inline !important;
+  height: 1.5em !important;
+  width: auto !important;
+  vertical-align: -0.3em !important;
+  margin: 0 !important;
+}
+
+.bttv-emoji-container .bttv-tooltip {
+  white-space: pre;
+  margin-bottom: 5px;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.bttv-emote.betterttv-emoji {
+  display: inline;
+  vertical-align: middle;
+}
+
+.bttv-emote.betterttv-emoji .bttv-emote-image {
+  display: inline;
+  height: 1.5em;
+  width: auto;
+  margin: 0;
+  vertical-align: -0.3em;
+}
+
+.bttv-emote[class*="betterttv-emoji"] .bttv-emote-image {
+  height: 1.5em;
+  width: auto;
+}
+
 .bttv-emote-container {
   display: inline-grid;
   place-items: center;
