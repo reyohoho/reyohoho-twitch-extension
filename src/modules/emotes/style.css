@@ -165,3 +165,12 @@ img.emoji.yt-live-chat-text-message-renderer + .bttv-global-emo-5e76d399d6581c37
   overflow: hidden;
   margin-bottom: 8px;
 }
+
+.bttv-emote-overlay {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.bttv-emote-overlay-loaded {
+  opacity: 1;
+}

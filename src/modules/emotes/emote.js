@@ -97,6 +97,16 @@ export default class Emote {
     image.alt = `${prefixModifiers != null && prefixModifiers.length > 0 ? `${prefixModifiers.join(' ')} ` : ''}${
       this.code
     }${suffixModifiers != null && suffixModifiers.length > 0 ? ` ${suffixModifiers.join(' ')}` : ''}`;
+
+    if (this.metadata?.isOverlay === true) {
+      image.onload = () => {
+        container.classList.add('bttv-emote-overlay-loaded');
+      };
+      image.onerror = () => {
+        container.classList.remove('bttv-emote-overlay');
+      };
+    }
+
     if (shouldRenderStatic) {
       image.__bttvStaticSrc = image.src;
       image.__bttvStaticSrcSet = image.srcset;
