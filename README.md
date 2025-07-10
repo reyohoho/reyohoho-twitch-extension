@@ -83,8 +83,8 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 2. Install the ESLint extension from the extensions marketplace
 
 ## TODO
+
 - Fix custom emotes preview in input
-- Player restart button (similar to FFZ)
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
 - Integrate copypasta search?
@@ -112,6 +112,7 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## Changes compared to the original BetterTTV
 
+- Player restart button (similar to FFZ)
 - Fixed support for zero-width 7TV emotes
 - Message copy button
 - Video mirror button
