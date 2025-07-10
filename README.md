@@ -121,12 +121,11 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - Middle mouse button on emote opens its page
 - System message added to chat about emote updates in channel
 - Moderator slider like in 7TV
-- Added moderator slider like in 7TV
 - Added proxy to BTTV emoji
 - Fixed display of BTTV emoji
 - BTTV emoji added to auto add-on
 - Added author's nickname to 7TV admin messages
 - In settings now you can change the size of emotes
-- Added message when loading the list of emotes 7tv
+- Added message when loading the list of emotes 7TV
 - Added message when loading emotes errors
-- Fixed displaying of 7tv overlay emotes
+- Fixed displaying of 7TV overlay emotes
