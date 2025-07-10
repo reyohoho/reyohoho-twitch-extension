@@ -13,6 +13,7 @@ const VIDEO_PLAYER_SELECTOR = '.video-player__container';
 const CANCEL_VOD_RECOMMENDATION_SELECTOR =
   '.recommendations-overlay .pl-rec__cancel.pl-button, .autoplay-vod__content-container button';
 const BTTV_PICTURE_IN_PICTURE_SELECTOR = '#bttv-picture-in-picture';
+const BTTV_RESTART_PLAYER_SELECTOR = '#bttv-restart-player';
 
 function createPictureInPictureButton(toggled) {
   const label = formatMessage({defaultMessage: 'Picture in Picture'});
@@ -54,6 +55,169 @@ function createPictureInPictureButton(toggled) {
   container.appendChild(tooltip);
 
   return container;
+}
+
+function createRestartPlayerButton() {
+  const label = formatMessage({defaultMessage: 'Restart Player'});
+
+  const container = document.createElement('div');
+  container.setAttribute('id', 'bttv-restart-player');
+  container.classList.add('bttv-restart-player-wrapper', 'bttv-tooltip-wrapper');
+
+  const button = document.createElement('button');
+  button.setAttribute('aria-label', label);
+  container.appendChild(button);
+
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icon.setAttribute('width', '100%');
+  icon.setAttribute('height', '100%');
+  icon.setAttribute('transform', 'scale(1.3)');
+  icon.setAttribute('viewBox', '0 0 24 24');
+  icon.setAttribute('x', '0px');
+  icon.setAttribute('y', '0px');
+  button.appendChild(icon);
+
+  const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  iconPath.setAttribute(
+    'd',
+    'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'
+  );
+  icon.appendChild(iconPath);
+
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('bttv-tooltip', 'bttv-tooltip--align-right', 'bttv-tooltip--up');
+  tooltip.setAttribute('role', 'tooltip');
+  tooltip.innerText = label;
+  container.appendChild(tooltip);
+
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    restartPlayer();
+  });
+
+  return container;
+}
+
+function findPlayerInstance() {
+  const video = document.querySelector('video');
+  if (!video) return null;
+
+  let reactRoot = video;
+  while (reactRoot && !Object.keys(reactRoot).some((key) => key.startsWith('__reactFiber$'))) {
+    reactRoot = reactRoot.parentElement;
+  }
+
+  if (!reactRoot) return null;
+
+  const fiberKey = Object.keys(reactRoot).find((key) => key.startsWith('__reactFiber$'));
+  const fiber = reactRoot[fiberKey];
+
+  if (!fiber) return null;
+
+  const stack = [fiber];
+  const seen = new Set();
+
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (!node || seen.has(node)) continue;
+    seen.add(node);
+
+    if (node.stateNode && typeof node.stateNode.setSrc === 'function' && node.stateNode.props?.mediaPlayerInstance) {
+      return node.stateNode;
+    }
+
+    if (node.child) stack.push(node.child);
+    if (node.sibling) stack.push(node.sibling);
+    if (node.return) stack.push(node.return);
+  }
+
+  return null;
+}
+
+async function resetTwitchPlayer(inst) {
+  if (!inst.props?.mediaPlayerInstance) {
+    return;
+  }
+
+  const player = inst.props.mediaPlayerInstance;
+
+  try {
+    await inst.setSrc({
+      isNewMediaPlayerInstance: false,
+    });
+  } catch (err) {
+    console.log('BTTV: setSrc failed, falling back to manual reset');
+
+    const video = player.mediaSinkManager?.video || player.core?.mediaSinkManager?.video;
+    if (!video) return;
+
+    const wasPlaying = !player.core?.state?.ended && !player.core?.state?.paused;
+    const old_src = video.src;
+
+    video.src = '';
+    video.load();
+
+    await new Promise((r) => setTimeout(r, 0));
+
+    video.src = old_src;
+    video.load();
+
+    if (wasPlaying) {
+      video.play();
+    }
+  }
+}
+
+async function restartPlayer() {
+  console.log('BTTV: Restarting player...');
+
+  const currentPlayer = twitch.getCurrentPlayer();
+  if (!currentPlayer) {
+    console.log('BTTV: No current player found');
+    return;
+  }
+
+  const currentTime = currentPlayer.getPosition();
+  const videoQuality = currentPlayer.getQuality();
+  const playerVolume = currentPlayer.getVolume();
+
+  console.log('BTTV: Player state:', {
+    currentTime,
+    videoQuality,
+    playerVolume,
+  });
+
+  const instance = findPlayerInstance();
+  if (!instance) {
+    console.log('BTTV: Player instance not found');
+    return;
+  }
+
+  try {
+    currentPlayer.pause();
+
+    await resetTwitchPlayer(instance);
+
+    setTimeout(() => {
+      const player = twitch.getCurrentPlayer();
+      if (!player) {
+        console.log('BTTV: Could not get player after reload');
+        return;
+      }
+
+      console.log('BTTV: Restoring player state...');
+
+      player.setQuality(videoQuality);
+      player.setVolume(playerVolume);
+      player.seekTo(currentTime);
+      player.play();
+
+      console.log('BTTV: Player state restored');
+    }, 500);
+  } catch (error) {
+    console.error('BTTV: Error during player restart:', error);
+  }
 }
 
 let removeRecommendationWatcher;
@@ -206,10 +370,16 @@ class VideoPlayerModule {
   }
 
   loadPictureInPicture() {
-    if (!document.pictureInPictureEnabled || document.querySelector(BTTV_PICTURE_IN_PICTURE_SELECTOR) != null) return;
+    if (!document.pictureInPictureEnabled || document.querySelector(BTTV_PICTURE_IN_PICTURE_SELECTOR) != null) {
+      console.log('PiP not enabled or button already exists');
+      return;
+    }
 
     const video = document.querySelector(VIDEO_PLAYER_SELECTOR)?.querySelector('video');
-    if (video == null) return;
+    if (video == null) {
+      console.log('No video element found');
+      return;
+    }
 
     video.addEventListener('enterpictureinpicture', () => {
       if (document.fullscreenElement) {
@@ -230,12 +400,18 @@ class VideoPlayerModule {
       '.player-controls__right-control-group > div:has(button[data-a-target="player-settings-button"])'
     );
     if (anchor == null) {
+      console.log('No anchor element found for buttons');
       return;
     }
 
-    const button = createPictureInPictureButton(false);
-    button.addEventListener('click', togglePictureInPicture);
-    anchor.after(button);
+    const pipButton = createPictureInPictureButton(false);
+    pipButton.addEventListener('click', togglePictureInPicture);
+    anchor.after(pipButton);
+
+    if (!document.querySelector(BTTV_RESTART_PLAYER_SELECTOR)) {
+      const restartButton = createRestartPlayerButton();
+      pipButton.after(restartButton);
+    }
   }
 }
 

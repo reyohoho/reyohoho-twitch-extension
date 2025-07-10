@@ -14,7 +14,8 @@
   }
 }
 
-#bttv-picture-in-picture {
+#bttv-picture-in-picture,
+#bttv-restart-player {
   display: inline-flex !important;
 
   button {
