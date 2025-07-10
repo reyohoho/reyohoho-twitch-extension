@@ -91,12 +91,28 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - FFZ giant emote
 - 7TV cosmetics
 - Custom badges
-- Moderator functions like in 7TV
 - Our badge - choice of any emote
+- You can't click on a link in a deleted message
+- Check 7tv personalized emotes
+- No sound after restart of stream by streamer?
+- If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
+- Add quick links to videos and so on under the streamer
+- Correct the position of the copy button
+- Highlight first message, current implementation in bttv does not work
+- Integrate copypaste search?
+- FFZ giant emote
+- 7tv cosmetics
+- Custom badges
+- Display timeouts, bans
+- Our badge is a choice of any emoticon
+- Publish in stores
+- Shazam current track on stream? https://github.com/shazamio/ShazamIO
+- Preview emotes from links
+- Add howto host own proxy
 
 ## Changes compared to the original BetterTTV
 
-- Support for zero-width 7TV emotes (bugs possible)
+- Fixed support for zero-width 7TV emotes
 - Message copy button
 - Video mirror button
 - Audio compressor in player (similar to FFZ)
@@ -104,3 +120,13 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - Proxying 7TV emote updates (add/remove/rename)
 - Middle mouse button on emote opens its page
 - System message added to chat about emote updates in channel
+- Moderator slider like in 7TV
+- Added moderator slider like in 7TV
+- Added proxy to BTTV emoji
+- Fixed display of BTTV emoji
+- BTTV emoji added to auto add-on
+- Added author's nickname to 7TV admin messages
+- In settings now you can change the size of emotes
+- Added message when loading the list of emotes 7tv
+- Added message when loading emotes errors
+- Fixed displaying of 7tv overlay emotes
