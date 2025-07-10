@@ -1,0 +1,116 @@
+.bttv-swipe-slider {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: stretch;
+  min-height: 30px;
+}
+
+.bttv-wrapped {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.bttv-wrapped [data-highlight-style="0"] {
+  border-left-color: var(--color-border-input-focus) !important;
+}
+
+.bttv-wrapped .seventv-highlight {
+  border-color: transparent !important;
+}
+
+.bttv-ban-background,
+.bttv-unban-background {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  box-shadow: inset 0.1em 0.1em 0.4em hsla(0deg, 0%, 0%, 70%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  z-index: 1;
+  min-width: 40px;
+}
+
+.bttv-ban-background {
+  right: 100%;
+}
+
+.bttv-unban-background {
+  left: 100%;
+  background-color: #00aa00 !important;
+}
+
+.bttv-background-text {
+  position: relative;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  text-shadow:
+    0.1em 0 0.2rem rgba(0, 0, 0, 0.8),
+    0 0.1em 0.2rem rgba(0, 0, 0, 0.8),
+    -0.1em 0 0.2rem rgba(0, 0, 0, 0.8),
+    0 -0.1em 0.2rem rgba(0, 0, 0, 0.8);
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
+
+.bttv-grabbable-wrapper {
+  width: 0;
+  height: 100%;
+  z-index: 999;
+  position: absolute;
+  left: 0;
+}
+
+.bttv-grabbable-outer {
+  height: 100%;
+  display: inline-flex;
+  padding: 0.5rem 0;
+  width: 2rem;
+  pointer-events: all;
+  cursor: grab;
+}
+
+.bttv-grabbable-outer:active {
+  cursor: grabbing;
+}
+
+.bttv-grabbable-inner {
+  height: 100%;
+  border: 0.1rem outset var(--color-border-input, #666);
+  border-radius: 0 0.3rem 0.3rem 0;
+  display: inline-flex;
+  align-items: center;
+  border-left: none;
+  box-shadow: 0 0 0.4rem hsla(0deg, 0%, 0%, 50%);
+  background-color: var(--color-background-base, #1f1925);
+  justify-content: center;
+}
+
+.bttv-dots {
+  background-image: radial-gradient(circle, var(--color-border-input, #666) 0.1rem, transparent 0.2rem);
+  background-size: 100% 33.33%;
+  height: 1.4rem;
+  width: 0.6rem;
+  background-repeat: repeat-y;
+}
+
+.bttv-swipe-transition {
+  transition: transform 0.3s ease;
+}
+
+.bttv-swipe-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.bttv-swipe-slider {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+} 

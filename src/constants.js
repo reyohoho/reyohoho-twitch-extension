@@ -44,6 +44,7 @@ export const SettingIds = {
   SIDEBAR: 'sidebar',
   EMOTES: 'emotes',
   CHAT: 'chat',
+  CHAT_SWIPE: 'chatSwipe',
   AUTO_PLAY: 'autoPlay',
   USERNAMES: 'usernames',
   AUTO_LIVE_CHAT_VIEW: 'autoLiveChatView',
@@ -280,6 +281,7 @@ export const SettingDefaultValues = {
   [SettingIds.AUDIO_COMPRESSOR_STATE]: false,
   [SettingIds.SEVENTV_ZERO_WIDTH]: true,
   [SettingIds.EMOTE_SIZE]: 128,
+  [SettingIds.CHAT_SWIPE]: true,
 };
 
 export const FlagSettings = [
