@@ -221,7 +221,7 @@ export const SettingDefaultValues = {
   [SettingIds.WHISPERS]: true,
   [SettingIds.SHOW_DIRECTORY_LIVE_TAB]: false,
   [SettingIds.CHANNEL_POINTS_MESSAGE_HIGHLIGHTS]: true,
-  [SettingIds.EMOTE_MENU]: EmoteMenuTypes.NONE,
+  [SettingIds.EMOTE_MENU]: EmoteMenuTypes.ENABLED,
   [SettingIds.AUTO_THEME_MODE]: false,
   [SettingIds.DARKENED_MODE]: false,
   [SettingIds.PRIME_PROMOTIONS]: true,
