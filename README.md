@@ -88,7 +88,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
 - Our badge - choice of any emote
-- You can't click on a link in a deleted message
 - Check 7tv personalized emotes
 - No sound after restart of stream by streamer?
 - If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
@@ -104,6 +103,7 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## Changes compared to the original BetterTTV
 
+- You can't click on a link in a deleted message
 - Display timeouts, bans
 - Highlight first message, current implementation in bttv does not work
 - FFZ giant emotes support
