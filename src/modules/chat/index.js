@@ -6,6 +6,7 @@ import cdn from '../../utils/cdn.js';
 import {getCurrentChannel} from '../../utils/channel.js';
 import colors from '../../utils/colors.js';
 import {hasFlag} from '../../utils/flags.js';
+import {getProxyUrl} from '../../utils/proxy.js';
 import twitch from '../../utils/twitch.js';
 import {getPlatform} from '../../utils/window.js';
 import watcher from '../../watcher.js';
@@ -121,6 +122,15 @@ export function getMessagePartsFromMessageElement(message) {
   return message.querySelectorAll('span[data-a-target="chat-message-text"]');
 }
 
+function proxyBadgeUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+
+  const proxyUrl = getProxyUrl();
+  if (!proxyUrl) return url;
+
+  return `${proxyUrl}${url}`;
+}
+
 class ChatModule {
   constructor() {
     watcher.on('load', () => this.loadEmoteMouseHandler());
@@ -231,19 +241,19 @@ class ChatModule {
 
     const badge = badgeUsers.get(user.id);
     if (badge) {
-      badges.push(badgeTemplate(badge.svg, badgeDescriptions[badge.type] ?? badge.description));
+      badges.push(badgeTemplate(proxyBadgeUrl(badge.svg), badgeDescriptions[badge.type] ?? badge.description));
     }
 
     const currentChannel = getCurrentChannel();
     if (currentChannel && currentChannel.name === 'night' && subscribers.hasLegacySubscription(user.id)) {
-      badges.push(badgeTemplate(cdn.url('tags/subscriber.png'), 'Subscriber'));
+      badges.push(badgeTemplate(proxyBadgeUrl(cdn.url('tags/subscriber.png')), 'Subscriber'));
     }
 
     const subscriberBadge = subscribers.getSubscriptionBadge(user.id);
     if (subscriberBadge?.url != null) {
       badges.push(
         badgeTemplate(
-          subscriberBadge.url,
+          proxyBadgeUrl(subscriberBadge.url),
           subscriberBadge.startedAt
             ? formatMessage(
                 {defaultMessage: 'BetterTTV Pro since {date, date, medium}'},
@@ -527,7 +537,7 @@ class ChatModule {
     if ((globalBots.includes(user.name) || channelBots.includes(user.name)) && user.mod) {
       element
         .querySelector('img.chat-badge[alt="Moderator"]')
-        ?.replaceWith(badgeTemplate(cdn.url('tags/bot.png'), formatMessage({defaultMessage: 'Bot'})));
+        ?.replaceWith(badgeTemplate(proxyBadgeUrl(cdn.url('tags/bot.png')), formatMessage({defaultMessage: 'Bot'})));
     }
 
     const customBadges = this.customBadges(user);
