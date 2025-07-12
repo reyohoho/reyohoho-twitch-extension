@@ -512,6 +512,10 @@ class ChatModule {
     const user = formatChatUser(messageObj);
     if (!user) return;
 
+    if (messageObj.isFirstMsg === true) {
+      element.classList.add('bttv-first-message');
+    }
+
     let color;
     if (hasFlag(settings.get(SettingIds.USERNAMES), UsernameFlags.READABLE)) {
       color = this.calculateColor(user.color);
@@ -561,13 +565,10 @@ class ChatModule {
       element.style.display = 'none';
     }
 
-    // --- КОПИРОВАНИЕ СООБЩЕНИЯ ---
-    // Сохраняем оригинальный текст
     if (messageObj && messageObj.messageBody) {
       element.setAttribute('data-original-text', messageObj.messageBody);
     }
 
-    // Добавляем кнопку копирования, если её ещё нет
     if (!element.querySelector('.bttv-copy-message-button')) {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'bttv-copy-message-button';
@@ -584,11 +585,8 @@ class ChatModule {
           fallbackCopy(text);
         }
       });
-      // Вставляем кнопку справа (после сообщения)
       element.appendChild(copyBtn);
     }
-
-    // --- END ---
 
     this.messageReplacer(messageParts, user);
 

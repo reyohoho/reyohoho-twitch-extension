@@ -94,11 +94,9 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
 - Add quick links to videos and so on under the streamer
 - Correct the position of the copy button
-- Highlight first message, current implementation in bttv does not work
 - Integrate copypaste search?
 - 7tv cosmetics
 - Custom badges
-- Display timeouts, bans
 - Our badge is a choice of any emoticon
 - Shazam current track on stream? https://github.com/shazamio/ShazamIO
 - Preview emotes from links
@@ -106,6 +104,8 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## Changes compared to the original BetterTTV
 
+- Display timeouts, bans
+- Highlight first message, current implementation in bttv does not work
 - FFZ giant emotes support
 - Player restart button (similar to FFZ)
 - Fixed support for zero-width 7TV emotes
