@@ -4,6 +4,7 @@ import {hasFlag} from '../../utils/flags.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
+import formatMessage from '../../i18n/index.js';
 
 class HideChatEventsModule {
   constructor() {
@@ -26,8 +27,67 @@ class HideChatEventsModule {
           preventDefault();
         }
         break;
+      case 2:
+        this.handleModerationMessage(message);
+        break;
       default:
         break;
+    }
+  }
+
+  handleModerationMessage(message) {
+    if (message.moderationType === undefined) return;
+
+    const currentUserIsModerator = twitch.getCurrentUserIsModerator();
+    const currentUserIsOwner = twitch.getCurrentUserIsOwner();
+
+    if (currentUserIsModerator || currentUserIsOwner) return;
+
+    const userLogin = message.userLogin;
+    const duration = message.duration;
+    const reason = message.reason;
+
+    let adminMessage;
+    if (message.moderationType === 1) {
+      if (duration) {
+        adminMessage = formatMessage(
+          {
+            defaultMessage: '{userLogin} was timed out for {duration} seconds {reason}',
+            id: 'modTimeout',
+          },
+          {
+            userLogin,
+            duration,
+            reason: reason ? ` (${reason})` : '',
+          }
+        );
+      } else {
+        adminMessage = formatMessage(
+          {
+            defaultMessage: '{userLogin} was banned {reason}',
+            id: 'modBan',
+          },
+          {
+            userLogin,
+            reason: reason ? ` (${reason})` : '',
+          }
+        );
+      }
+    } else if (message.moderationType === 0) {
+      adminMessage = formatMessage(
+        {
+          defaultMessage: '{userLogin} was banned {reason}',
+          id: 'modBan',
+        },
+        {
+          userLogin,
+          reason: reason ? ` (${reason})` : '',
+        }
+      );
+    }
+
+    if (adminMessage) {
+      twitch.sendChatAdminMessage(adminMessage);
     }
   }
 }
