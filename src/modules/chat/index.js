@@ -15,6 +15,7 @@ import nicknames from '../chat_nicknames/index.js';
 import emotes from '../emotes/index.js';
 import splitChat from '../split_chat/index.js';
 import subscribers from '../subscribers/index.js';
+import reyohohoBadges from '../reyohoho_badges/index.js';
 import {shouldMakeGiantEmote, extractRewardTitle} from '../../utils/giant-emotes.js';
 
 const STEAM_LOBBY_JOIN_REGEX = /^steam:\/\/joinlobby\/\d+\/\d+\/\d+$/;
@@ -262,6 +263,11 @@ class ChatModule {
             : formatMessage({defaultMessage: 'BetterTTV Pro Subscriber'})
         )
       );
+    }
+
+    const reyohohoBadge = reyohohoBadges.getBadge(user.id);
+    if (reyohohoBadge && reyohohoBadge.url) {
+      badges.push(badgeTemplate(reyohohoBadge.url, reyohohoBadge.description));
     }
 
     return badges;
