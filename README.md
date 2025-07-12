@@ -87,9 +87,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - Fix custom emotes preview in input
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
-- Integrate copypasta search?
-- 7TV cosmetics
-- Custom badges
 - Our badge - choice of any emote
 - You can't click on a link in a deleted message
 - Check 7tv personalized emotes
@@ -103,7 +100,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - Custom badges
 - Display timeouts, bans
 - Our badge is a choice of any emoticon
-- Publish in stores
 - Shazam current track on stream? https://github.com/shazamio/ShazamIO
 - Preview emotes from links
 - Add howto host own proxy
