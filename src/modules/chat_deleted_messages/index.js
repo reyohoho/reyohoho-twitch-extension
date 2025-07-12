@@ -108,10 +108,6 @@ class ChatDeletedMessagesModule {
             ChatHighlightBlacklistKeywords.markHighlighted(message);
           }
           message.classList.toggle(CHAT_LINE_DELETED_CLASS, true);
-
-          message.querySelectorAll(CHAT_LINE_LINK_SELECTOR).forEach((node) => {
-            node.removeAttribute('href');
-          });
           message.querySelector(CHAT_LINE_CLIP_CARD_SELECTOR)?.remove();
           break;
       }
