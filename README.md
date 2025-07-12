@@ -88,7 +88,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
 - Integrate copypasta search?
-- FFZ giant emote
 - 7TV cosmetics
 - Custom badges
 - Our badge - choice of any emote
@@ -100,7 +99,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - Correct the position of the copy button
 - Highlight first message, current implementation in bttv does not work
 - Integrate copypaste search?
-- FFZ giant emote
 - 7tv cosmetics
 - Custom badges
 - Display timeouts, bans
@@ -112,6 +110,7 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## Changes compared to the original BetterTTV
 
+- FFZ giant emotes support
 - Player restart button (similar to FFZ)
 - Fixed support for zero-width 7TV emotes
 - Message copy button
