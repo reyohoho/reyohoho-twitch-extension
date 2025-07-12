@@ -38,11 +38,19 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
     fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
+          if (response.status === 404) {
+            console.log('7TV global emotes not found');
+            return null;
+          }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(({emotes: globalEmotes}) => {
+      .then((data) => {
+        if (data === null) {
+          return;
+        }
+        const {emotes: globalEmotes} = data;
         if (globalEmotes == null) {
           return;
         }

@@ -52,11 +52,19 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
+          if (response.status === 404) {
+            console.log(`7TV channel emotes not found for channel: ${currentChannel.id}`);
+            return null;
+          }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(({emote_set: emoteSet}) => {
+      .then((data) => {
+        if (data === null) {
+          return;
+        }
+        const {emote_set: emoteSet} = data;
         const {emotes} = emoteSet ?? {};
         if (emotes == null) {
           return;
