@@ -1,4 +1,4 @@
-import {EmoteTypeFlags, SettingIds, UsernameFlags, PlatformTypes, BadgeTypes} from '../../constants.js';
+import {EmoteTypeFlags, SettingIds, UsernameFlags, PlatformTypes, BadgeTypes, ChatFlags} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import api from '../../utils/api.js';
@@ -512,7 +512,7 @@ class ChatModule {
     const user = formatChatUser(messageObj);
     if (!user) return;
 
-    if (messageObj.isFirstMsg === true) {
+    if (messageObj.isFirstMsg === true && hasFlag(settings.get(SettingIds.CHAT), ChatFlags.VIEWER_GREETING)) {
       element.classList.add('bttv-first-message');
     }
 
