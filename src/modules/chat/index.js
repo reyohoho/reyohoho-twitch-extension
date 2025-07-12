@@ -9,10 +9,12 @@ import {hasFlag} from '../../utils/flags.js';
 import twitch from '../../utils/twitch.js';
 import {getPlatform} from '../../utils/window.js';
 import watcher from '../../watcher.js';
+import domObserver from '../../observers/dom.js';
 import nicknames from '../chat_nicknames/index.js';
 import emotes from '../emotes/index.js';
 import splitChat from '../split_chat/index.js';
 import subscribers from '../subscribers/index.js';
+import {shouldMakeGiantEmote, extractRewardTitle} from '../../utils/giant-emotes.js';
 
 const STEAM_LOBBY_JOIN_REGEX = /^steam:\/\/joinlobby\/\d+\/\d+\/\d+$/;
 const EMOTES_TO_CAP = ['567b5b520e984428652809b6'];
@@ -147,6 +149,14 @@ class ChatModule {
 
         this.messageReplacer(getMessagePartsFromMessageElement(element), user);
       }
+    });
+
+    domObserver.on('div[data-test-selector="user-notice-line"]', (element) => {
+      this.handleChannelPointsMessage(element);
+    });
+
+    domObserver.on('.chat-line__message-body--highlighted', (element) => {
+      this.handleHighlightedMessage(element);
     });
 
     api.get(`cached/badges/${getPlatform() === 'twitch'}`).then((badges) => {
@@ -638,6 +648,35 @@ class ChatModule {
           }
         }
       }
+
+      if (settings.get(SettingIds.GIANT_EMOTES)) {
+        const hasChannelPointsReward = messageObj?.ffz_reward || element.ffz_reward;
+
+        const isHighlightedByChannelPoints = element.querySelector('.chat-line__message-body--highlighted');
+
+        if (hasChannelPointsReward || isHighlightedByChannelPoints) {
+          let reward = messageObj?.ffz_reward || element.ffz_reward;
+
+          if (!reward && isHighlightedByChannelPoints) {
+            const channelPointsElement =
+              element.closest('[data-test-selector="user-notice-line"]') ||
+              element.previousElementSibling?.closest('[data-test-selector="user-notice-line"]');
+
+            if (channelPointsElement) {
+              const rewardText = channelPointsElement.textContent || '';
+              const title = extractRewardTitle(rewardText);
+
+              if (title) {
+                reward = {title};
+              }
+            }
+          }
+
+          if (reward) {
+            this.handleGiantEmotes(element, {ffz_reward: reward});
+          }
+        }
+      }
     }, 0);
 
     element.__bttvParsed = true;
@@ -660,6 +699,116 @@ class ChatModule {
 
   pinnedMessageParser(element) {
     this.messageReplacer(getMessagePartsFromMessageElement(element), null);
+  }
+
+  handleChannelPointsMessage(element) {
+    const rewardIcon = element.querySelector('.channel-points-reward-line__icon');
+    if (!rewardIcon) {
+      return;
+    }
+
+    const rewardText = element.textContent || '';
+    const title = extractRewardTitle(rewardText);
+
+    if (!title) {
+      return;
+    }
+
+    const reward = {title};
+
+    if (!shouldMakeGiantEmote(reward)) {
+      return;
+    }
+
+    const messageElement = element.querySelector('.chat-line__message, .chat-line--inline');
+    if (messageElement) {
+      messageElement.ffz_reward = reward;
+    } else {
+      let nextMessage = element.nextElementSibling;
+      while (nextMessage && !nextMessage.classList.contains('chat-line__message')) {
+        nextMessage = nextMessage.nextElementSibling;
+      }
+
+      if (nextMessage) {
+        nextMessage.ffz_reward = reward;
+      }
+    }
+  }
+
+  handleHighlightedMessage(element) {
+    const messageElement = element.closest('.chat-line__message');
+    if (!messageElement) {
+      return;
+    }
+
+    const channelPointsElement =
+      messageElement.closest('[data-test-selector="user-notice-line"]') ||
+      messageElement.previousElementSibling?.closest('[data-test-selector="user-notice-line"]');
+
+    if (channelPointsElement) {
+      const rewardText = channelPointsElement.textContent || '';
+      const title = extractRewardTitle(rewardText);
+
+      if (title) {
+        const reward = {title};
+
+        if (shouldMakeGiantEmote(reward)) {
+          messageElement.ffz_reward = reward;
+        }
+      }
+    }
+  }
+
+  handleGiantEmotes(element, messageObj) {
+    if (!shouldMakeGiantEmote(messageObj.ffz_reward)) {
+      return;
+    }
+
+    const emotes = element.querySelectorAll('.bttv-emote img, div[data-test-selector="emote-button"] img');
+    if (emotes.length === 0) {
+      return;
+    }
+
+    const lastEmote = emotes[emotes.length - 1];
+    const emoteContainer = lastEmote.closest('.bttv-emote, div[data-test-selector="emote-button"]');
+
+    if (!emoteContainer) {
+      return;
+    }
+
+    const giantContainer = document.createElement('div');
+    giantContainer.classList.add('chat-line__message--ffz-giant-emote');
+
+    const giantEmote = lastEmote.cloneNode(true);
+
+    const provider =
+      giantEmote.getAttribute('data-provider') ||
+      (giantEmote.src.includes('cdn.frankerfacez.com')
+        ? 'ffz'
+        : giantEmote.src.includes('cdn.7tv.app')
+          ? '7tv'
+          : 'twitch');
+
+    let height = 112;
+
+    if (provider === 'ffz' || provider === '7tv') {
+      const originalHeight = giantEmote.height || 28;
+      const scale = 4;
+      height = originalHeight * scale;
+
+      if (height > 128) height = 128;
+      if (height < 64) height = 64;
+    }
+
+    giantEmote.style.height = `${height}px`;
+    giantEmote.style.maxHeight = `${height}px`;
+    giantEmote.style.maxWidth = `${height * 2}px`;
+
+    emoteContainer.remove();
+
+    giantContainer.appendChild(giantEmote);
+
+    element.appendChild(giantContainer);
   }
 }
 

@@ -1,0 +1,30 @@
+.bttv-emote img,
+div[data-test-selector="emote-button"] img {
+  max-height: var(--bttv-emote-size, 28px);
+  max-width: calc(var(--bttv-emote-size, 28px) * 2);
+}
+
+.chat-line__message--ffz-giant-emote {
+  padding: 0.5rem;
+}
+
+.chat-line__message--ffz-giant-emote img {
+  max-height: none !important;
+  max-width: none !important;
+  height: 112px !important;
+  max-height: 128px !important;
+  max-width: 256px !important;
+}
+
+.chat-line__message--ffz-giant-emote img[src*="cdn.frankerfacez.com"],
+.chat-line__message--ffz-giant-emote img[src*="cdn.7tv.app"] {
+  height: auto !important;
+  max-height: 128px !important;
+  max-width: 256px !important;
+}
+
+.chat-line__message--ffz-giant-emote img[src*="static-cdn.jtvnw.net"] {
+  height: 112px !important;
+  max-height: 128px !important;
+  max-width: 256px !important;
+} 

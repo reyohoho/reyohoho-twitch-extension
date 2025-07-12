@@ -37,32 +37,32 @@ class EmoteSizeModule {
     this.styleElement.id = 'bttv-emote-size-styles';
 
     const css = `
-      .bttv-emote-image {
+      .bttv-emote-image:not(.chat-line__message--ffz-giant-emote img) {
         max-width: ${this.currentSize}px !important;
         max-height: ${this.currentSize}px !important;
         width: auto !important;
         height: auto !important;
       }
       
-      .bttv-emote img {
+      .bttv-emote img:not(.chat-line__message--ffz-giant-emote img) {
         max-width: ${this.currentSize}px !important;
         max-height: ${this.currentSize}px !important;
         width: auto !important;
         height: auto !important;
       }
       
-      .bttv-emote.seventv-channel img {
+      .bttv-emote.seventv-channel img:not(.chat-line__message--ffz-giant-emote img) {
         max-height: ${this.currentSize}px !important;
         width: auto !important;
       }
       
-      .bttv-emote-modifier-rotate-left img,
-      .bttv-emote-modifier-rotate-right img {
+      .bttv-emote-modifier-rotate-left img:not(.chat-line__message--ffz-giant-emote img),
+      .bttv-emote-modifier-rotate-right img:not(.chat-line__message--ffz-giant-emote img) {
         max-width: ${this.currentSize}px !important;
         max-height: ${this.currentSize}px !important;
       }
       
-      .bttv-emote-modifier-wide img {
+      .bttv-emote-modifier-wide img:not(.chat-line__message--ffz-giant-emote img) {
         width: ${this.currentSize * 4}px !important;
         height: ${this.currentSize}px !important;
         max-width: ${this.currentSize * 4}px !important;
@@ -71,16 +71,16 @@ class EmoteSizeModule {
       }
       
       /* Override existing styles with higher specificity */
-      .bttv-emote.seventv-channel img.bttv-emote-image {
+      .bttv-emote.seventv-channel img.bttv-emote-image:not(.chat-line__message--ffz-giant-emote img) {
         max-height: ${this.currentSize}px !important;
         width: auto !important;
       }
       
       /* Override any existing max-height constraints */
-      .chat-line__message .bttv-emote img,
-      .vod-message .bttv-emote img,
-      .pinned-chat__message .bttv-emote img,
-      .thread-message__message .bttv-emote img {
+      .chat-line__message .bttv-emote img:not(.chat-line__message--ffz-giant-emote img),
+      .vod-message .bttv-emote img:not(.chat-line__message--ffz-giant-emote img),
+      .pinned-chat__message .bttv-emote img:not(.chat-line__message--ffz-giant-emote img),
+      .thread-message__message .bttv-emote img:not(.chat-line__message--ffz-giant-emote img) {
         max-width: ${this.currentSize}px !important;
         max-height: ${this.currentSize}px !important;
         width: auto !important;
@@ -88,12 +88,27 @@ class EmoteSizeModule {
       }
       
       /* Ensure our styles take precedence */
-      .bttv-emote-image,
-      .bttv-emote img {
+      .bttv-emote-image:not(.chat-line__message--ffz-giant-emote img),
+      .bttv-emote img:not(.chat-line__message--ffz-giant-emote img) {
         max-width: ${this.currentSize}px !important;
         max-height: ${this.currentSize}px !important;
         width: auto !important;
         height: auto !important;
+      }
+      
+      /* Giant emote styles */
+      .chat-line__message--ffz-giant-emote {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 2px;
+      }
+      
+      .chat-line__message--ffz-giant-emote img {
+        max-width: 512px !important;
+        max-height: 512px !important;
+        width: auto !important;
+        height: auto !important;
+        vertical-align: middle;
       }
     `;
 

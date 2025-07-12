@@ -57,6 +57,7 @@ export const SettingIds = {
   AUDIO_COMPRESSOR_STATE: 'audioCompressorState',
   SEVENTV_ZERO_WIDTH: 'seventvZeroWidth',
   EMOTE_SIZE: 'emoteSize',
+  GIANT_EMOTES: 'giantEmotes',
 };
 
 export const CategoryTypes = {
@@ -84,9 +85,7 @@ export const EmoteMenuTypes = {
 };
 
 export const SidebarFlags = {
-  // 1 << 0: FRIENDS,
   RECOMMENDED_CHANNELS: 1 << 1,
-  // 1 << 2: RECOMMENDED_FRIENDS,
   OFFLINE_FOLLOWED_CHANNELS: 1 << 3,
   AUTO_EXPAND_CHANNELS: 1 << 4,
   RECENTLY_WATCHED_CHANNELS: 1 << 5,
@@ -122,7 +121,6 @@ export const ChannelPointsFlags = {
 
 export const AutoPlayFlags = {
   FP_VIDEO: 1 << 0,
-  // HOST_MODE: 1 << 1,
   VOD_RECOMMENDATION_AUTOPLAY: 1 << 2,
   OFFLINE_CHANNEL_VIDEO: 1 << 3,
 };
@@ -136,7 +134,6 @@ export const UsernameFlags = {
 
 export const AutoClaimFlags = {
   DROPS: 1 << 0,
-  // MOMENTS: 1 << 1,
 };
 
 export const PageTypes = {
@@ -281,6 +278,7 @@ export const SettingDefaultValues = {
   [SettingIds.AUDIO_COMPRESSOR_STATE]: false,
   [SettingIds.SEVENTV_ZERO_WIDTH]: true,
   [SettingIds.EMOTE_SIZE]: 128,
+  [SettingIds.GIANT_EMOTES]: true,
   [SettingIds.CHAT_SWIPE]: true,
 };
 
