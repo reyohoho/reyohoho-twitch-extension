@@ -4,6 +4,7 @@ import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import settings from '../../settings.js';
 import {formatChatUser} from '../chat/index.js';
+import {getCurrentUser} from '../../utils/user.js';
 import './style.css';
 
 class ChatSwipeModule {
@@ -34,6 +35,11 @@ class ChatSwipeModule {
     const user = formatChatUser(messageObj);
     if (!user) {
       console.debug('BetterTTV ChatSwipe: Could not format chat user');
+      return false;
+    }
+
+    const currentUser = getCurrentUser();
+    if (currentUser && user.id === currentUser.id) {
       return false;
     }
 
