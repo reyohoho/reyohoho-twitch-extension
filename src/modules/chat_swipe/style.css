@@ -1,16 +1,17 @@
 .bttv-swipe-slider {
-  position: relative;
+  position: relative !important;
   width: 100%;
-  overflow: visible;
-  display: flex;
-  align-items: stretch;
-  min-height: 30px;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: stretch !important;
+  min-height: 30px !important;
 }
 
 .bttv-wrapped {
   position: relative;
   z-index: 2;
   flex: 1;
+  width: 100%;
 }
 
 .bttv-wrapped [data-highlight-style="0"] {

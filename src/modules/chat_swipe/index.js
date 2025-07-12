@@ -18,6 +18,11 @@ class ChatSwipeModule {
     settings.on(`changed.${SettingIds.CHAT_SWIPE}`, () => {
       console.log('BetterTTV ChatSwipe: Setting changed, clearing processed elements');
       this.processedElements = new WeakSet();
+
+      const swipeElements = document.querySelectorAll('.bttv-swipe-slider');
+      swipeElements.forEach((element) => {
+        this.restoreOriginalElement(element);
+      });
     });
 
     console.log('BetterTTV ChatSwipe: Module initialized successfully');
@@ -48,11 +53,6 @@ class ChatSwipeModule {
       return false;
     }
 
-    if (isOwner) {
-      // TODO: Fix owner moderation
-      // return false;
-    }
-
     console.debug('BetterTTV ChatSwipe: Can moderate user:', user.name);
     return true;
   }
@@ -73,14 +73,24 @@ class ChatSwipeModule {
 
     this.processedElements.add(element);
 
-    const swipeContainer = this.createSwipeContainer(element);
+    const swipeContainer = this.modifyElementForSwipe(element);
 
     this.setupSwipeHandlers(swipeContainer, user, messageObj);
   }
 
-  createSwipeContainer(originalElement) {
-    const container = document.createElement('div');
-    container.className = 'bttv-swipe-slider';
+  modifyElementForSwipe(originalElement) {
+    originalElement.dataset.bttvOriginalDisplay = originalElement.style.display;
+    originalElement.dataset.bttvOriginalPosition = originalElement.style.position;
+    originalElement.dataset.bttvOriginalZIndex = originalElement.style.zIndex;
+    originalElement.dataset.bttvOriginalTransform = originalElement.style.transform;
+
+    originalElement.classList.add('bttv-swipe-slider');
+
+    originalElement.style.position = 'relative';
+    originalElement.style.overflow = 'visible';
+    originalElement.style.display = 'flex';
+    originalElement.style.alignItems = 'stretch';
+    originalElement.style.minHeight = '30px';
 
     const banBackground = document.createElement('div');
     banBackground.className = 'bttv-ban-background';
@@ -107,35 +117,24 @@ class ChatSwipeModule {
     const dots = document.createElement('div');
     dots.className = 'bttv-dots';
 
-    const wrapped = document.createElement('div');
-    wrapped.className = 'bttv-wrapped';
-
     grabbableInner.appendChild(dots);
     grabbableOuter.appendChild(grabbableInner);
     grabbableWrapper.appendChild(grabbableOuter);
 
-    const parent = originalElement.parentNode;
-    const nextSibling = originalElement.nextSibling;
+    const wrapped = document.createElement('div');
+    wrapped.className = 'bttv-wrapped';
 
-    parent.removeChild(originalElement);
-
-    originalElement.style.display = '';
-
-    wrapped.appendChild(originalElement);
-
-    container.appendChild(banBackground);
-    container.appendChild(grabbableWrapper);
-    container.appendChild(wrapped);
-    container.appendChild(unbanBackground);
-
-    if (nextSibling) {
-      parent.insertBefore(container, nextSibling);
-    } else {
-      parent.appendChild(container);
+    while (originalElement.firstChild) {
+      wrapped.appendChild(originalElement.firstChild);
     }
+    originalElement.appendChild(wrapped);
+
+    originalElement.insertBefore(banBackground, originalElement.firstChild);
+    originalElement.insertBefore(grabbableWrapper, originalElement.firstChild);
+    originalElement.appendChild(unbanBackground);
 
     return {
-      container,
+      container: originalElement,
       banBackground,
       unbanBackground,
       grabbableWrapper,
@@ -310,6 +309,45 @@ class ChatSwipeModule {
     const maxSeconds = 1209600;
     const normalizedDistance = Math.min((position - 80) / (maxDistance - 80), 1);
     return Math.floor(Math.pow(normalizedDistance, 10) * maxSeconds) || 600;
+  }
+
+  restoreOriginalElement(element, originalStyles) {
+    if (!element) return;
+
+    element.classList.remove('bttv-swipe-slider');
+
+    if (element.dataset.bttvOriginalDisplay !== undefined) {
+      element.style.display = element.dataset.bttvOriginalDisplay;
+      delete element.dataset.bttvOriginalDisplay;
+    }
+    if (element.dataset.bttvOriginalPosition !== undefined) {
+      element.style.position = element.dataset.bttvOriginalPosition;
+      delete element.dataset.bttvOriginalPosition;
+    }
+    if (element.dataset.bttvOriginalZIndex !== undefined) {
+      element.style.zIndex = element.dataset.bttvOriginalZIndex;
+      delete element.dataset.bttvOriginalZIndex;
+    }
+    if (element.dataset.bttvOriginalTransform !== undefined) {
+      element.style.transform = element.dataset.bttvOriginalTransform;
+      delete element.dataset.bttvOriginalTransform;
+    }
+
+    const banBackground = element.querySelector('.bttv-ban-background');
+    const unbanBackground = element.querySelector('.bttv-unban-background');
+    const grabbableWrapper = element.querySelector('.bttv-grabbable-wrapper');
+    const wrapped = element.querySelector('.bttv-wrapped');
+
+    if (banBackground) banBackground.remove();
+    if (unbanBackground) unbanBackground.remove();
+    if (grabbableWrapper) grabbableWrapper.remove();
+
+    if (wrapped) {
+      while (wrapped.firstChild) {
+        element.appendChild(wrapped.firstChild);
+      }
+      wrapped.remove();
+    }
   }
 
   onChatMessage(element, messageObj) {
