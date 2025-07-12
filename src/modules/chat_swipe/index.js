@@ -48,6 +48,11 @@ class ChatSwipeModule {
       return false;
     }
 
+    if (isOwner) {
+      // TODO: Fix owner moderation
+      // return false;
+    }
+
     console.debug('BetterTTV ChatSwipe: Can moderate user:', user.name);
     return true;
   }

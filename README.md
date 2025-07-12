@@ -84,6 +84,7 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## TODO
 
+- Fix chat swipe for broadcasters
 - Fix custom emotes preview in input
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
