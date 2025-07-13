@@ -1,3 +1,4 @@
+import * as faGear from '@fortawesome/free-solid-svg-icons/faGear';
 import * as faSearch from '@fortawesome/free-solid-svg-icons/faSearch';
 import * as faTimes from '@fortawesome/free-solid-svg-icons/faTimes';
 import {Icon} from '@rsuite/icons';
@@ -21,6 +22,11 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
     setTimeout(() => currentSearchInputRef.focus(), 1);
   }, []);
 
+  const handleSettingsClick = async () => {
+    const {default: settings} = await import('../../settings/index.js');
+    settings.openSettings();
+  };
+
   return (
     <div {...props}>
       <InputGroup>
@@ -34,6 +40,11 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
           inputRef={searchInputRef}
         />
       </InputGroup>
+      <IconButton
+        icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faGear} />}
+        appearance="subtle"
+        onClick={handleSettingsClick}
+      />
       <IconButton
         icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faTimes} />}
         appearance="subtle"
