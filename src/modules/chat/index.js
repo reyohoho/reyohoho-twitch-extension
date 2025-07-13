@@ -578,8 +578,8 @@ class ChatModule {
     if (!element.querySelector('.bttv-copy-message-button')) {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'bttv-copy-message-button';
-      copyBtn.title = 'Скопировать сообщение';
-      copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5h12v13H9zM3 13V2h12v2H5v11H3z"/></svg>`;
+      copyBtn.setAttribute('aria-label', 'Скопировать сообщение');
+      copyBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation"><path fill-rule="evenodd" d="M8 16V3h10v13H8zM2 11V0h10v2H4v11H2z" clip-rule="evenodd"></path></svg>`;
       copyBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -591,7 +591,17 @@ class ChatModule {
           fallbackCopy(text);
         }
       });
-      element.appendChild(copyBtn);
+
+      const iconsContainer = element.querySelector('.chat-line__icons');
+      if (iconsContainer) {
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'bttv-copy-icon-wrapper';
+
+        iconWrapper.appendChild(copyBtn);
+        iconsContainer.appendChild(iconWrapper);
+      } else {
+        element.appendChild(copyBtn);
+      }
     }
 
     this.messageReplacer(messageParts, user);
