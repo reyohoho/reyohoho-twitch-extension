@@ -63,7 +63,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
     websocket.onclose = (event) => {
       console.log('BTTV: 7TV WebSocket closed', event.code, event.reason);
-      if (!isReconnecting && event.code !== 1000) {
+      if (!isReconnecting && event.code !== 1000 && event.code !== 1005) {
         this.scheduleReconnect(emoteSetId);
       }
     };
