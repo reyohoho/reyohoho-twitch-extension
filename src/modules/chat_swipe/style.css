@@ -7,6 +7,11 @@
   min-height: 30px !important;
 }
 
+.bttv-swipe-slider.chat-line--inline {
+  position: relative !important;
+  overflow: visible !important;
+}
+
 .bttv-wrapped {
   position: relative;
   z-index: 2;
@@ -68,6 +73,10 @@
   z-index: 999;
   position: absolute;
   left: 0;
+}
+
+.bttv-swipe-slider.chat-line--inline .bttv-grabbable-wrapper {
+  left: -2rem;
 }
 
 .bttv-grabbable-outer {
