@@ -376,10 +376,6 @@ class ChatHighlightBlacklistKeywordsModule {
       this.markHighlighted(message, color);
 
       if (!isDuplicateHighlight({from, message: messageContent, date: new Date()})) {
-        if (settings.get(SettingIds.HIGHLIGHT_FEEDBACK)) {
-          this.handleHighlightSound();
-        }
-
         this.pinHighlight({from, message: messageContent, date: new Date()});
       }
     }
