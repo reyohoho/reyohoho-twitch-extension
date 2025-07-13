@@ -32,6 +32,14 @@ class CommandStore {
     }
     twitchCommandStore.addCommand(command);
   }
+
+  unregisterCommand(commandName) {
+    this.commands = this.commands.filter((cmd) => cmd.name !== commandName);
+    const twitchCommandStore = twitch.getChatCommandStore();
+    if (twitchCommandStore == null) {
+      return;
+    }
+  }
 }
 
 export default new CommandStore();

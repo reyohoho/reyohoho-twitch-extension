@@ -1,0 +1,147 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal {
+  background-color: #18181b;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3d;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3a3a3d;
+}
+
+.header h2 {
+  margin: 0;
+  color: #efeff1;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #efeff1;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.closeButton:hover {
+  background-color: #3a3a3d;
+}
+
+.content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.loading {
+  text-align: center;
+  color: #efeff1;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.error {
+  color: #ff6b6b;
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.noResults {
+  color: #adadb8;
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pastaItem {
+  background-color: #1f1f23;
+  border: 1px solid #3a3a3d;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pastaItem:hover {
+  background-color: #26262c;
+  border-color: #5c5c61;
+}
+
+.pastaText {
+  color: #efeff1;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  margin-bottom: 4px;
+}
+
+.pastaAuthor {
+  color: #adadb8;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.pastaText .bttv-emote {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.pastaText .bttv-emote img {
+  height: 28px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.pastaText .bttv-emoji-container {
+  display: inline;
+  vertical-align: middle;
+}
+
+.pastaText .bttv-emoji-image {
+  height: 1.5em;
+  width: auto;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.pastaText .bttv-tooltip {
+  display: none;
+} 

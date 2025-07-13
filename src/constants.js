@@ -58,6 +58,7 @@ export const SettingIds = {
   SEVENTV_ZERO_WIDTH: 'seventvZeroWidth',
   EMOTE_SIZE: 'emoteSize',
   GIANT_EMOTES: 'giantEmotes',
+  PASTA_COMMAND: 'pastaCommand',
 };
 
 export const CategoryTypes = {
@@ -280,6 +281,7 @@ export const SettingDefaultValues = {
   [SettingIds.EMOTE_SIZE]: 128,
   [SettingIds.GIANT_EMOTES]: true,
   [SettingIds.CHAT_SWIPE]: true,
+  [SettingIds.PASTA_COMMAND]: true,
 };
 
 export const FlagSettings = [
