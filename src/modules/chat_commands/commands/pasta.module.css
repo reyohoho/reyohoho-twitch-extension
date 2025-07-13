@@ -14,8 +14,7 @@
 .modal {
   background-color: #18181b;
   border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
+  width: 450px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -106,7 +105,8 @@
 
 .pastaText {
   color: #efeff1;
-  font-size: 14px;
+  font-size: 13px;
+  font-family: "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.4;
   word-wrap: break-word;
   margin-bottom: 4px;

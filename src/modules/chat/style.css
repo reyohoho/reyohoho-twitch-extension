@@ -197,3 +197,10 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+.bttv-ascii-art {
+  font-family: "Roobert", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  letter-spacing: normal !important;
+}

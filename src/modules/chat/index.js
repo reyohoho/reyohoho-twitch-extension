@@ -119,6 +119,29 @@ function hasNonASCII(message) {
   return false;
 }
 
+function isASCIIArt(message) {
+  if (!message || typeof message !== 'string') return false;
+
+  const asciiArtChars =
+    /[░▒▓█▄▀▐▌▆▇▉▊▋▍▎▏▐▕▖▗▘▙▚▛▜▝▞▟■□▢▣▤▥▦▧▨▩▪▫▬▭▮▯▰▱▲▼◀▶◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯◰◱◲◳◴◵◶◷◸◹◺◻◼◽◾◿⬛⬜⬝⬞⬟⬠⬡⬢⬣⬤⬥⬦⬧⬨⬩⬪⬫⬬⬭⬮⬯⬰⬱⬲⬳⬴⬵⬶⬷⬸⬹⬺⬻⬼⬽⬾⬿⭀⭁⭂⭃⭄⭅⭆⭇⭈⭉⭊⭋⭌⭍⭎⭏⭐\u2800-\u28FF]/g;
+
+  const asciiArtMatches = message.match(asciiArtChars);
+  const asciiArtCount = asciiArtMatches ? asciiArtMatches.length : 0;
+
+  const nonSpaceChars = message.replace(/\s/g, '');
+  const totalChars = nonSpaceChars.length;
+
+  if (totalChars === 0) return false;
+
+  const asciiArtRatio = asciiArtCount / totalChars;
+
+  const hasMultipleSpaces = /\s{3,}/.test(message);
+
+  const isLongMessage = message.length > 50;
+
+  return asciiArtRatio > 0.2 || (asciiArtRatio > 0.1 && hasMultipleSpaces && isLongMessage);
+}
+
 export function getMessagePartsFromMessageElement(message) {
   return message.querySelectorAll('span[data-a-target="chat-message-text"]');
 }
@@ -573,6 +596,10 @@ class ChatModule {
 
     if (messageObj && messageObj.messageBody) {
       element.setAttribute('data-original-text', messageObj.messageBody);
+
+      if (settings.get(SettingIds.ASCII_ART_FONT) && isASCIIArt(messageObj.messageBody)) {
+        element.classList.add('bttv-ascii-art');
+      }
     }
 
     if (!element.querySelector('.bttv-copy-message-button')) {

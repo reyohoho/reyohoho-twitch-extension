@@ -59,6 +59,7 @@ export const SettingIds = {
   EMOTE_SIZE: 'emoteSize',
   GIANT_EMOTES: 'giantEmotes',
   PASTA_COMMAND: 'pastaCommand',
+  ASCII_ART_FONT: 'asciiArtFont',
 };
 
 export const CategoryTypes = {
@@ -282,6 +283,7 @@ export const SettingDefaultValues = {
   [SettingIds.GIANT_EMOTES]: true,
   [SettingIds.CHAT_SWIPE]: true,
   [SettingIds.PASTA_COMMAND]: true,
+  [SettingIds.ASCII_ART_FONT]: false,
 };
 
 export const FlagSettings = [
