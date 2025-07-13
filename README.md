@@ -93,7 +93,6 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 - No sound after restart of stream by streamer?
 - If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
 - Add quick links to videos and so on under the streamer
-- Correct the position of the copy button
 - Integrate copypaste search?
 - 7tv cosmetics
 - Custom badges
