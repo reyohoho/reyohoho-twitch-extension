@@ -24,8 +24,12 @@ export async function checkProxyAvailability(proxyUrl) {
   }
 }
 
-export async function initializeProxyCheck() {
-  if (proxyCheckPromise) return proxyCheckPromise;
+export async function initializeProxyCheck(force = false) {
+  if (proxyCheckPromise && !force) return proxyCheckPromise;
+
+  if (force) {
+    proxyCheckPromise = null;
+  }
 
   proxyCheckPromise = (async () => {
     if (!settings.get(SettingIds.PROXY_ENABLED)) {

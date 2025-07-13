@@ -12,6 +12,7 @@ import frankerfacezGlobalEmotes from '../frankerfacez/global-emotes.js';
 import frankerfacezChannelEmotes from '../frankerfacez/channel-emotes.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import {PlatformTypes} from '../../constants.js';
+import {initializeProxyCheck} from '../../utils/proxy.js';
 import './style.css';
 
 const CHAT_SETTINGS_BUTTON_CONTAINER_SELECTOR = '.chat-input div[data-test-selector="chat-input-buttons-container"]';
@@ -74,6 +75,15 @@ function EmoteReloadButton() {
 async function reloadAllEmotes() {
   try {
     console.log('[BTTV] Reloading all emotes...');
+
+    try {
+      console.log('[BTTV] Checking proxy availability...');
+      await initializeProxyCheck(true);
+      console.log('[BTTV] Proxy check completed');
+    } catch (proxyError) {
+      console.error('[BTTV] Error during proxy check:', proxyError);
+    }
+
     await Promise.all([
       globalEmotes.updateGlobalEmotes(),
       reloadChannelEmotes(),
