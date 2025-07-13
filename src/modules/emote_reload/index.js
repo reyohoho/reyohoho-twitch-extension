@@ -4,12 +4,6 @@ import formatMessage from '../../i18n/index.js';
 import domObserver from '../../observers/dom.js';
 import watcher from '../../watcher.js';
 import globalEmotes from '../emotes/global-emotes.js';
-import channelEmotes from '../emotes/channel-emotes.js';
-import personalEmotes from '../emotes/personal-emotes.js';
-import seventvGlobalEmotes from '../seventv/global-emotes.js';
-import seventvChannelEmotes from '../seventv/channel-emotes.js';
-import frankerfacezGlobalEmotes from '../frankerfacez/global-emotes.js';
-import frankerfacezChannelEmotes from '../frankerfacez/channel-emotes.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import {PlatformTypes} from '../../constants.js';
 import {initializeProxyCheck} from '../../utils/proxy.js';
@@ -84,13 +78,7 @@ async function reloadAllEmotes() {
       console.error('[BTTV] Error during proxy check:', proxyError);
     }
 
-    await Promise.all([
-      globalEmotes.updateGlobalEmotes(),
-      reloadChannelEmotes(),
-      reloadPersonalEmotes(),
-      reloadSevenTVEmotes(),
-      reloadFFZEmotes(),
-    ]);
+    await Promise.all([globalEmotes.updateGlobalEmotes(), reloadChannelEmotes()]);
     console.log('[BTTV] All emotes reloaded successfully');
   } catch (error) {
     console.error('[BTTV] Error reloading emotes:', error);
@@ -103,43 +91,6 @@ async function reloadChannelEmotes() {
     watcher.emit('channel.updated');
   } catch (error) {
     console.error('[BTTV] Error reloading channel emotes:', error);
-  }
-}
-
-async function reloadPersonalEmotes() {
-  try {
-    console.log('[BTTV] Reloading personal emotes...');
-    personalEmotes.broadcastMe();
-  } catch (error) {
-    console.error('[BTTV] Error reloading personal emotes:', error);
-  }
-}
-
-async function reloadSevenTVEmotes() {
-  try {
-    console.log('[BTTV] Reloading 7TV emotes...');
-    if (seventvGlobalEmotes.updateGlobalEmotes) {
-      await seventvGlobalEmotes.updateGlobalEmotes();
-    }
-    if (seventvChannelEmotes.updateChannelEmotes) {
-      await seventvChannelEmotes.updateChannelEmotes();
-    }
-  } catch (error) {
-    console.error('[BTTV] Error reloading 7TV emotes:', error);
-  }
-}
-
-async function reloadFFZEmotes() {
-  try {
-    console.log('[BTTV] Reloading FFZ emotes...');
-    if (frankerfacezGlobalEmotes.updateGlobalEmotes) {
-      await frankerfacezGlobalEmotes.updateGlobalEmotes();
-    }
-    if (frankerfacezChannelEmotes.updateChannelEmotes) {
-      await frankerfacezChannelEmotes.updateChannelEmotes();
-    }
-  } catch (error) {
-    console.error('[BTTV] Error reloading FFZ emotes:', error);
   }
 }
 
@@ -181,16 +132,6 @@ function loadButton() {
   mountedRoot = createRoot(buttonContainer);
   mountedRoot.render(<EmoteReloadButton />);
   console.log('[BTTV] Emote reload button successfully loaded');
-}
-
-function unloadButton() {
-  const container = document.getElementById(EMOTE_RELOAD_BUTTON_CONTAINER_ID);
-  if (container != null) {
-    container.remove();
-  }
-  if (mountedRoot != null) {
-    mountedRoot.unmount();
-  }
 }
 
 class EmoteReloadModule {
