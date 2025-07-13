@@ -3,6 +3,7 @@ import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import playerButtonManager from '../../utils/player-button-manager.js';
+import watcher from '../../watcher.js';
 
 class VideoMirror {
   constructor() {
@@ -121,6 +122,10 @@ class VideoMirror {
     playerButtonManager.registerButton('video-mirror', {
       shouldAdd: () => settings.get(SettingIds.VIDEO_MIRROR) && !document.querySelector('.bttv-video-mirror-container'),
       add: () => this.addMirrorButton(),
+    });
+
+    watcher.on('load.player', () => {
+      this.ensureMirrorButton();
     });
 
     // Initial attempt

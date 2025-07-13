@@ -3,6 +3,7 @@ import domObserver from '../../observers/dom.js';
 import settings from '../../settings.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import playerButtonManager from '../../utils/player-button-manager.js';
+import watcher from '../../watcher.js';
 
 const HAS_COMPRESSOR = window.AudioContext && window.DynamicsCompressorNode != null;
 const HAS_GAIN = HAS_COMPRESSOR && window.GainNode != null;
@@ -730,6 +731,10 @@ class AudioCompressor {
       shouldAdd: () =>
         settings.get(SettingIds.AUDIO_COMPRESSOR) && !document.querySelector('.bttv-compressor-container'),
       add: () => this.addCompressorIcon(),
+    });
+
+    watcher.on('load.player', () => {
+      this.ensureCompressorIcon();
     });
 
     domObserver.on('video', (video) => {
