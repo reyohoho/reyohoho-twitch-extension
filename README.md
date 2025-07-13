@@ -84,7 +84,7 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## TODO
 
-- Fix buttons after restart stream or change layout
+- Fix buttons after restart stream or change layout and compressor state
 - Fix left chat position
 - Fix hide left panel categories
 - System messages too long
