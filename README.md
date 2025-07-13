@@ -84,6 +84,10 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## TODO
 
+- Preview for links in chat
+- Check stock bttv features
+- Tooltip thread
+- Some ui icons not loading without proxy
 - Fix buttons after restart stream or change layout and compressor state
 - Fix left chat position
 - Fix hide left panel categories
