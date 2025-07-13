@@ -1,0 +1,60 @@
+.bttv-emote-reload-container {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  position: relative;
+}
+
+.bttv-emote-reload-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  transition: background-color 0.1s ease;
+  color: var(--color-text-alt-2);
+  min-width: 3rem;
+  min-height: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.bttv-emote-reload-container [role="tooltip"],
+.bttv-emote-reload-container .tooltip {
+  display: none !important;
+}
+
+.bttv-emote-reload-button:hover {
+  background-color: var(--color-background-button-text-hover);
+}
+
+.bttv-emote-reload-button:active {
+  background-color: var(--color-background-button-text-active);
+}
+
+.bttv-emote-reload-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bttv-emote-reload-button:disabled:hover {
+  background-color: transparent;
+}
+
+.bttv-emote-reload-button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.bttv-emote-reload-button:disabled svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+} 
