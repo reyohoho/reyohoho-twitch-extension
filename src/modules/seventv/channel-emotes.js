@@ -1,4 +1,3 @@
-import ReconnectingEventSource from 'reconnecting-eventsource';
 import {EmoteCategories, EmoteProviders, EmoteTypeFlags, SettingIds} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
@@ -16,7 +15,9 @@ const category = {
   displayName: formatMessage({defaultMessage: '7TV Channel Emotes'}),
 };
 
-let eventSource;
+let websocket;
+let reconnectTimeout;
+let isReconnecting = false;
 
 class SevenTVChannelEmotes extends AbstractEmotes {
   constructor() {
@@ -30,13 +31,200 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     return category;
   }
 
-  updateChannelEmotes() {
-    if (eventSource != null) {
-      try {
-        eventSource.close();
-      } catch (_) {}
+  createWebSocket(emoteSetId) {
+    if (websocket) {
+      websocket.close();
     }
 
+    const wsUrl = 'wss://events.7tv.io/v3';
+
+    websocket = new WebSocket(wsUrl);
+
+    websocket.onopen = () => {
+      isReconnecting = false;
+      console.log('BTTV: 7TV WebSocket connected');
+    };
+
+    websocket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        this.handleWebSocketMessage(message, emoteSetId);
+      } catch (error) {
+        console.error('BTTV: Error parsing 7TV WebSocket message:', error);
+      }
+    };
+
+    websocket.onclose = (event) => {
+      console.log('BTTV: 7TV WebSocket closed', event.code, event.reason);
+      if (!isReconnecting && event.code !== 1000) {
+        this.scheduleReconnect(emoteSetId);
+      }
+    };
+
+    websocket.onerror = (error) => {
+      console.error('BTTV: 7TV WebSocket error:', error);
+    };
+  }
+
+  scheduleReconnect(emoteSetId) {
+    if (isReconnecting) return;
+
+    isReconnecting = true;
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+    }
+
+    reconnectTimeout = setTimeout(() => {
+      console.log('BTTV: Reconnecting to 7TV WebSocket...');
+      this.createWebSocket(emoteSetId);
+    }, 5000);
+  }
+
+  handleWebSocketMessage(message, emoteSetId) {
+    const {op, d} = message;
+
+    if (op === 1) {
+      this.subscribeToEmoteSet(emoteSetId);
+    } else if (op === 0) {
+      this.handleDispatchMessage(d);
+    } else if (op === 5) {
+      console.log('7TV WebSocket ACK:', d);
+    } else if (op === 6) {
+      console.error('7TV WebSocket error:', d);
+    }
+  }
+
+  subscribeToEmoteSet(emoteSetId) {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+      const subscribeMessage = {
+        op: 35,
+        d: {
+          type: 'emote_set.update',
+          condition: {
+            object_id: emoteSetId,
+          },
+        },
+      };
+      websocket.send(JSON.stringify(subscribeMessage));
+      console.log('Subscribed to 7TV emote set:', emoteSetId);
+    }
+  }
+
+  handleDispatchMessage(data) {
+    if (data.type !== 'emote_set.update') {
+      return;
+    }
+
+    const {body} = data;
+    if (!body) {
+      return;
+    }
+
+    const username = body.actor?.display_name || 'Unknown';
+
+    if (body.pulled && Array.isArray(body.pulled)) {
+      body.pulled.forEach((item) => {
+        if (item.key === 'emotes' && item.old_value) {
+          const emoteCode = item.old_value.name;
+          this.emotes.delete(emoteCode);
+
+          twitch.sendChatAdminMessage(
+            formatMessage(
+              {defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat by {username}'},
+              {emoteCode: `\u200B${emoteCode}\u200B`, username}
+            ),
+            true
+          );
+        }
+      });
+    }
+
+    if (body.pushed && Array.isArray(body.pushed)) {
+      body.pushed.forEach((item) => {
+        if (item.key === 'emotes' && item.value) {
+          const emote = item.value;
+          const {
+            id,
+            name: code,
+            data: {
+              listed,
+              animated,
+              owner,
+              flags,
+              host: {url},
+            },
+          } = emote;
+
+          if (!listed && !hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)) {
+            return;
+          }
+
+          this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
+
+          twitch.sendChatAdminMessage(
+            formatMessage(
+              {defaultMessage: '7TV Emotes: {emoteCode} has been added to chat by {username}'},
+              {emoteCode: `${code} \u200B \u200B${code}\u200B`, username}
+            ),
+            true
+          );
+        }
+      });
+    }
+
+    if (body.updated && Array.isArray(body.updated)) {
+      body.updated.forEach((item) => {
+        if (item.key === 'emotes' && item.old_value && item.value) {
+          const oldEmoteCode = item.old_value.name;
+          const newEmote = item.value;
+          const {
+            id,
+            name: newCode,
+            data: {
+              listed,
+              animated,
+              owner,
+              flags,
+              host: {url},
+            },
+          } = newEmote;
+
+          if (!listed && !hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)) {
+            return;
+          }
+
+          this.emotes.delete(oldEmoteCode);
+          this.emotes.set(newCode, createEmote(id, newCode, animated, owner, category, isOverlay(flags), url));
+
+          twitch.sendChatAdminMessage(
+            formatMessage(
+              {defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode} by {username}'},
+              {
+                oldCode: `\u200B${oldEmoteCode}\u200B`,
+                newCode: `${newCode} \u200B \u200B${newCode}\u200B`,
+                username,
+              }
+            ),
+            true
+          );
+        }
+      });
+    }
+
+    watcher.emit('emotes.updated');
+  }
+
+  updateChannelEmotes() {
+    if (websocket) {
+      websocket.close();
+    }
+
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
+      reconnectTimeout = null;
+    }
+
+    isReconnecting = false;
     this.emotes.clear();
 
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_EMOTES)) return;
@@ -88,124 +276,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
           this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
         }
 
-        eventSource = new ReconnectingEventSource(
-          `${proxyUrl ? proxyUrl : ''}https://events.7tv.io/v3@emote_set.update<object_id=${encodeURIComponent(emoteSet.id)}>`
-        );
-
-        // Handle emote_set.update events with pulled/pushed arrays
-        eventSource.addEventListener('dispatch', (event) => {
-          const data = JSON.parse(event.data);
-          if (data.type !== 'emote_set.update') {
-            return;
-          }
-
-          const {body} = data;
-          if (!body) {
-            return;
-          }
-
-          const username = body.actor?.username || 'Unknown';
-
-          // Handle removed emotes (pulled array)
-          if (body.pulled && Array.isArray(body.pulled)) {
-            body.pulled.forEach((item) => {
-              if (item.key === 'emotes' && item.old_value) {
-                const emoteCode = item.old_value.name;
-                this.emotes.delete(emoteCode);
-
-                // Send system message for emote removal
-                twitch.sendChatAdminMessage(
-                  formatMessage(
-                    {defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat by {username}'},
-                    {emoteCode: `\u200B${emoteCode}\u200B`, username}
-                  ),
-                  true
-                );
-              }
-            });
-          }
-
-          // Handle added emotes (pushed array)
-          if (body.pushed && Array.isArray(body.pushed)) {
-            body.pushed.forEach((item) => {
-              if (item.key === 'emotes' && item.value) {
-                const emote = item.value;
-                const {
-                  id,
-                  name: code,
-                  data: {
-                    listed,
-                    animated,
-                    owner,
-                    flags,
-                    host: {url},
-                  },
-                } = emote;
-
-                if (!listed && !hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)) {
-                  return;
-                }
-
-                this.emotes.set(code, createEmote(id, code, animated, owner, category, isOverlay(flags), url));
-
-                // Send system message for emote addition
-                twitch.sendChatAdminMessage(
-                  formatMessage(
-                    {defaultMessage: '7TV Emotes: {emoteCode} has been added to chat by {username}'},
-                    {emoteCode: `${code} \u200B \u200B${code}\u200B`, username}
-                  ),
-                  true
-                );
-              }
-            });
-          }
-
-          // Handle updated emotes (renamed emotes)
-          if (body.updated && Array.isArray(body.updated)) {
-            body.updated.forEach((item) => {
-              if (item.key === 'emotes' && item.old_value && item.value) {
-                const oldEmoteCode = item.old_value.name;
-                const newEmote = item.value;
-                const {
-                  id,
-                  name: newCode,
-                  data: {
-                    listed,
-                    animated,
-                    owner,
-                    flags,
-                    host: {url},
-                  },
-                } = newEmote;
-
-                if (!listed && !hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)) {
-                  return;
-                }
-
-                // Remove old emote code
-                this.emotes.delete(oldEmoteCode);
-
-                // Add new emote code
-                this.emotes.set(newCode, createEmote(id, newCode, animated, owner, category, isOverlay(flags), url));
-
-                // Send system message for emote rename
-                twitch.sendChatAdminMessage(
-                  formatMessage(
-                    {defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode} by {username}'},
-                    {
-                      oldCode: `\u200B${oldEmoteCode}\u200B`,
-                      newCode: `${newCode} \u200B \u200B${newCode}\u200B`,
-                      username,
-                    }
-                  ),
-                  true
-                );
-              }
-            });
-          }
-
-          watcher.emit('emotes.updated');
-        });
+        this.createWebSocket(emoteSet.id);
       })
       .then(() => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV channel emotes have been updated'}), true);
