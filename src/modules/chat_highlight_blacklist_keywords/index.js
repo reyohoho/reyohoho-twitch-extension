@@ -322,19 +322,14 @@ class ChatHighlightBlacklistKeywordsModule {
       (fieldContainsKeyword(highlightUsers, from, reply.parentUserLogin, handleColorChange) ||
         fieldContainsKeyword(highlightKeywords, from, reply.parentMessageBody, handleColorChange));
 
-    let fullMessageText = messageText;
-    if (reply != null) {
-      const domMessageText = message.textContent || '';
-      fullMessageText = domMessageText.includes(messageText) ? domMessageText : messageText;
-    }
-
-    console.log('DEBUG: fullMessageText:', fullMessageText, 'original messageText:', messageText);
+    const isMentioned = message.querySelector('.reply-line--mentioned') != null;
 
     if (
       badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
       fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
-      fieldContainsKeyword(highlightKeywords, from, fullMessageText, handleColorChange) ||
-      replyContainsHighlight
+      fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
+      replyContainsHighlight ||
+      isMentioned
     ) {
       this.markHighlighted(message, color);
 
