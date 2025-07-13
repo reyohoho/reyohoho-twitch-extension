@@ -195,26 +195,7 @@ async function restartPlayer() {
   }
 
   try {
-    currentPlayer.pause();
-
     await resetTwitchPlayer(instance);
-
-    setTimeout(() => {
-      const player = twitch.getCurrentPlayer();
-      if (!player) {
-        console.log('BTTV: Could not get player after reload');
-        return;
-      }
-
-      console.log('BTTV: Restoring player state...');
-
-      player.setQuality(videoQuality);
-      player.setVolume(playerVolume);
-      player.seekTo(currentTime);
-      player.play();
-
-      console.log('BTTV: Player state restored');
-    }, 500);
   } catch (error) {
     console.error('BTTV: Error during player restart:', error);
   }
