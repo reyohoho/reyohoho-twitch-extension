@@ -84,24 +84,27 @@ If you use VSCode as your text editor, you can set it up to highlight any errors
 
 ## TODO
 
+- Fix buttons after restart stream or change layout
+- Fix left chat position
+- Fix hide left panel categories
+- System messages too long
 - Fix custom emotes preview in input
 - WebSocket proxy support for FFZ/BTTV emote updates (already works if there's access to their addresses without VPN)
 - Integration with 1080p proxy, possibly with 1440p support
 - Our badge - choice of any emote
 - Check 7tv personalized emotes
 - No sound after restart of stream by streamer?
-- If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
 - Add quick links to videos and so on under the streamer
-- Integrate copypaste search?
 - 7tv cosmetics
 - Custom badges
-- Our badge is a choice of any emoticon
 - Shazam current track on stream? https://github.com/shazamio/ShazamIO
 - Preview emotes from links
 - Add howto host own proxy
 
 ## Changes compared to the original BetterTTV
 
+- Integrate copypaste search?
+- If ASCII art ⣿⣿⣿⡿ with similes is sent to the chat, then reduce the size of such message to fit in
 - Fix chat swipe for broadcasters
 - You can't click on a link in a deleted message
 - Display timeouts, bans
