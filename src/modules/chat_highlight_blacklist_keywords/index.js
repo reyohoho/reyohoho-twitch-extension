@@ -230,10 +230,6 @@ function fieldContainsKeyword(keywords, from, field, onColorChange) {
   return false;
 }
 
-function isReply(message) {
-  return message.closest('.chat-input-tray__open') != null;
-}
-
 function messageTextFromAST(ast) {
   return ast
     .map((node) => {
@@ -249,6 +245,7 @@ function messageTextFromAST(ast) {
         case 6: // Emote
           return node.content.alt;
         default:
+          console.log('BTTV: DEBUG: Unknown AST node type:', node.type, 'content:', node.content);
           return '';
       }
     })
@@ -320,17 +317,28 @@ class ChatHighlightBlacklistKeywordsModule {
       return;
     }
 
+    const replyContainsHighlight =
+      reply != null &&
+      (fieldContainsKeyword(highlightUsers, from, reply.parentUserLogin, handleColorChange) ||
+        fieldContainsKeyword(highlightKeywords, from, reply.parentMessageBody, handleColorChange));
+
+    let fullMessageText = messageText;
+    if (reply != null) {
+      const domMessageText = message.textContent || '';
+      fullMessageText = domMessageText.includes(messageText) ? domMessageText : messageText;
+    }
+
+    console.log('DEBUG: fullMessageText:', fullMessageText, 'original messageText:', messageText);
+
     if (
       badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
       fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
-      fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
-      (reply != null &&
-        (fieldContainsKeyword(highlightUsers, from, reply.parentUserLogin, handleColorChange) ||
-          fieldContainsKeyword(highlightKeywords, from, reply.parentMessageBody, handleColorChange)))
+      fieldContainsKeyword(highlightKeywords, from, fullMessageText, handleColorChange) ||
+      replyContainsHighlight
     ) {
       this.markHighlighted(message, color);
 
-      if (isReply(message) || isDuplicateHighlight({date, from, message: messageText})) {
+      if (isDuplicateHighlight({date, from, message: messageText})) {
         return;
       }
 
