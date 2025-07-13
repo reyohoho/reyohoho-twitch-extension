@@ -36,7 +36,14 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       websocket.close();
     }
 
-    const wsUrl = 'wss://events.7tv.io/v3';
+    const proxyUrl = getProxyUrl();
+    let wsUrl;
+
+    if (proxyUrl && settings.get(SettingIds.PROXY_ENABLED)) {
+      wsUrl = 'wss://starege.rhhhhhhh.live/7tv-proxy';
+    } else {
+      wsUrl = 'wss://events.7tv.io/v3';
+    }
 
     websocket = new WebSocket(wsUrl);
 
