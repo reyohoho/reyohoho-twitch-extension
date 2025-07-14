@@ -89,3 +89,15 @@
     content: '';
   }
 }
+
+/* Fix Twitch's native emote chat-image__container display to keep emotes inline with text */
+/* Only target native Twitch emotes, not BetterTTV overlay emotes */
+.chat-image__container:not(.bttv-emote):not(.bttv-emote-overlay):not([class*="bttv-"]) {
+  display: inline !important;
+  vertical-align: middle !important;
+}
+
+/* Also target the img elements inside native Twitch emote containers */
+.chat-image__container:not(.bttv-emote):not(.bttv-emote-overlay):not([class*="bttv-"]) img {
+  vertical-align: middle !important;
+}
