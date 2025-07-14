@@ -1,15 +1,19 @@
 .legacyButton {
-  background-size: 18px;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  height: 18px;
-  width: 18px;
+  height: 48px;
+  width: 48px;
   filter: grayscale(100%);
   opacity: 0.9;
   float: left;
   padding: 15px;
-  background-image: url(assets/icons/legacy_smile.svg) !important;
+  
+  svg {
+    height: 18px;
+    width: 18px;
+  }
 }
 
 .button {
