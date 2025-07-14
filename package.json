@@ -9,7 +9,7 @@
     "start": "webpack serve --mode development",
     "postinstall": "node ./dev/post-install.js",
     "build": "webpack --mode development",
-    "build:prod": "webpack --mode production",
+    "build:prod": "webpack --mode production && node ./dev/create-zip.js",
     "lint": "eslint . && prettier --check .",
     "extract-i18n": "formatjs extract 'src/**/*.{js,jsx}' --out-file build/i18n/messages/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --preserve-whitespace && formatjs compile build/i18n/messages/en.json --out-file build/i18n/messages/en.json"
   },
@@ -93,7 +93,8 @@
     "webpack": "5.99.9",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.2",
-    "webpack-virtual-modules": "0.6.2"
+    "webpack-virtual-modules": "0.6.2",
+    "archiver": "7.0.1"
   },
   "browserslist": [
     "last 1 version",
