@@ -193,7 +193,7 @@ class ChatModule {
       this.handleHighlightedMessage(element);
     });
 
-    api.get(`cached/badges/${getPlatform() === 'twitch'}`).then((badges) => {
+    api.get(`cached/badges`).then((badges) => {
       badges.forEach(({providerId, badge}) => badgeUsers.set(providerId, badge));
     });
   }
@@ -270,7 +270,7 @@ class ChatModule {
 
     const currentChannel = getCurrentChannel();
     if (currentChannel && currentChannel.name === 'night' && subscribers.hasLegacySubscription(user.id)) {
-      badges.push(badgeTemplate(proxyBadgeUrl(cdn.url('tags/subscriber.png')), 'Subscriber'));
+      badges.push(badgeTemplate(cdn.url('tags/subscriber.png'), 'Subscriber'));
     }
 
     const subscriberBadge = subscribers.getSubscriptionBadge(user.id);
@@ -570,7 +570,7 @@ class ChatModule {
     if ((globalBots.includes(user.name) || channelBots.includes(user.name)) && user.mod) {
       element
         .querySelector('img.chat-badge[alt="Moderator"]')
-        ?.replaceWith(badgeTemplate(proxyBadgeUrl(cdn.url('tags/bot.png')), formatMessage({defaultMessage: 'Bot'})));
+        ?.replaceWith(badgeTemplate(cdn.url('tags/bot.png'), formatMessage({defaultMessage: 'Bot'})));
     }
 
     const customBadges = this.customBadges(user);
