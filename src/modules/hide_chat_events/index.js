@@ -1,4 +1,4 @@
-import {ChatFlags, PlatformTypes, SettingIds} from '../../constants.js';
+import {ChatFlags, DeletedMessageTypes, PlatformTypes, SettingIds} from '../../constants.js';
 import settings from '../../settings.js';
 import {hasFlag} from '../../utils/flags.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
@@ -10,6 +10,53 @@ class HideChatEventsModule {
   constructor() {
     watcher.on('chat.message.handler', (message) => {
       this.handleMessage(message);
+    });
+  }
+
+  addAdminMessageToDeletedMessage(userLogin, adminMessage, moderationType, duration) {
+    const deletedMessages = settings.get(SettingIds.DELETED_MESSAGES);
+    if (deletedMessages !== DeletedMessageTypes.HIGHLIGHT) {
+      return;
+    }
+
+    let displayText;
+    if (moderationType === 1) {
+      if (duration) {
+        displayText = `Timed Out (${duration}s)`;
+      } else {
+        displayText = 'Permanently Banned';
+      }
+    } else if (moderationType === 0) {
+      displayText = 'Permanently Banned';
+    } else {
+      displayText = adminMessage;
+    }
+
+    const messages = Array.from(document.querySelectorAll('.chat-line__message')).filter((node) => {
+      const message = twitch.getChatMessageObject(node);
+      if (!message) {
+        return false;
+      }
+      return message.user?.userLogin === userLogin;
+    });
+    messages.forEach((messageNode) => {
+      const messageTextElement = messageNode.querySelector('.text-fragment');
+      if (messageTextElement && !messageTextElement.querySelector('.bttv-admin-message')) {
+        const adminMessageSpan = document.createElement('span');
+        adminMessageSpan.className = 'bttv-admin-message';
+        adminMessageSpan.style.color = '#999999';
+        adminMessageSpan.style.fontStyle = 'italic';
+        adminMessageSpan.textContent = ` ${displayText}`;
+        messageTextElement.appendChild(adminMessageSpan);
+
+        const originalText = messageTextElement.innerHTML;
+        messageNode.addEventListener('mouseenter', () => {
+          adminMessageSpan.style.display = 'none';
+        });
+        messageNode.addEventListener('mouseleave', () => {
+          adminMessageSpan.style.display = 'inline';
+        });
+      }
     });
   }
 
@@ -64,7 +111,7 @@ class HideChatEventsModule {
       } else {
         adminMessage = formatMessage(
           {
-            defaultMessage: '{userLogin} was banned {reason}',
+            defaultMessage: '{userLogin} was permanently banned {reason}',
             id: 'modBan',
           },
           {
@@ -76,7 +123,7 @@ class HideChatEventsModule {
     } else if (message.moderationType === 0) {
       adminMessage = formatMessage(
         {
-          defaultMessage: '{userLogin} was banned {reason}',
+          defaultMessage: '{userLogin} was permanently banned {reason}',
           id: 'modBan',
         },
         {
@@ -88,6 +135,9 @@ class HideChatEventsModule {
 
     if (adminMessage) {
       twitch.sendChatAdminMessage(adminMessage);
+      setTimeout(() => {
+        this.addAdminMessageToDeletedMessage(userLogin, adminMessage, message.moderationType, duration);
+      }, 100);
     }
   }
 }
