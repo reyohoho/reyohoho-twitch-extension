@@ -37,3 +37,53 @@
 .vod-message.bttv-highlighted {
   background-color: rgba(255, 0, 0, 0.3);
 }
+
+.bttv-reply-thread-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.bttv-reply-thread-tooltip {
+  max-width: 600px;
+  min-width: 200px;
+  width: max-content;
+  white-space: normal;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  pointer-events: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background-color: var(--color-background-tooltip);
+  color: var(--color-text-tooltip);
+}
+
+.bttv-reply-thread-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.bttv-reply-parent-user {
+  font-weight: bold;
+  color: var(--color-text-tooltip);
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+
+.bttv-reply-parent-message {
+  color: var(--color-text-tooltip);
+  font-size: 1.2rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  opacity: 0.8;
+  max-width: 100%;
+}

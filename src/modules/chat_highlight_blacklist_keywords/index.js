@@ -10,6 +10,8 @@ import {loadModuleForPlatforms} from '../../utils/modules.js';
 import {escapeRegExp} from '../../utils/regex.js';
 import {getCurrentUser} from '../../utils/user.js';
 import watcher from '../../watcher.js';
+import domObserver from '../../observers/dom.js';
+import './style.css';
 
 const CHAT_LIST_SELECTOR =
   '.chat-list .chat-scrollable-area__message-container,.chat-list--default .chat-scrollable-area__message-container,.chat-list--other .chat-scrollable-area__message-container,.video-chat div[data-test-selector="video-chat-message-list-wrapper"]';
@@ -65,6 +67,99 @@ function createPinnedHighlight({timestamp, from, message: messageText}) {
   container.appendChild(message);
 
   return container;
+}
+
+function createReplyThreadTooltip(replyData) {
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('bttv-reply-thread-tooltip');
+
+  const tooltipContent = document.createElement('div');
+  tooltipContent.classList.add('bttv-reply-thread-content');
+
+  const parentUser = document.createElement('div');
+  parentUser.classList.add('bttv-reply-parent-user');
+  parentUser.textContent = `@${replyData.parentUserLogin}`;
+
+  const parentMessage = document.createElement('div');
+  parentMessage.classList.add('bttv-reply-parent-message');
+  parentMessage.textContent = replyData.parentMessageBody;
+
+  tooltipContent.appendChild(parentUser);
+  tooltipContent.appendChild(parentMessage);
+  tooltip.appendChild(tooltipContent);
+
+  return tooltip;
+}
+
+function addReplyThreadHover(message, replyData) {
+  if (!replyData || !replyData.parentUserLogin || !replyData.parentMessageBody) {
+    return;
+  }
+
+  const messageContainer = message.closest('.chat-line__message') || message;
+
+  if (messageContainer.classList.contains('bttv-reply-thread-enabled')) {
+    return;
+  }
+
+  if (messageContainer.style.display === 'none') {
+    return;
+  }
+
+  const replyIcon = messageContainer.querySelector(
+    '.chat-line__reply-icon, .reply-line, [class*="tw-svg"], [data-a-target="reply-button"]'
+  );
+  if (!replyIcon) {
+    return;
+  }
+
+  const replyContainer =
+    replyIcon.closest('.chat-line__reply, .reply-line, [data-a-target="reply-button"]') || replyIcon.parentElement;
+  if (!replyContainer) {
+    return;
+  }
+
+  if (replyContainer.classList.contains('bttv-reply-thread-wrapper')) {
+    return;
+  }
+
+  if (replyContainer.querySelector('.bttv-reply-thread-tooltip')) {
+    return;
+  }
+
+  messageContainer.classList.add('bttv-reply-thread-enabled');
+  replyContainer.classList.add('bttv-reply-thread-wrapper');
+
+  const tooltip = createReplyThreadTooltip(replyData);
+  document.body.appendChild(tooltip);
+
+  replyContainer.addEventListener('mouseenter', () => {
+    tooltip.style.display = 'block';
+  });
+
+  replyContainer.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+  });
+
+  replyContainer.addEventListener('mousemove', (e) => {
+    const rect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let left = e.clientX + 10;
+    let top = e.clientY - rect.height - 10;
+
+    if (left + rect.width > viewportWidth - 10) {
+      left = e.clientX - rect.width - 10;
+    }
+
+    if (top < 10) {
+      top = e.clientY + 20;
+    }
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+  });
 }
 
 let loadTime = 0;
@@ -270,6 +365,36 @@ class ChatHighlightBlacklistKeywordsModule {
 
     this.sound = null;
     this.handleHighlightSound = this.handleHighlightSound.bind(this);
+
+    this.setupReplyObserver();
+  }
+
+  setupReplyObserver() {
+    domObserver.on('.chat-line__message.bttv-reply-thread-enabled', (node, isConnected) => {
+      if (!isConnected) return;
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const messageContainer = mutation.target;
+            if (messageContainer.style.display === 'none') {
+              const replyContainer = messageContainer.querySelector('.bttv-reply-thread-wrapper');
+              if (replyContainer) {
+                const tooltip = document.querySelector('.bttv-reply-thread-tooltip');
+                if (tooltip) {
+                  tooltip.remove();
+                }
+              }
+            }
+          }
+        });
+      });
+
+      observer.observe(node, {
+        attributes: true,
+        attributeFilter: ['style'],
+      });
+    });
   }
 
   handleHighlightSound() {
@@ -317,6 +442,10 @@ class ChatHighlightBlacklistKeywordsModule {
       return;
     }
 
+    if (reply != null) {
+      addReplyThreadHover(message, reply);
+    }
+
     const isMentioned =
       message.querySelector('.reply-line--mentioned') != null || message.querySelector('.mention-fragment--recipient');
 
@@ -351,6 +480,20 @@ class ChatHighlightBlacklistKeywordsModule {
     );
     const messageContent = `${messageContainer.textContent.replace(/^:/, '')} ${emotes.join(' ')}`;
     const badges = [...message.querySelectorAll(CHAT_BADGE_SELECTOR)].map((badge) => badge.getAttribute('alt') || '');
+
+    const replyElement = message.querySelector('.reply-line');
+    if (replyElement) {
+      const parentUserElement = replyElement.querySelector('.reply-line__parent-user');
+      const parentMessageElement = replyElement.querySelector('.reply-line__parent-message');
+
+      if (parentUserElement && parentMessageElement) {
+        const replyData = {
+          parentUserLogin: parentUserElement.textContent.replace('@', ''),
+          parentMessageBody: parentMessageElement.textContent,
+        };
+        addReplyThreadHover(message, replyData);
+      }
+    }
 
     let color;
     function handleColorChange(newColor) {
