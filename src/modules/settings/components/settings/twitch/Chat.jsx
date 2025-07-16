@@ -65,6 +65,14 @@ function ChatModule() {
               })}
             </p>
           </Checkbox>
+          <Checkbox key="moderatorActions" value={ChatFlags.MODERATOR_ACTIONS}>
+            <p className={styles.heading}>{formatMessage({defaultMessage: 'Moderator Actions'})}</p>
+            <p className={styles.settingDescription}>
+              {formatMessage({
+                defaultMessage: 'Show system messages about moderator actions (timeouts, bans)',
+              })}
+            </p>
+          </Checkbox>
         </CheckboxGroup>
       </div>
     </Panel>
@@ -75,5 +83,5 @@ registerComponent(ChatModule, {
   settingId: SettingIds.CHAT,
   name: SETTING_NAME,
   category: CategoryTypes.CHAT,
-  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions'],
+  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions', 'moderator', 'actions'],
 });

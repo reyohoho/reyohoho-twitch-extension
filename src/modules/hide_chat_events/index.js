@@ -134,10 +134,12 @@ class HideChatEventsModule {
     }
 
     if (adminMessage) {
-      twitch.sendChatAdminMessage(adminMessage);
-      setTimeout(() => {
-        this.addAdminMessageToDeletedMessage(userLogin, adminMessage, message.moderationType, duration);
-      }, 100);
+      if (hasFlag(settings.get(SettingIds.CHAT), ChatFlags.MODERATOR_ACTIONS)) {
+        twitch.sendChatAdminMessage(adminMessage);
+        setTimeout(() => {
+          this.addAdminMessageToDeletedMessage(userLogin, adminMessage, message.moderationType, duration);
+        }, 100);
+      }
     }
   }
 }

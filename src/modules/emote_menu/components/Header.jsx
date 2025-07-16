@@ -1,17 +1,22 @@
 import * as faGear from '@fortawesome/free-solid-svg-icons/faGear';
 import * as faSearch from '@fortawesome/free-solid-svg-icons/faSearch';
 import * as faTimes from '@fortawesome/free-solid-svg-icons/faTimes';
+import * as faSync from '@fortawesome/free-solid-svg-icons/faSync';
 import {Icon} from '@rsuite/icons';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import IconButton from 'rsuite/IconButton';
 import Input from 'rsuite/Input';
 import InputGroup from 'rsuite/InputGroup';
 import FontAwesomeSvgIcon from '../../../common/components/FontAwesomeSvgIcon.jsx';
 import formatMessage from '../../../i18n/index.js';
+import globalEmotes from '../../emotes/global-emotes.js';
+import watcher from '../../../watcher.js';
+import {initializeProxyCheck} from '../../../utils/proxy.js';
 import styles from './Header.module.css';
 
 function Header({value, onChange, toggleWhisper, selected, ...props}) {
   const searchInputRef = useRef(null);
+  const [isReloading, setIsReloading] = useState(false);
 
   useEffect(() => {
     const currentSearchInputRef = searchInputRef.current;
@@ -27,6 +32,26 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
     settings.openSettings();
   };
 
+  const handleReloadEmotes = async () => {
+    if (isReloading) {
+      return;
+    }
+
+    setIsReloading(true);
+
+    try {
+      await initializeProxyCheck(true);
+      await Promise.all([globalEmotes.updateGlobalEmotes(), new Promise((resolve) => {
+        watcher.emit('channel.updated');
+        setTimeout(resolve, 100);
+      })]);
+    } catch (error) {
+      console.error('[BTTV] Error reloading emotes:', error);
+    } finally {
+      setIsReloading(false);
+    }
+  };
+
   return (
     <div {...props}>
       <InputGroup>
@@ -40,6 +65,14 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
           inputRef={searchInputRef}
         />
       </InputGroup>
+      <IconButton
+        icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faSync} />}
+        appearance="subtle"
+        onClick={handleReloadEmotes}
+        disabled={isReloading}
+        title={formatMessage({defaultMessage: 'Reload Emotes'})}
+        className={isReloading ? styles.reloading : ''}
+      />
       <IconButton
         icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faGear} />}
         appearance="subtle"
