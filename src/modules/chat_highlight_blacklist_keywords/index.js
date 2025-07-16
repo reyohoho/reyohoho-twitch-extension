@@ -317,18 +317,13 @@ class ChatHighlightBlacklistKeywordsModule {
       return;
     }
 
-    const replyContainsHighlight =
-      reply != null &&
-      (fieldContainsKeyword(highlightUsers, from, reply.parentUserLogin, handleColorChange) ||
-        fieldContainsKeyword(highlightKeywords, from, reply.parentMessageBody, handleColorChange));
-
-    const isMentioned = message.querySelector('.reply-line--mentioned') != null;
+    const isMentioned =
+      message.querySelector('.reply-line--mentioned') != null || message.querySelector('.mention-fragment--recipient');
 
     if (
       badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
       fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
       fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
-      replyContainsHighlight ||
       isMentioned
     ) {
       this.markHighlighted(message, color);
