@@ -82,38 +82,74 @@ export default function Button({
       }>
       {isLegacy ? (
         <button type="button" className={classNames(styles.legacyButton, className)}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.5 47.5" style={{enableBackground: 'new 0 0 47.5 47.5'}} xmlSpace="preserve">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 47.5 47.5"
+            style={{enableBackground: 'new 0 0 47.5 47.5'}}
+            xmlSpace="preserve">
             <g transform="matrix(1.25,0,0,-1.25,0,47.5)">
               <g>
                 <g clipPath="url(#clipPath16)">
                   <g transform="translate(36,19)">
-                    <path style={{fill: '#ffcc4d', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}} d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.389,0 -17,7.611 -17,17 0,9.389 7.611,17 17,17 C -7.611,17 0,9.389 0,0"/>
+                    <path
+                      style={{fill: '#ffcc4d', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}
+                      d="m 0,0 c 0,-9.389 -7.611,-17 -17,-17 -9.389,0 -17,7.611 -17,17 0,9.389 7.611,17 17,17 C -7.611,17 0,9.389 0,0"
+                    />
                   </g>
                   <g transform="translate(19,16)">
-                    <path style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}} d="m 0,0 c -3.623,0 -6.027,0.422 -9,1 -0.679,0.131 -2,0 -2,-2 0,-4 4.595,-9 11,-9 6.404,0 11,5 11,9 C 11,1 9.679,1.132 9,1 6.027,0.422 3.623,0 0,0"/>
+                    <path
+                      style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}
+                      d="m 0,0 c -3.623,0 -6.027,0.422 -9,1 -0.679,0.131 -2,0 -2,-2 0,-4 4.595,-9 11,-9 6.404,0 11,5 11,9 C 11,1 9.679,1.132 9,1 6.027,0.422 3.623,0 0,0"
+                    />
                   </g>
                   <g transform="translate(11,24)">
-                    <path style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}} d="M 0,0 C 0,0 0,2 2,2 4,2 4,0 4,0 l 0,-2 c 0,0 0,-2 -2,-2 -2,0 -2,2 -2,2 l 0,2 z"/>
+                    <path
+                      style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}
+                      d="M 0,0 C 0,0 0,2 2,2 4,2 4,0 4,0 l 0,-2 c 0,0 0,-2 -2,-2 -2,0 -2,2 -2,2 l 0,2 z"
+                    />
                   </g>
                   <g transform="translate(23,24)">
-                    <path style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}} d="M 0,0 C 0,0 0,2 2,2 4,2 4,0 4,0 l 0,-2 c 0,0 0,-2 -2,-2 -2,0 -2,2 -2,2 l 0,2 z"/>
+                    <path
+                      style={{fill: '#664500', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}
+                      d="M 0,0 C 0,0 0,2 2,2 4,2 4,0 4,0 l 0,-2 c 0,0 0,-2 -2,-2 -2,0 -2,2 -2,2 l 0,2 z"
+                    />
                   </g>
                   <g transform="translate(10,15)">
-                    <path style={{fill: '#ffffff', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}} d="m 0,0 c 0,0 3,-1 9,-1 6,0 9,1 9,1 0,0 -2,-4 -9,-4 -7,0 -9,4 -9,4"/>
+                    <path
+                      style={{fill: '#ffffff', fillOpacity: 1, fillRule: 'nonzero', stroke: 'none'}}
+                      d="m 0,0 c 0,0 3,-1 9,-1 6,0 9,1 9,1 0,0 -2,-4 -9,-4 -7,0 -9,4 -9,4"
+                    />
                   </g>
                 </g>
               </g>
             </g>
             <defs>
               <clipPath id="clipPath16" clipPathUnits="userSpaceOnUse">
-                <path d="M 0,38 38,38 38,0 0,0 0,38 Z"/>
+                <path d="M 0,38 38,38 38,0 0,0 0,38 Z" />
               </clipPath>
             </defs>
           </svg>
         </button>
       ) : (
         <button type="button" className={classNames(styles.button, className)}>
-          <LogoIcon />
+          <svg
+            width="100%"
+            height="100%"
+            version="1.1"
+            viewBox="0 0 20 20"
+            x="0px"
+            y="0px"
+            role="presentation"
+            aria-hidden="true"
+            focusable="false"
+            class="ScIconSVG-sc-1q25cff-1 kXuCmW">
+            <g>
+              <path d="M7 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-4 4a2 2 0 0 0 2-2H8a2 2 0 0 0 2 2z"></path>
+              <path
+                d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-2 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"
+                fill-rule="evenodd"></path>
+            </g>
+          </svg>
         </button>
       )}
     </Whisper>
