@@ -53,37 +53,25 @@ class PlayerButtonManager {
 
   findPlayerContainer() {
     return (
-      document.querySelector('[data-a-target="player-overlay-video"]') ||
-      document.querySelector('.video-player__container') ||
-      document.querySelector('[data-a-target="player-controls"]') ||
       document.querySelector('.persistent-player')
     );
   }
 
   findControlsContainer(videoPlayer) {
     return (
-      videoPlayer.querySelector('[data-a-target="player-controls"]') ||
-      videoPlayer.querySelector('.player-controls') ||
-      videoPlayer.querySelector('.player-controls__container') ||
-      videoPlayer
+      videoPlayer.querySelector('.player-controls')
     );
   }
 
   findRightControls(controlsContainer) {
     return (
-      controlsContainer.querySelector('[data-a-target="player-controls-right"]') ||
-      controlsContainer.querySelector('.player-controls__right') ||
-      controlsContainer.querySelector('.player-controls__right-control-group') ||
-      controlsContainer.querySelector('[class*="right"]') ||
-      controlsContainer.querySelector('[class*="controls-right"]')
+      controlsContainer.querySelector('.player-controls__right-control-group')
     );
   }
 
   findVolumeSlider() {
     return (
-      document.querySelector('[data-a-target="volume-slider"]') ||
-      document.querySelector('.volume-slider__slider-container') ||
-      document.querySelector('[class*="volume-slider"]')
+      document.querySelector('.volume-slider__slider-container')
     );
   }
 
@@ -120,14 +108,10 @@ class PlayerButtonManager {
     return false;
   }
 
-  retryWithTimeout(operation, maxRetries = 10, interval = 500) {
+  retryWithTimeout(operation, interval = 500) {
     let retryCount = 0;
 
     const attempt = () => {
-      if (retryCount >= maxRetries) {
-        return false;
-      }
-
       if (operation()) {
         return true;
       }

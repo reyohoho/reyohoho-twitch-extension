@@ -352,13 +352,13 @@ class VideoPlayerModule {
 
   loadPictureInPicture() {
     if (!document.pictureInPictureEnabled || document.querySelector(BTTV_PICTURE_IN_PICTURE_SELECTOR) != null) {
-      console.log('PiP not enabled or button already exists');
+      console.log('BTTV: PiP not enabled or button already exists');
       return;
     }
 
     const video = document.querySelector(VIDEO_PLAYER_SELECTOR)?.querySelector('video');
     if (video == null) {
-      console.log('No video element found');
+      console.log('BTTV: No video element found');
       return;
     }
 
@@ -381,7 +381,7 @@ class VideoPlayerModule {
       '.player-controls__right-control-group > div:has(button[data-a-target="player-settings-button"])'
     );
     if (anchor == null) {
-      console.log('No anchor element found for buttons');
+      console.log('BTTV: No anchor element found for buttons');
       return;
     }
 
