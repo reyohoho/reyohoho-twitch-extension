@@ -1,0 +1,78 @@
+.bttv-pip-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin: 0 0.5rem;
+}
+
+.bttv-pip-button {
+  position: relative;
+  vertical-align: middle;
+  overflow: hidden;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-medium);
+  font-size: var(--button-text-default);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  height: var(--button-size-default);
+  width: var(--button-size-default);
+  border: var(--border-width-default) solid transparent;
+  background-color: var(--color-background-button-icon-overlay-default);
+  color: var(--color-text-button-overlay);
+  padding: 4px;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.bttv-pip-button:hover {
+  color: var(--color-text-button-overlay-hover);
+  background-color: var(--color-background-button-icon-overlay-hover);
+}
+
+.bttv-pip-button.active {
+  background-color: var(--color-background-button-primary);
+  color: var(--color-text-button-primary);
+}
+
+.bttv-pip-button svg {
+  fill: currentColor;
+  width: 20px;
+  height: 20px;
+}
+
+.bttv-pip-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-background-tooltip);
+  color: var(--color-text-tooltip);
+  padding: 0.5rem;
+  border-radius: var(--border-radius-medium);
+  font-size: var(--font-size-6);
+  white-space: nowrap;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+}
+
+.bttv-pip-container:hover .bttv-pip-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.bttv-pip-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--color-background-tooltip);
+} 

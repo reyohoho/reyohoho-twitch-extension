@@ -52,34 +52,26 @@ class PlayerButtonManager {
   }
 
   findPlayerContainer() {
-    return (
-      document.querySelector('.persistent-player')
-    );
+    return document.querySelector('.persistent-player');
   }
 
   findControlsContainer(videoPlayer) {
-    return (
-      videoPlayer.querySelector('.player-controls')
-    );
+    return videoPlayer.querySelector('.player-controls');
   }
 
   findRightControls(controlsContainer) {
-    return (
-      controlsContainer.querySelector('.player-controls__right-control-group')
-    );
+    return controlsContainer.querySelector('.player-controls__right-control-group');
   }
 
   findVolumeSlider() {
-    return (
-      document.querySelector('.volume-slider__slider-container')
-    );
+    return document.querySelector('.volume-slider__slider-container');
   }
 
   addButtonToRightControls(buttonElement, rightControls, controlsContainer) {
     if (rightControls) {
-      const firstChild = rightControls.firstElementChild;
-      if (firstChild) {
-        rightControls.insertBefore(buttonElement, firstChild);
+      const lastChild = rightControls.lastElementChild;
+      if (lastChild) {
+        rightControls.insertBefore(buttonElement, lastChild);
       } else {
         rightControls.appendChild(buttonElement);
       }
