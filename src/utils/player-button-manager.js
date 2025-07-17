@@ -69,9 +69,10 @@ class PlayerButtonManager {
 
   addButtonToRightControls(buttonElement, rightControls, controlsContainer) {
     if (rightControls) {
-      const lastChild = rightControls.lastElementChild;
-      if (lastChild) {
-        rightControls.insertBefore(buttonElement, lastChild);
+      const children = rightControls.children;
+      if (children.length >= 3) {
+        const insertBeforeElement = children[children.length - 3];
+        rightControls.insertBefore(buttonElement, insertBeforeElement);
       } else {
         rightControls.appendChild(buttonElement);
       }
