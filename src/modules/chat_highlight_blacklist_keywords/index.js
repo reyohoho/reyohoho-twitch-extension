@@ -447,13 +447,15 @@ class ChatHighlightBlacklistKeywordsModule {
     }
 
     const isMentioned =
-      message.querySelector('.reply-line--mentioned') != null || message.querySelector('.mention-fragment--recipient');
+      message.querySelector('.reply-line--mentioned') != null ||
+      message.querySelector('.mention-fragment--recipient') != null;
 
     if (
-      badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
-      fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
-      fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
-      isMentioned
+      document.querySelector('.chat-input-tray__open') == null &&
+      (badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
+        fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
+        fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
+        isMentioned)
     ) {
       this.markHighlighted(message, color);
 
