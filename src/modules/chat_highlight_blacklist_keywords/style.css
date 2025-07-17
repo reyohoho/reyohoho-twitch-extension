@@ -44,8 +44,12 @@
   cursor: pointer;
 }
 
+.bttv-reply-thread-wrapper:hover .bttv-reply-thread-tooltip {
+  display: block !important;
+}
+
 .bttv-reply-thread-tooltip {
-  max-width: 600px;
+  max-width: 100%;
   min-width: 200px;
   width: max-content;
   white-space: normal;
@@ -54,13 +58,17 @@
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: none;
-  position: fixed;
+  position: absolute;
+  top: 100%;
+  left: 0;
   z-index: 2000;
   pointer-events: none;
   word-wrap: break-word;
   overflow-wrap: break-word;
   background-color: var(--color-background-tooltip);
   color: var(--color-text-tooltip);
+  margin-top: 5px;
+  word-break: break-word;
 }
 
 .bttv-reply-thread-content {

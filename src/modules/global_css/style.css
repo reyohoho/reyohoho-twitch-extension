@@ -27,7 +27,7 @@
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
-  z-index: 2000;
+  z-index: 99999;
   pointer-events: none;
   user-select: none;
   white-space: pre;

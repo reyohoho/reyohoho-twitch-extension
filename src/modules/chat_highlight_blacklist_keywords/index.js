@@ -131,34 +131,27 @@ function addReplyThreadHover(message, replyData) {
   replyContainer.classList.add('bttv-reply-thread-wrapper');
 
   const tooltip = createReplyThreadTooltip(replyData);
-  document.body.appendChild(tooltip);
+  replyContainer.appendChild(tooltip);
 
   replyContainer.addEventListener('mouseenter', () => {
     tooltip.style.display = 'block';
+
+    setTimeout(() => {
+      const chatContainer = replyContainer.closest('.chat-list, .video-chat');
+      if (chatContainer) {
+        const chatRect = chatContainer.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+
+        if (tooltipRect.right > chatRect.right - 10) {
+          tooltip.style.left = 'auto';
+          tooltip.style.right = '0';
+        }
+      }
+    }, 0);
   });
 
   replyContainer.addEventListener('mouseleave', () => {
     tooltip.style.display = 'none';
-  });
-
-  replyContainer.addEventListener('mousemove', (e) => {
-    const rect = tooltip.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    let left = e.clientX + 10;
-    let top = e.clientY - rect.height - 10;
-
-    if (left + rect.width > viewportWidth - 10) {
-      left = e.clientX - rect.width - 10;
-    }
-
-    if (top < 10) {
-      top = e.clientY + 20;
-    }
-
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${top}px`;
   });
 }
 
@@ -380,7 +373,7 @@ class ChatHighlightBlacklistKeywordsModule {
             if (messageContainer.style.display === 'none') {
               const replyContainer = messageContainer.querySelector('.bttv-reply-thread-wrapper');
               if (replyContainer) {
-                const tooltip = document.querySelector('.bttv-reply-thread-tooltip');
+                const tooltip = replyContainer.querySelector('.bttv-reply-thread-tooltip');
                 if (tooltip) {
                   tooltip.remove();
                 }
