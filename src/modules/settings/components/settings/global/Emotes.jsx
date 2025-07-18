@@ -181,6 +181,14 @@ function EmotesModule() {
                   {formatMessage({defaultMessage: 'Enables unlisted emotes from the third party 7TV extension'})}
                 </p>
               </Checkbox>
+              <Checkbox
+                key="seventvCosmetics"
+                value={EmoteTypeFlags.SEVENTV_COSMETICS}>
+                <p className={styles.heading}>{formatMessage({defaultMessage: '7TV Cosmetics'})}</p>
+                <p className={styles.settingDescription}>
+                  {formatMessage({defaultMessage: 'Enables cosmetics (paints) from the third party 7TV extension'})}
+                </p>
+              </Checkbox>
             </>
           ) : null}
         </CheckboxGroup>

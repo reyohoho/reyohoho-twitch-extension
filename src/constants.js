@@ -58,6 +58,7 @@ export const SettingIds = {
   PICTURE_IN_PICTURE: 'pictureInPicture',
   RESTART_PLAYER: 'restartPlayer',
   SEVENTV_ZERO_WIDTH: 'seventvZeroWidth',
+  SEVENTV_COSMETICS: 'seventvCosmetics',
   EMOTE_SIZE: 'emoteSize',
   GIANT_EMOTES: 'giantEmotes',
   PASTA_COMMAND: 'pastaCommand',
@@ -105,6 +106,7 @@ export const EmoteTypeFlags = {
   SEVENTV_EMOTES: 1 << 4,
   EMOTE_MODIFIERS: 1 << 5,
   SEVENTV_UNLISTED_EMOTES: 1 << 6,
+  SEVENTV_COSMETICS: 1 << 7,
 };
 
 export const ChatFlags = {
@@ -285,6 +287,7 @@ export const SettingDefaultValues = {
   [SettingIds.PICTURE_IN_PICTURE]: true,
   [SettingIds.RESTART_PLAYER]: true,
   [SettingIds.SEVENTV_ZERO_WIDTH]: true,
+  [SettingIds.SEVENTV_COSMETICS]: true,
   [SettingIds.EMOTE_SIZE]: 128,
   [SettingIds.GIANT_EMOTES]: true,
   [SettingIds.CHAT_SWIPE]: true,

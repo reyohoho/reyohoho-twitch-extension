@@ -16,6 +16,7 @@ import emotes from '../emotes/index.js';
 import splitChat from '../split_chat/index.js';
 import subscribers from '../subscribers/index.js';
 import reyohohoBadges from '../reyohoho_badges/index.js';
+import seventvCosmetics from '../seventv/cosmetics.js';
 import {shouldMakeGiantEmote, extractRewardTitle} from '../../utils/giant-emotes.js';
 
 const STEAM_LOBBY_JOIN_REGEX = /^steam:\/\/joinlobby\/\d+\/\d+\/\d+$/;
@@ -583,6 +584,10 @@ class ChatModule {
     const nickname = nicknames.get(user.name);
     if (nickname) {
       fromNode.innerText = nickname;
+    }
+
+    if (fromNode && seventvCosmetics.isEnabled()) {
+      seventvCosmetics.applyUserPaint(fromNode, user.id);
     }
 
     if (
