@@ -79,7 +79,7 @@ class GlobalEmotes extends AbstractEmotes {
       })
       .catch((error) => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading FrankerFaceZ global emotes'}), true);
-        console.error('Error loading FrankerFaceZ global emotes:', error);
+        console.error('BTTV: Error loading FrankerFaceZ global emotes:', error);
       });
   }
 }

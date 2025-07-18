@@ -66,7 +66,7 @@ class GlobalEmotes extends AbstractEmotes {
       })
       .catch((error) => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading BetterTTV global emotes'}), true);
-        console.error('Error loading BetterTTV global emotes:', error);
+        console.error('BTTV: Error loading BetterTTV global emotes:', error);
       });
   }
 }

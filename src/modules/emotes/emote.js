@@ -121,7 +121,7 @@ export default class Emote {
 
         const pageUrl = getEmotePageUrl(this);
         if (pageUrl) {
-          console.log('Opening emote page:', pageUrl);
+          console.log('BTTV: Opening emote page:', pageUrl);
           const originalOpacity = image.style.opacity;
           image.style.opacity = '0.5';
 

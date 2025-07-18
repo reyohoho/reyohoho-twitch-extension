@@ -39,7 +39,7 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 404) {
-            console.log('7TV global emotes not found');
+            console.log('BTTV: 7TV global emotes not found');
             return null;
           }
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -79,7 +79,7 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
       })
       .catch((error) => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading 7TV global emotes'}), true);
-        console.error('Error loading 7TV global emotes:', error);
+        console.error('BTTV: Error loading 7TV global emotes:', error);
       });
   }
 }

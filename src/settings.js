@@ -47,7 +47,7 @@ class Settings extends SafeEventEmitter {
       const {initializeProxyCheck} = await import('./utils/proxy.js');
       await initializeProxyCheck();
     } catch (error) {
-      console.warn('Failed to handle proxy setting change:', error);
+      console.warn('BTTV: Failed to handle proxy setting change:', error);
     }
   }
 

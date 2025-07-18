@@ -95,9 +95,9 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     } else if (op === 0) {
       this.handleDispatchMessage(d);
     } else if (op === 5) {
-      console.log('7TV WebSocket ACK:', d);
+      console.log('BTTV: 7TV WebSocket ACK:', d);
     } else if (op === 6) {
-      console.error('7TV WebSocket error:', d);
+      console.error('BTTV: 7TV WebSocket error:', d);
     }
   }
 
@@ -113,7 +113,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
         },
       };
       websocket.send(JSON.stringify(subscribeMessage));
-      console.log('Subscribed to 7TV emote set:', emoteSetId);
+      console.log('BTTV: Subscribed to 7TV emote set:', emoteSetId);
     }
   }
 
@@ -248,7 +248,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       .then((response) => {
         if (!response.ok) {
           if (response.status === 404) {
-            console.log(`7TV channel emotes not found for channel: ${currentChannel.id}`);
+            console.log(`BTTV: 7TV channel emotes not found for channel: ${currentChannel.id}`);
             return null;
           }
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -291,7 +291,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       })
       .catch((error) => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading 7TV channel emotes'}), true);
-        console.error('Error loading 7TV channel emotes:', error);
+        console.error('BTTV: Error loading 7TV channel emotes:', error);
       });
   }
 }

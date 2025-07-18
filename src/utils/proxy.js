@@ -57,7 +57,7 @@ export async function initializeProxyCheck(force = false) {
           })
         );
       } catch (error) {
-        console.warn('Failed to send proxy availability message:', error);
+        console.warn('BTTV: Failed to send proxy availability message:', error);
       }
     }
   })();

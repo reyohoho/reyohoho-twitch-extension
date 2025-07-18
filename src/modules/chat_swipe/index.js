@@ -9,14 +9,14 @@ import './style.css';
 
 class ChatSwipeModule {
   constructor() {
-    console.log('BetterTTV ChatSwipe: Module initializing...');
+    console.log('BTTV: ChatSwipe: Module initializing...');
 
     this.processedElements = new WeakSet();
 
     watcher.on('chat.message', (element, messageObj) => this.onChatMessage(element, messageObj));
 
     settings.on(`changed.${SettingIds.CHAT_SWIPE}`, () => {
-      console.log('BetterTTV ChatSwipe: Setting changed, clearing processed elements');
+      console.log('BTTV: ChatSwipe: Setting changed, clearing processed elements');
       this.processedElements = new WeakSet();
 
       const swipeElements = document.querySelectorAll('.bttv-swipe-slider');
@@ -25,7 +25,7 @@ class ChatSwipeModule {
       });
     });
 
-    console.log('BetterTTV ChatSwipe: Module initialized successfully');
+    console.log('BTTV: ChatSwipe: Module initialized successfully');
   }
 
   canModerate(messageObj) {
@@ -33,13 +33,13 @@ class ChatSwipeModule {
     const isOwner = twitch.getCurrentUserIsOwner();
 
     if (!isModerator && !isOwner) {
-      console.debug('BetterTTV ChatSwipe: User is not moderator or owner');
+      console.debug('BTTV: ChatSwipe: User is not moderator or owner');
       return false;
     }
 
     const user = formatChatUser(messageObj);
     if (!user) {
-      console.debug('BetterTTV ChatSwipe: Could not format chat user');
+      console.debug('BTTV: ChatSwipe: Could not format chat user');
       return false;
     }
 
@@ -49,11 +49,11 @@ class ChatSwipeModule {
     }
 
     if (user.mod || messageObj.badges?.broadcaster || messageObj.badges?.moderator) {
-      console.debug('BetterTTV ChatSwipe: Target user is mod/broadcaster, cannot moderate');
+      console.debug('BTTV: ChatSwipe: Target user is mod/broadcaster, cannot moderate');
       return false;
     }
 
-    console.debug('BetterTTV ChatSwipe: Can moderate user:', user.name);
+    console.debug('BTTV: ChatSwipe: Can moderate user:', user.name);
     return true;
   }
 
@@ -69,7 +69,7 @@ class ChatSwipeModule {
       return;
     }
 
-    console.log('BetterTTV ChatSwipe: Adding swipe handlers for user:', user.name);
+    console.log('BTTV: ChatSwipe: Adding swipe handlers for user:', user.name);
 
     this.processedElements.add(element);
 
@@ -203,7 +203,7 @@ class ChatSwipeModule {
       grabbableOuter.style.cursor = 'grabbing';
       grabbableOuter.setPointerCapture?.(e.pointerId);
 
-      console.log('BetterTTV ChatSwipe: Started dragging');
+      console.log('BTTV: ChatSwipe: Started dragging');
     };
 
     const handleMove = (e) => {
@@ -224,7 +224,7 @@ class ChatSwipeModule {
       grabbableOuter.releasePointerCapture?.(e.pointerId);
 
       const deltaX = currentX - startX;
-      console.log('BetterTTV ChatSwipe: Ended dragging, deltaX:', deltaX);
+      console.log('BTTV: ChatSwipe: Ended dragging, deltaX:', deltaX);
 
       if (Math.abs(deltaX) > 40) {
         this.executeSwipeCommand(deltaX, user, messageObj);
@@ -273,34 +273,34 @@ class ChatSwipeModule {
       if (deltaX < -40) {
         // Unban
         const unbanCommand = `/unban ${user.name}`;
-        console.log('BetterTTV ChatSwipe: Executing unban:', unbanCommand);
+        console.log('BTTV: ChatSwipe: Executing unban:', unbanCommand);
         twitch.sendChatMessage(unbanCommand);
       } else if (deltaX > 40 && deltaX < 80) {
         // Delete
         if (messageObj.id) {
           const deleteCommand = `/delete ${messageObj.id}`;
-          console.log('BetterTTV ChatSwipe: Executing delete:', deleteCommand);
+          console.log('BTTV: ChatSwipe: Executing delete:', deleteCommand);
           twitch.sendChatMessage(deleteCommand);
         } else {
           const purgeCommand = `/timeout ${user.name} 1`;
-          console.log('BetterTTV ChatSwipe: Executing purge:', purgeCommand);
+          console.log('BTTV: ChatSwipe: Executing purge:', purgeCommand);
           twitch.sendChatMessage(purgeCommand);
         }
       } else if (deltaX >= 80) {
         // Timeout or Ban
         if (deltaX >= 300) {
           const banCommand = `/ban ${user.name}`;
-          console.log('BetterTTV ChatSwipe: Executing ban:', banCommand);
+          console.log('BTTV: ChatSwipe: Executing ban:', banCommand);
           twitch.sendChatMessage(banCommand);
         } else {
           const timeoutSeconds = this.calculateTimeoutSeconds(deltaX);
           const timeoutCommand = `/timeout ${user.name} ${timeoutSeconds}`;
-          console.log('BetterTTV ChatSwipe: Executing timeout:', timeoutCommand);
+          console.log('BTTV: ChatSwipe: Executing timeout:', timeoutCommand);
           twitch.sendChatMessage(timeoutCommand);
         }
       }
     } catch (error) {
-      console.error('BetterTTV ChatSwipe: Error executing command:', error);
+      console.error('BTTV: ChatSwipe: Error executing command:', error);
     }
   }
 
@@ -352,24 +352,24 @@ class ChatSwipeModule {
 
   onChatMessage(element, messageObj) {
     if (!element || !messageObj) {
-      console.debug('BetterTTV ChatSwipe: Missing element or messageObj');
+      console.debug('BTTV: ChatSwipe: Missing element or messageObj');
       return;
     }
 
     const swipeEnabled = settings.get(SettingIds.CHAT_SWIPE, true);
 
     if (!swipeEnabled) {
-      console.debug('BetterTTV ChatSwipe: Swipe disabled in settings');
+      console.debug('BTTV: ChatSwipe: Swipe disabled in settings');
       return;
     }
 
-    console.debug('BetterTTV ChatSwipe: Processing message from', messageObj.user?.userLogin);
+    console.debug('BTTV: ChatSwipe: Processing message from', messageObj.user?.userLogin);
 
     setTimeout(() => {
       try {
         this.addSwipeHandlers(element, messageObj);
       } catch (error) {
-        console.error('BetterTTV ChatSwipe: Error adding swipe handlers:', error);
+        console.error('BTTV: ChatSwipe: Error adding swipe handlers:', error);
       }
     }, 100);
   }

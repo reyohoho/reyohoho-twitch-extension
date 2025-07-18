@@ -43,7 +43,7 @@ export default function Emote({emote, className, locked, sizes = DEFAULT_SIZES, 
 
       const pageUrl = getEmotePageUrl(emote);
       if (pageUrl) {
-        console.log('Opening emote page:', pageUrl);
+        console.log('BTTV: Opening emote page:', pageUrl);
         const originalOpacity = e.target.style.opacity;
         e.target.style.opacity = '0.5';
 

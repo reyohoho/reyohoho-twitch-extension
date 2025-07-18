@@ -63,7 +63,7 @@ class HideChatEventsModule {
   }
 
   handleMessage({message, preventDefault}) {
-    console.log('Handling chat event:', message);
+    console.log('BTTV: Handling chat event:', message);
     switch (message.type) {
       case twitch.getTMIActionTypes()?.FIRST_MESSAGE_HIGHLIGHT:
         if (!hasFlag(settings.get(SettingIds.CHAT), ChatFlags.VIEWER_GREETING)) {
@@ -134,7 +134,7 @@ class HideChatEventsModule {
           reason: reason ? ` (${reason})` : '',
         }
       );
-    }else if (message.moderationType === 2) {
+    } else if (message.moderationType === 2) {
       adminMessage = formatMessage(
         {
           defaultMessage: 'Message from {userLogin} was deleted',

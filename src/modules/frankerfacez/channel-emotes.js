@@ -81,7 +81,7 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
       })
       .catch((error) => {
         twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading FrankerFaceZ channel emotes'}), true);
-        console.error('Error loading FrankerFaceZ channel emotes:', error);
+        console.error('BTTV: Error loading FrankerFaceZ channel emotes:', error);
       });
   }
 }
