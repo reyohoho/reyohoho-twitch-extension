@@ -12,6 +12,7 @@ class SevenTVCosmetics {
     this.userPaintCache = new Map();
     this.cacheTimeout = 5 * 60 * 1000; // 5 min
     this.stylesInjected = false;
+    this.pendingRequests = new Set();
 
     settings.on(`changed.${SettingIds.EMOTES}`, () => {
       if (!this.isEnabled()) {
@@ -341,21 +342,41 @@ class SevenTVCosmetics {
   applyPaintToElement(element, paint, className = 'seventv-paint') {
     if (!element || !paint) return;
 
-    element.classList.add(className);
-
     const uniqueClassName = `${className}-${paint.id}`;
+    if (element.classList.contains(uniqueClassName)) {
+      return;
+    }
+
+    element.classList.add(className);
     element.classList.add(uniqueClassName);
 
-    if (!document.querySelector(`style[data-paint-id="${paint.id}"]`)) {
+    if (!this.paintCache.has(paint.id)) {
       const style = document.createElement('style');
       style.setAttribute('data-paint-id', paint.id);
       style.textContent = this.generatePaintCSS(paint, uniqueClassName);
       document.head.appendChild(style);
+      this.paintCache.set(paint.id, true);
     }
   }
 
   async applyUserPaint(element, userId) {
     if (!this.isEnabled() || !element || !userId) return;
+
+    const cacheKey = `${userId}:TWITCH`;
+    const cached = this.userPaintCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
+      if (cached.data) {
+        this.applyPaintToElement(element, cached.data);
+      }
+      return;
+    }
+
+    if (this.pendingRequests.has(userId)) {
+      setTimeout(() => this.applyUserPaint(element, userId), 50);
+      return;
+    }
+
+    this.pendingRequests.add(userId);
 
     try {
       const paint = await this.fetchUserPaint(userId);
@@ -364,12 +385,15 @@ class SevenTVCosmetics {
       }
     } catch (error) {
       debug.error('Failed to apply user paint:', error);
+    } finally {
+      this.pendingRequests.delete(userId);
     }
   }
 
   clearCache() {
     this.paintCache.clear();
     this.userPaintCache.clear();
+    this.pendingRequests.clear();
   }
 
   removePaintStyles() {
