@@ -69,7 +69,6 @@ class SevenTVCosmetics {
 
       .chat-line__username .seventv-paint {
         display: inline;
-        font-weight: inherit;
         font-size: inherit;
         line-height: inherit;
       }
@@ -77,14 +76,12 @@ class SevenTVCosmetics {
       .chat-author__display-name .seventv-paint,
       .chat-author__intl-login .seventv-paint {
         display: inline;
-        font-weight: inherit;
         font-size: inherit;
         line-height: inherit;
       }
 
       .seventv-chat-user-username .seventv-paint {
         display: inline;
-        font-weight: inherit;
         font-size: inherit;
         line-height: inherit;
       }
