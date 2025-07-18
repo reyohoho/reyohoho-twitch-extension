@@ -264,7 +264,8 @@ class SevenTVCosmetics {
         break;
       }
       case 'URL': {
-        result = `url(${paint.image_url || ''})`;
+        const imageUrl = paint.image_url ? `${getProxyUrl()}${paint.image_url}` : '';
+        result = `url(${imageUrl})`;
         break;
       }
       default: {
