@@ -28,6 +28,8 @@ class HideChatEventsModule {
       }
     } else if (moderationType === 0) {
       displayText = 'Permanently Banned';
+    } else if (moderationType === 2) {
+      displayText = 'Deleted';
     } else {
       displayText = adminMessage;
     }
@@ -61,6 +63,7 @@ class HideChatEventsModule {
   }
 
   handleMessage({message, preventDefault}) {
+    console.log('Handling chat event:', message);
     switch (message.type) {
       case twitch.getTMIActionTypes()?.FIRST_MESSAGE_HIGHLIGHT:
         if (!hasFlag(settings.get(SettingIds.CHAT), ChatFlags.VIEWER_GREETING)) {
@@ -125,6 +128,17 @@ class HideChatEventsModule {
         {
           defaultMessage: '{userLogin} was permanently banned {reason}',
           id: 'modBan',
+        },
+        {
+          userLogin,
+          reason: reason ? ` (${reason})` : '',
+        }
+      );
+    }else if (message.moderationType === 2) {
+      adminMessage = formatMessage(
+        {
+          defaultMessage: 'Message from {userLogin} was deleted',
+          id: 'modDelete',
         },
         {
           userLogin,
