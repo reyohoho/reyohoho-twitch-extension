@@ -10,7 +10,7 @@ class SevenTVCosmetics {
   constructor() {
     this.paintCache = new Map();
     this.userPaintCache = new Map();
-    this.cacheTimeout = 5 * 60 * 1000; // 5 min
+    this.cacheTimeout = 15 * 60 * 1000; // 15 min
     this.stylesInjected = false;
     this.pendingRequests = new Set();
 
