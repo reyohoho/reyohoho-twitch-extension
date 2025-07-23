@@ -47,7 +47,7 @@ async function sendPresence({self = false} = {}) {
   if (!userId) return;
 
   const now = Date.now();
-  if (!self && lastPresenceAt && now - lastPresenceAt < 10000) return;
+  if (!self && lastPresenceAt && now - lastPresenceAt < 120000) return;
   lastPresenceAt = now;
 
   const body = {
@@ -75,7 +75,7 @@ async function sendPresence({self = false} = {}) {
 function startPresenceLoop() {
   if (presenceInterval) clearInterval(presenceInterval);
   sendPresence({self: true});
-  presenceInterval = setInterval(() => sendPresence({self: false}), 10000);
+  presenceInterval = setInterval(() => sendPresence({self: false}), 120000);
 }
 
 function stopPresenceLoop() {
