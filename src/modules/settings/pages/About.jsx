@@ -1,19 +1,19 @@
 import * as faDownload from '@fortawesome/free-solid-svg-icons/faDownload';
 import * as faRedo from '@fortawesome/free-solid-svg-icons/faRedo';
 import * as faUpload from '@fortawesome/free-solid-svg-icons/faUpload';
-import {Icon} from '@rsuite/icons';
+import { Icon } from '@rsuite/icons';
 import classNames from 'classnames';
-import {saveAs} from 'file-saver';
-import React, {useRef, useState} from 'react';
+import { saveAs } from 'file-saver';
+import React, { useRef, useState } from 'react';
 import IconButton from 'rsuite/IconButton';
 import Panel from 'rsuite/Panel';
 import PanelGroup from 'rsuite/PanelGroup';
 import FontAwesomeSvgIcon from '../../../common/components/FontAwesomeSvgIcon.jsx';
-import {EXT_VER, REYOHOHO_VER} from '../../../constants.js';
+import { EXT_VER, REYOHOHO_VER } from '../../../constants.js';
 import formatMessage from '../../../i18n/index.js';
-import {SETTINGS_STORAGE_KEY} from '../../../settings.js';
+import { SETTINGS_STORAGE_KEY } from '../../../settings.js';
 import storage from '../../../storage.js';
-import {loadLegacySettings} from '../../../utils/legacy-settings.js';
+import { loadLegacySettings } from '../../../utils/legacy-settings.js';
 import CloseButton from '../components/CloseButton.jsx';
 import styles from '../styles/about.module.css';
 import header from '../styles/header.module.css';
@@ -31,7 +31,7 @@ function loadJSON(string) {
 function getDataURLFromUpload(input) {
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = ({target}) => resolve(target.result);
+    reader.onload = ({ target }) => resolve(target.result);
     const file = input.files[0];
     if (!file) {
       resolve(null);
@@ -43,10 +43,10 @@ function getDataURLFromUpload(input) {
 
 function backupFile() {
   const rv = storage.getStorage();
-  saveAs(new Blob([JSON.stringify(rv)], {type: 'application/json;charset=utf-8'}), 'bttv_settings.backup');
+  saveAs(new Blob([JSON.stringify(rv)], { type: 'application/json;charset=utf-8' }), 'bttv_settings.backup');
 }
 
-function About({onClose}) {
+function About({ onClose }) {
   const fileImportRef = useRef(null);
   const [importing, setImporting] = useState(false);
   const [resetting, setResetting] = useState(false);
@@ -85,12 +85,12 @@ function About({onClose}) {
     <>
       <div className={header.content}>
         <PanelGroup>
-          <Panel header={formatMessage({defaultMessage: 'ReYohoho'})}>
+          <Panel header={formatMessage({ defaultMessage: 'ReYohoho' })}>
             <div className={styles.socials}>
               <ul>
                 <li>
                   <p className={classNames(header.heading, header.upper)}>
-                    {formatMessage({defaultMessage: 'Version'})}
+                    {formatMessage({ defaultMessage: 'Version' })}
                   </p>
                 </li>
                 <li>
@@ -104,13 +104,17 @@ function About({onClose}) {
                   </p>
                 </li>
                 <li>
+                  <a target="_blank" rel="noreferrer" href="https://t.me/reyohoho_twitch_ext">
+                    Updates(Следите за обновлениями в TG!)
+                  </a>
+                </li>
+                <li>
                   <a target="_blank" rel="noreferrer" href="https://github.com/reyohoho/reyohoho-betterttv">
                     GitHub Repository
                   </a>
                 </li>
               </ul>
               <ul>
-
                 <li>
                   <a target="_blank" rel="noreferrer" href="https://boosty.to/sentryward/donate">
                     Boosty
@@ -146,7 +150,7 @@ function About({onClose}) {
               </ul>
             </div>
           </Panel>
-          <Panel header={formatMessage({defaultMessage: 'Settings'})}>
+          <Panel header={formatMessage({ defaultMessage: 'Settings' })}>
             <div className={styles.buttons}>
               <IconButton
                 className={styles.button}
@@ -154,9 +158,9 @@ function About({onClose}) {
                 onClick={backupFile}
                 disabled={resetting}
                 icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faDownload} />}>
-                {formatMessage({defaultMessage: 'Backup Settings'})}
+                {formatMessage({ defaultMessage: 'Backup Settings' })}
               </IconButton>
-              <input type="file" hidden ref={fileImportRef} onChange={({target}) => importFile(target)} />
+              <input type="file" hidden ref={fileImportRef} onChange={({ target }) => importFile(target)} />
               <IconButton
                 className={styles.button}
                 appearance="primary"
@@ -170,7 +174,7 @@ function About({onClose}) {
                 disabled={resetting}
                 loading={importing}
                 icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faUpload} />}>
-                {formatMessage({defaultMessage: 'Import Settings'})}
+                {formatMessage({ defaultMessage: 'Import Settings' })}
               </IconButton>
               <IconButton
                 icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faRedo} />}
@@ -179,13 +183,13 @@ function About({onClose}) {
                 disabled={importing}
                 color="red"
                 onClick={() => resetDefault()}>
-                {formatMessage({defaultMessage: 'Reset to Default'})}
+                {formatMessage({ defaultMessage: 'Reset to Default' })}
               </IconButton>
             </div>
           </Panel>
           <Panel>
             <p className={header.description}>
-              {formatMessage({defaultMessage: 'Version {version}'}, {version: EXT_VER})}
+              {formatMessage({ defaultMessage: 'Version {version}' }, { version: EXT_VER })}
             </p>
           </Panel>
         </PanelGroup>
