@@ -1,4 +1,5 @@
 :global {
+
   .emote-autocomplete-provider__image[srcset*='/__BTTV__'],
   .chat-line__message--emote[srcset*='/__BTTV__'] {
     display: none;
@@ -6,8 +7,8 @@
 
   /* handle wide emotes like FireSpeed */
   .emote-autocomplete-provider__image {
-    height: 2.8rem;
-    width: 2.8rem;
+    height: 5.6rem;
+    width: 5.6rem;
     object-fit: contain;
   }
 }
