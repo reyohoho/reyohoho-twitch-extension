@@ -217,7 +217,7 @@ export const SettingDefaultValues = {
   [SettingIds.AUTO_JOIN_RAIDS]: true,
   [SettingIds.AUTO_MOD_VIEW]: false,
   [SettingIds.SPLIT_CHAT]: false,
-  [SettingIds.DELETED_MESSAGES]: DeletedMessageTypes.DEFAULT,
+  [SettingIds.DELETED_MESSAGES]: DeletedMessageTypes.HIGHLIGHT,
   [SettingIds.REVERSE_CHAT_DIRECTION]: false,
   [SettingIds.PINNED_HIGHLIGHTS]: false,
   [SettingIds.MAX_PINNED_HIGHLIGHTS]: 10,
@@ -253,7 +253,9 @@ export const SettingDefaultValues = {
     EmoteTypeFlags.ANIMATED_EMOTES |
     EmoteTypeFlags.FFZ_EMOTES |
     EmoteTypeFlags.EMOTE_MODIFIERS |
-    EmoteTypeFlags.SEVENTV_EMOTES,
+    EmoteTypeFlags.SEVENTV_EMOTES |
+    EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES |
+    EmoteTypeFlags.SEVENTV_COSMETICS,
     0,
   ],
   [SettingIds.CHAT]: [
