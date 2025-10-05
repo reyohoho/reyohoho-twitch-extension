@@ -107,6 +107,12 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       console.log('BTTV: 7TV WebSocket ACK:', d);
     } else if (op === 6) {
       console.error('BTTV: 7TV WebSocket error:', d);
+    } else if (op === 7) {
+      console.log('BTTV: 7TV WebSocket reconnect requested:', d);
+      if (websocket) {
+        websocket.close();
+      }
+      this.scheduleReconnect(emoteSetId);
     }
   }
 
