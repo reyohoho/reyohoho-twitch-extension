@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
-import {DateTime} from 'luxon';
+import { DateTime } from 'luxon';
 import formatMessage from '../../i18n/index.js';
-import {getCurrentChannel} from '../../utils/channel.js';
+import { getCurrentChannel } from '../../utils/channel.js';
 import keyCodes from '../../utils/keycodes.js';
 import twitch from '../../utils/twitch.js';
-import {getCurrentUser} from '../../utils/user.js';
+import { getCurrentUser } from '../../utils/user.js';
 import nicknames from '../chat_nicknames/index.js';
 
 const Commands = {
@@ -38,7 +38,7 @@ function createSvgIcon(svgProps, pathProps) {
 const Icons = {
   EYE: () =>
     createSvgIcon(
-      {width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white'},
+      { width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white' },
       {
         'clip-rule': 'evenodd',
         'fill-rule': 'evenodd',
@@ -47,7 +47,7 @@ const Icons = {
     ),
   HEART: () =>
     createSvgIcon(
-      {width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white'},
+      { width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white' },
       {
         'clip-rule': 'evenodd',
         'fill-rule': 'evenodd',
@@ -56,7 +56,7 @@ const Icons = {
     ),
   PENCIL: () =>
     createSvgIcon(
-      {width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white'},
+      { width: '16px', height: '16px', viewBox: '0 0 16 16', x: '0px', y: '0px', fill: 'white' },
       {
         'clip-rule': 'evenodd',
         'fill-rule': 'evenodd',
@@ -65,14 +65,14 @@ const Icons = {
     ),
   BIRTHDAY_CAKE: () =>
     createSvgIcon(
-      {width: '16px', height: '16px', viewBox: '0 0 1792 1792', fill: 'white'},
+      { width: '16px', height: '16px', viewBox: '0 0 1792 1792', fill: 'white' },
       {
         d: 'M1792 1408v384h-1792v-384q45 0 85-14t59-27.5 47-37.5q30-27 51.5-38t56.5-11q24 0 44 7t31 15 33 27q29 25 47 38t58 27 86 14q45 0 85-14.5t58-27 48-37.5q21-19 32.5-27t31-15 43.5-7q35 0 56.5 11t51.5 38q28 24 47 37.5t59 27.5 85 14 85-14 59-27.5 47-37.5q30-27 51.5-38t56.5-11q34 0 55.5 11t51.5 38q28 24 47 37.5t59 27.5 85 14zm0-320v192q-24 0-44-7t-31-15-33-27q-29-25-47-38t-58-27-85-14q-46 0-86 14t-58 27-47 38q-22 19-33 27t-31 15-44 7q-35 0-56.5-11t-51.5-38q-29-25-47-38t-58-27-86-14q-45 0-85 14.5t-58 27-48 37.5q-21 19-32.5 27t-31 15-43.5 7q-35 0-56.5-11t-51.5-38q-28-24-47-37.5t-59-27.5-85-14q-46 0-86 14t-58 27-47 38q-30 27-51.5 38t-56.5 11v-192q0-80 56-136t136-56h64v-448h256v448h256v-448h256v448h256v-448h256v448h64q80 0 136 56t56 136zm-1280-864q0 77-36 118.5t-92 41.5q-53 0-90.5-37.5t-37.5-90.5q0-29 9.5-51t23.5-34 31-28 31-31.5 23.5-44.5 9.5-67q38 0 83 74t45 150zm512 0q0 77-36 118.5t-92 41.5q-53 0-90.5-37.5t-37.5-90.5q0-29 9.5-51t23.5-34 31-28 31-31.5 23.5-44.5 9.5-67q38 0 83 74t45 150zm512 0q0 77-36 118.5t-92 41.5q-53 0-90.5-37.5t-37.5-90.5q0-29 9.5-51t23.5-34 31-28 31-31.5 23.5-44.5 9.5-67q38 0 83 74t45 150z',
       }
     ),
   GIFT: () =>
     createSvgIcon(
-      {width: '16px', height: '16px', viewBox: '0 0 20 20', x: '0px', y: '0px'},
+      { width: '16px', height: '16px', viewBox: '0 0 20 20', x: '0px', y: '0px' },
       {
         'clip-rule': 'evenodd',
         'fill-rule': 'evenodd',
@@ -151,12 +151,12 @@ function createUserStats(follows, createdAt, giftedBy, giftedAt) {
   container.classList.add('bttv-moderator-card-user-stats');
 
   container.appendChild(
-    createUserStatsItem(Icons.HEART(), formatMessage({defaultMessage: 'Followers'}), follows.toLocaleString())
+    createUserStatsItem(Icons.HEART(), formatMessage({ defaultMessage: 'Followers' }), follows.toLocaleString())
   );
   container.appendChild(
     createUserStatsItem(
       Icons.BIRTHDAY_CAKE(),
-      formatMessage({defaultMessage: 'Account Creation Date'}),
+      formatMessage({ defaultMessage: 'Account Creation Date' }),
       DateTime.fromJSDate(new Date(createdAt)).toFormat('LLL dd, yyyy')
     )
   );
@@ -164,7 +164,7 @@ function createUserStats(follows, createdAt, giftedBy, giftedAt) {
     container.appendChild(
       createUserStatsItem(
         Icons.GIFT(),
-        formatMessage({defaultMessage: 'Subscription Gifted By'}),
+        formatMessage({ defaultMessage: 'Subscription Gifted By' }),
         giftedBy,
         DateTime.fromJSDate(new Date(giftedAt)).toFormat('LLL dd, yyyy')
       )
@@ -183,7 +183,7 @@ function createUserMessages(messages) {
   container.appendChild(header);
 
   const headerText = document.createElement('span');
-  headerText.innerText = formatMessage({defaultMessage: 'Chat Messages'});
+  headerText.innerText = formatMessage({ defaultMessage: 'Chat Messages' });
   header.appendChild(headerText);
 
   const headerCollapse = document.createElement('div');
@@ -192,8 +192,57 @@ function createUserMessages(messages) {
 
   const messageList = document.createElement('div');
   messageList.classList.add('message-list');
-  for (const {element} of messages) {
-    messageList.appendChild(element.cloneNode(true));
+  for (const { element } of messages) {
+    const clonedElement = element.cloneNode(true);
+
+    // Re-attach copy button event listeners
+    const copyBtn = clonedElement.querySelector('.bttv-copy-message-button');
+    if (copyBtn) {
+      const originalText = clonedElement.getAttribute('data-original-text') || '';
+      copyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!originalText) return;
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(originalText).catch(() => {
+            // Fallback method
+            const textArea = document.createElement('textarea');
+            textArea.value = originalText;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            textArea.style.opacity = '0';
+            textArea.style.pointerEvents = 'none';
+            document.body.appendChild(textArea);
+            try {
+              textArea.focus();
+              textArea.select();
+              document.execCommand('copy');
+            } catch (err) { }
+            document.body.removeChild(textArea);
+          });
+        } else {
+          // Fallback method
+          const textArea = document.createElement('textarea');
+          textArea.value = originalText;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          textArea.style.opacity = '0';
+          textArea.style.pointerEvents = 'none';
+          document.body.appendChild(textArea);
+          try {
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+          } catch (err) { }
+          document.body.removeChild(textArea);
+        }
+      });
+    }
+
+    messageList.appendChild(clonedElement);
   }
   container.appendChild(messageList);
 
@@ -277,11 +326,11 @@ class ModeratorCard {
     `;
 
     twitch
-      .graphqlQuery(query, {userId: this.user.id, channelId: getCurrentChannel().id})
+      .graphqlQuery(query, { userId: this.user.id, channelId: getCurrentChannel().id })
       .then(
         ({
           data: {
-            user: {followers, createdAt, relationship},
+            user: { followers, createdAt, relationship },
           },
         }) => {
           const giftedSubscriptionBenefit = relationship.subscriptionBenefit?.gift;
@@ -320,7 +369,7 @@ class ModeratorCard {
     builtInModeratorActions.appendChild(moderatorActions);
 
     moderatorActions.querySelectorAll('.bttv-moderator-card-action').forEach((node) => {
-      node.addEventListener('click', ({currentTarget, shiftKey}) => {
+      node.addEventListener('click', ({ currentTarget, shiftKey }) => {
         const command = currentTarget.getAttribute('data-command');
         const duration = currentTarget.getAttribute('data-duration');
         const commandText = `${command} ${this.user.name}${duration ? ` ${duration}` : ''}`;
