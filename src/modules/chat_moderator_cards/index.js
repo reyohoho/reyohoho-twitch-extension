@@ -1,5 +1,5 @@
-import {PlatformTypes} from '../../constants.js';
-import {loadModuleForPlatforms} from '../../utils/modules.js';
+import { PlatformTypes } from '../../constants.js';
+import { loadModuleForPlatforms } from '../../utils/modules.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import ModeratorCard from './moderator-card.js';
@@ -15,7 +15,23 @@ class ChatModeratorCardsModule {
 
   onOpen(element) {
     const targetUser = twitch.getChatModeratorCardUser(element);
-    if (!targetUser) return;
+    if (!targetUser) {
+      return;
+    }
+
+    if (!targetUser.id && targetUser.login) {
+      const allMessages = twitch.getChatMessages();
+      for (const msgData of allMessages) {
+        if (msgData.message && msgData.message.user && msgData.message.user.userLogin === targetUser.login) {
+          targetUser.id = msgData.message.user.userID;
+          break;
+        }
+      }
+
+      if (!targetUser.id) {
+        return;
+      }
+    }
 
     if (openModeratorCard && openModeratorCard.user.id === targetUser.id) {
       return;
@@ -27,7 +43,7 @@ class ChatModeratorCardsModule {
     let isModerator = false;
     const userMessages = twitch.getChatMessages(targetUser.id);
     if (userMessages.length) {
-      const {message} = userMessages[userMessages.length - 1];
+      const { message } = userMessages[userMessages.length - 1];
       isOwner = twitch.getUserIsOwnerFromTagsBadges(message.badges);
       isModerator = twitch.getUserIsModeratorFromTagsBadges(message.badges);
     }

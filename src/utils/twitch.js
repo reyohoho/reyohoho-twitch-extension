@@ -1,8 +1,8 @@
 import cookies from 'cookies-js';
 import gql from 'graphql-tag';
-import {getCurrentChannel, setCurrentChannel} from './channel.js';
+import { getCurrentChannel, setCurrentChannel } from './channel.js';
 import debug from './debug.js';
-import {getCurrentUser, setCurrentUser} from './user.js';
+import { getCurrentUser, setCurrentUser } from './user.js';
 
 const REACT_ROOT = '#root';
 const CHAT_CONTAINER = 'section[data-test-selector="chat-room-component-layout"]';
@@ -54,13 +54,13 @@ function searchReactParents(node, predicate, maxDepth = 15, depth = 0) {
     if (predicate(node)) {
       return node;
     }
-  } catch (_) {}
+  } catch (_) { }
 
   if (!node || depth > maxDepth) {
     return null;
   }
 
-  const {return: parent} = node;
+  const { return: parent } = node;
   if (parent) {
     return searchReactParents(parent, predicate, maxDepth, depth + 1);
   }
@@ -73,13 +73,13 @@ function searchReactChildren(node, predicate, maxDepth = 15, depth = 0) {
     if (predicate(node)) {
       return node;
     }
-  } catch (_) {}
+  } catch (_) { }
 
   if (!node || depth > maxDepth) {
     return null;
   }
 
-  const {child, sibling} = node;
+  const { child, sibling } = node;
   if (child || sibling) {
     return (
       searchReactChildren(child, predicate, maxDepth, depth + 1) ||
@@ -96,14 +96,14 @@ const profilePicturesByUserId = {};
 const userCookie = cookies.get('twilight-user');
 if (userCookie) {
   try {
-    const {id, login, displayName} = JSON.parse(userCookie);
+    const { id, login, displayName } = JSON.parse(userCookie);
     setCurrentUser({
       provider: 'twitch',
       id: id.toString(),
       name: login,
       displayName,
     });
-  } catch (_) {}
+  } catch (_) { }
 }
 
 export const SelectionTypes = {
@@ -133,7 +133,7 @@ export default {
     }
 
     try {
-      const {data} = await this.graphqlQuery(USER_PROFILE_IMAGE_GQL_QUERY, {userId});
+      const { data } = await this.graphqlQuery(USER_PROFILE_IMAGE_GQL_QUERY, { userId });
       profilePicture = data.user.profileImageURL;
     } catch (e) {
       debug.log('failed to fetch twitch user profile', e);
@@ -160,7 +160,7 @@ export default {
 
     const currentChat = this.getCurrentChat();
     if (currentChat && currentChat.props && currentChat.props.channelID) {
-      const {channelID, channelLogin, channelDisplayName} = currentChat.props;
+      const { channelID, channelLogin, channelDisplayName } = currentChat.props;
       rv = {
         id: channelID.toString(),
         name: channelLogin,
@@ -171,7 +171,7 @@ export default {
     const currentVodChat = this.getCurrentVodChat();
     if (currentVodChat && currentVodChat.props && currentVodChat.props.data && currentVodChat.props.data.video) {
       const {
-        owner: {id, login},
+        owner: { id, login },
       } = currentVodChat.props.data.video;
       rv = {
         id: id.toString(),
@@ -181,7 +181,7 @@ export default {
     }
 
     if (rv != null) {
-      setCurrentChannel({provider: 'twitch', ...rv});
+      setCurrentChannel({ provider: 'twitch', ...rv });
     }
 
     return rv;
@@ -270,7 +270,7 @@ export default {
         (n) => n.pendingProps && n.pendingProps.value && n.pendingProps.value.store
       );
       store = node.pendingProps.value.store;
-    } catch (_) {}
+    } catch (_) { }
 
     return store;
   },
@@ -284,7 +284,7 @@ export default {
         (n) => n.pendingProps?.value?.client
       );
       client = node.pendingProps.value.client;
-    } catch (_) {}
+    } catch (_) { }
 
     return client;
   },
@@ -297,7 +297,7 @@ export default {
         (n) => n?.stateNode?.providers != null,
         30
       );
-    } catch (_) {}
+    } catch (_) { }
 
     return node;
   },
@@ -310,7 +310,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.data && n.stateNode.props.data.clip
       );
       broadcaster = node.stateNode.props.data.clip.broadcaster;
-    } catch (_) {}
+    } catch (_) { }
 
     return broadcaster;
   },
@@ -324,7 +324,7 @@ export default {
         30
       );
       player = node.memoizedProps.mediaPlayerInstance.core;
-    } catch (e) {}
+    } catch (e) { }
 
     return player;
   },
@@ -338,7 +338,7 @@ export default {
         30
       );
       chatContentComponent = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return chatContentComponent;
   },
@@ -354,7 +354,7 @@ export default {
         1000
       );
       chatClient = node.stateNode.client;
-    } catch (_) {}
+    } catch (_) { }
 
     return chatClient;
   },
@@ -363,7 +363,7 @@ export default {
     let socket;
     try {
       socket = this.getChatServiceClient().connection.ws;
-    } catch (_) {}
+    } catch (_) { }
     return socket;
   },
 
@@ -375,7 +375,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.messageBufferAPI
       );
       chatList = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return chatList;
   },
@@ -388,7 +388,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.scrollRef
       );
       chatScroller = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return chatScroller;
   },
@@ -402,7 +402,7 @@ export default {
         30
       );
       chatScroller = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return chatScroller;
   },
@@ -421,7 +421,7 @@ export default {
         30
       );
       currentEmotes = node.stateNode.props.emoteSetsData;
-    } catch (_) {}
+    } catch (_) { }
 
     return currentEmotes;
   },
@@ -434,7 +434,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.onSendMessage
       );
       currentChat = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return currentChat;
   },
@@ -447,7 +447,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.data && n.stateNode.props.data.video
       );
       currentVodChat = node.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return currentVodChat;
   },
@@ -494,7 +494,7 @@ export default {
         10
       );
       renderer = reactNode.stateNode;
-    } catch (_) {}
+    } catch (_) { }
 
     return renderer;
   },
@@ -504,7 +504,7 @@ export default {
     try {
       const reactNode = searchReactParents(getReactInstance(element), (n) => n?.pendingProps?.message != null, 5);
       msgObject = reactNode.pendingProps.message;
-    } catch (_) {}
+    } catch (_) { }
 
     return msgObject;
   },
@@ -517,7 +517,7 @@ export default {
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.message
       );
       msgObject = node.stateNode.props.message;
-    } catch (_) {}
+    } catch (_) { }
 
     return msgObject;
   },
@@ -534,31 +534,76 @@ export default {
       conversationThreadId =
         (node.stateNode && node.stateNode.props && node.stateNode.props.threadID) ||
         (node.memoizedProps && node.memoizedProps.whisperThreadID);
-    } catch (_) {}
+    } catch (_) { }
 
     return conversationThreadId || null;
   },
 
   getChatModeratorCardUser(element) {
     let user;
+    const reactInstance = getReactInstance(element);
+
+    // Try 1: searchReactChildren with both targetUserID and targetLogin
     try {
       const node = searchReactChildren(
-        getReactInstance(element),
+        reactInstance,
         (n) => n.stateNode && n.stateNode.props && n.stateNode.props.targetUserID && n.stateNode.props.targetLogin,
         20
       );
-      const {props} = node.stateNode;
+      const { props } = node.stateNode;
       user = {
         id: props.targetUserID,
         login: props.targetLogin,
         displayName: props.targetDisplayName || props.targetLogin,
       };
-    } catch (_) {}
+    } catch (_) { }
 
+    // Try 2: searchReactParents with both targetUserID and targetLogin
     if (!user) {
       try {
         const node = searchReactParents(
-          getReactInstance(element),
+          reactInstance,
+          (n) =>
+            n.stateNode &&
+            n.stateNode.props &&
+            n.stateNode.props.targetUserID &&
+            n.stateNode.props.targetLogin,
+          20
+        );
+        const { props } = node.stateNode;
+        user = {
+          id: props.targetUserID,
+          login: props.targetLogin,
+          displayName: props.targetDisplayName || props.targetLogin,
+        };
+      } catch (_) { }
+    }
+
+    // Try 3: searchReactParents with targetLogin only (userID will be found from chat messages)
+    if (!user) {
+      try {
+        const node = searchReactParents(
+          reactInstance,
+          (n) =>
+            n.stateNode &&
+            n.stateNode.props &&
+            n.stateNode.props.targetLogin,
+          20
+        );
+        const { props } = node.stateNode;
+        user = {
+          id: props.targetUserID, // may be undefined
+          login: props.targetLogin,
+          displayName: props.targetDisplayName || props.targetLogin,
+        };
+      } catch (_) { }
+    }
+
+    // Try 4: Fallback for channel owner (when clicking on broadcaster)
+    if (!user) {
+      try {
+        const node = searchReactParents(
+          reactInstance,
           (n) =>
             n.stateNode &&
             n.stateNode.props &&
@@ -568,13 +613,13 @@ export default {
             n.stateNode.props.channelLogin === n.stateNode.props.targetLogin,
           20
         );
-        const {props} = node.stateNode;
+        const { props } = node.stateNode;
         user = {
           id: props.channelID,
           login: props.channelLogin,
           displayName: props.channelDisplayName || props.channelLogin,
         };
-      } catch (_) {}
+      } catch (_) { }
     }
 
     return user;
@@ -617,7 +662,7 @@ export default {
         getReactInstance(element || document.querySelector(CHAT_INPUT)),
         (n) => n.memoizedProps && n.memoizedProps.componentType != null && n.memoizedProps.value != null
       );
-    } catch (_) {}
+    } catch (_) { }
 
     return chatInput;
   },
@@ -630,7 +675,7 @@ export default {
         // TODO: remove slateEditor check after legacy slate is gone
         (n) => n.memoizedProps?.value?.editor != null || n.stateNode?.state?.slateEditor != null
       );
-    } catch (_) {}
+    } catch (_) { }
 
     // TODO: remove slateEditor after legacy slate is gone
     return chatInputEditor?.memoizedProps?.value?.editor ?? chatInputEditor?.stateNode?.state?.slateEditor;
@@ -640,7 +685,7 @@ export default {
     const element = document.querySelector(CHAT_INPUT);
 
     // deprecated
-    const {value: currentValue} = element;
+    const { value: currentValue } = element;
     if (currentValue != null) {
       return currentValue;
     }
@@ -657,16 +702,16 @@ export default {
     const element = document.querySelector(CHAT_INPUT);
 
     // deprecated
-    const {value: currentValue, selectionStart} = element;
+    const { value: currentValue, selectionStart } = element;
     if (currentValue != null) {
       element.value = text;
-      element.dispatchEvent(new Event('input', {bubbles: true}));
+      element.dispatchEvent(new Event('input', { bubbles: true }));
 
       const instance = getReactInstance(element);
       if (instance) {
         const props = instance.memoizedProps;
         if (props && props.onChange) {
-          props.onChange({target: element});
+          props.onChange({ target: element });
         }
       }
 
@@ -709,7 +754,7 @@ export default {
     const element = document.querySelector(CHAT_INPUT);
 
     // deprecated
-    const {value: currentValue, selectionStart} = element;
+    const { value: currentValue, selectionStart } = element;
     if (currentValue != null) {
       if (selectionStart === 0) {
         return SelectionTypes.START;
@@ -725,7 +770,7 @@ export default {
       return SelectionTypes.MIDDLE;
     }
 
-    const {focus} = chatInputEditor.selection;
+    const { focus } = chatInputEditor.selection;
     if (focus == null) {
       return SelectionTypes.MIDDLE;
     }
@@ -756,7 +801,7 @@ export default {
       }));
 
     if (providerId) {
-      messages = messages.filter(({message}) => message && message.user && message.user.userID === providerId);
+      messages = messages.filter(({ message }) => message && message.user && message.user.userID === providerId);
     }
 
     return messages;
@@ -770,7 +815,7 @@ export default {
         (n) => n.memoizedProps?.highlight?.event != null
       );
       highlight = node.memoizedProps.highlight;
-    } catch (e) {}
+    } catch (e) { }
 
     return highlight;
   },
@@ -780,7 +825,7 @@ export default {
     try {
       const node = searchReactParents(getReactInstance(element), (n) => n.memoizedProps?.section != null);
       sidebarSection = node.memoizedProps.section;
-    } catch (e) {}
+    } catch (e) { }
 
     return sidebarSection;
   },
@@ -790,7 +835,7 @@ export default {
     try {
       const node = searchReactParents(getReactInstance(element), (n) => n.memoizedProps?.event != null);
       privateCalloutEvent = node.memoizedProps.event;
-    } catch (e) {}
+    } catch (e) { }
 
     return privateCalloutEvent;
   },
@@ -800,7 +845,7 @@ export default {
     if (client == null) {
       return Promise.reject(new Error('unable to locate Twitch Apollo client'));
     }
-    return client.query({query, variables, ...options});
+    return client.query({ query, variables, ...options });
   },
 
   graphqlMutation(mutation, variables) {
@@ -808,7 +853,7 @@ export default {
     if (client == null) {
       return Promise.reject(new Error('unable to locate Twitch Apollo client'));
     }
-    return client.mutate({mutation, variables});
+    return client.mutate({ mutation, variables });
   },
 
   getChatCommandStore() {
@@ -820,7 +865,7 @@ export default {
         25
       );
       context = node.pendingProps.value;
-    } catch (_) {}
+    } catch (_) { }
     return context;
   },
 
@@ -830,7 +875,7 @@ export default {
     try {
       const reactNode = searchReactParents(getReactInstance(node), (n) => n?.pendingProps?.message?.pinnedBy != null);
       user = reactNode.pendingProps.message.pinnedBy;
-    } catch (_) {}
+    } catch (_) { }
 
     return user;
   },
