@@ -1,23 +1,26 @@
-import {EmoteCategories, EmoteProviders, EmoteTypeFlags, SettingIds} from '../../constants.js';
+import { EmoteCategories, EmoteProviders, EmoteTypeFlags, SettingIds } from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
-import {hasFlag} from '../../utils/flags.js';
-import {getProxyUrl} from '../../utils/proxy.js';
-import {getCurrentChannel} from '../../utils/channel.js';
+import { hasFlag } from '../../utils/flags.js';
+import { getProxyUrl } from '../../utils/proxy.js';
+import { getCurrentChannel } from '../../utils/channel.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 import AbstractEmotes from '../emotes/abstract-emotes.js';
-import {createEmote, isOverlay} from './utils.js';
+import { createEmote, isOverlay } from './utils.js';
 
 const category = {
   id: EmoteCategories.SEVENTV_CHANNEL,
   provider: EmoteProviders.SEVENTV,
-  displayName: formatMessage({defaultMessage: '7TV Channel Emotes'}),
+  displayName: formatMessage({ defaultMessage: '7TV Channel Emotes' }),
 };
 
 let websocket;
 let reconnectTimeout;
 let isReconnecting = false;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_DELAY = 60000; // 60 seconds max delay
+const INITIAL_RECONNECT_DELAY = 5000; // 5 seconds initial delay
 
 class SevenTVChannelEmotes extends AbstractEmotes {
   constructor() {
@@ -49,6 +52,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
     websocket.onopen = () => {
       isReconnecting = false;
+      reconnectAttempts = 0;
       console.log('BTTV: 7TV WebSocket connected');
     };
 
@@ -63,7 +67,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
     websocket.onclose = (event) => {
       console.log('BTTV: 7TV WebSocket closed', event.code, event.reason);
-      if (!isReconnecting && event.code !== 1000 && event.code !== 1005) {
+      // Reconnect on abnormal closures (not 1000 = normal close, not 1005 = no status received)
+      if (event.code !== 1000 && event.code !== 1005) {
         this.scheduleReconnect(emoteSetId);
       }
     };
@@ -74,21 +79,25 @@ class SevenTVChannelEmotes extends AbstractEmotes {
   }
 
   scheduleReconnect(emoteSetId) {
-    if (isReconnecting) return;
-
-    isReconnecting = true;
     if (reconnectTimeout) {
       clearTimeout(reconnectTimeout);
     }
 
+    // Exponential backoff: 5s, 10s, 20s, 40s, 60s (max)
+    const delay = Math.min(INITIAL_RECONNECT_DELAY * Math.pow(2, reconnectAttempts), MAX_RECONNECT_DELAY);
+    reconnectAttempts++;
+
+    isReconnecting = true;
+    console.log(`BTTV: Reconnecting to 7TV WebSocket in ${delay / 1000}s (attempt ${reconnectAttempts})...`);
+
     reconnectTimeout = setTimeout(() => {
-      console.log('BTTV: Reconnecting to 7TV WebSocket...');
+      console.log('BTTV: Attempting to reconnect to 7TV WebSocket...');
       this.createWebSocket(emoteSetId);
-    }, 5000);
+    }, delay);
   }
 
   handleWebSocketMessage(message, emoteSetId) {
-    const {op, d} = message;
+    const { op, d } = message;
 
     if (op === 1) {
       this.subscribeToEmoteSet(emoteSetId);
@@ -122,7 +131,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
       return;
     }
 
-    const {body} = data;
+    const { body } = data;
     if (!body) {
       return;
     }
@@ -137,8 +146,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
           twitch.sendChatAdminMessage(
             formatMessage(
-              {defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat by {username}'},
-              {emoteCode: `\u200B${emoteCode}\u200B`, username}
+              { defaultMessage: '7TV Emotes: {emoteCode} has been removed from chat by {username}' },
+              { emoteCode: `\u200B${emoteCode}\u200B`, username }
             ),
             true
           );
@@ -158,7 +167,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
               animated,
               owner,
               flags,
-              host: {url},
+              host: { url },
             },
           } = emote;
 
@@ -170,8 +179,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
           twitch.sendChatAdminMessage(
             formatMessage(
-              {defaultMessage: '7TV Emotes: {emoteCode} has been added to chat by {username}'},
-              {emoteCode: `${code} \u200B \u200B${code}\u200B`, username}
+              { defaultMessage: '7TV Emotes: {emoteCode} has been added to chat by {username}' },
+              { emoteCode: `${code} \u200B \u200B${code}\u200B`, username }
             ),
             true
           );
@@ -192,7 +201,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
               animated,
               owner,
               flags,
-              host: {url},
+              host: { url },
             },
           } = newEmote;
 
@@ -205,7 +214,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
 
           twitch.sendChatAdminMessage(
             formatMessage(
-              {defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode} by {username}'},
+              { defaultMessage: '7TV Emotes: {oldCode} has been renamed to {newCode} by {username}' },
               {
                 oldCode: `\u200B${oldEmoteCode}\u200B`,
                 newCode: `${newCode} \u200B \u200B${newCode}\u200B`,
@@ -232,6 +241,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     }
 
     isReconnecting = false;
+    reconnectAttempts = 0;
     this.emotes.clear();
 
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_EMOTES)) return;
@@ -259,8 +269,8 @@ class SevenTVChannelEmotes extends AbstractEmotes {
         if (data === null) {
           return;
         }
-        const {emote_set: emoteSet} = data;
-        const {emotes} = emoteSet ?? {};
+        const { emote_set: emoteSet } = data;
+        const { emotes } = emoteSet ?? {};
         if (emotes == null) {
           return;
         }
@@ -273,7 +283,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
             animated,
             owner,
             flags,
-            host: {url},
+            host: { url },
           },
         } of emotes) {
           if (!listed && !hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_UNLISTED_EMOTES)) {
@@ -286,11 +296,11 @@ class SevenTVChannelEmotes extends AbstractEmotes {
         this.createWebSocket(emoteSet.id);
       })
       .then(() => {
-        twitch.sendChatAdminMessage(formatMessage({defaultMessage: '7TV channel emotes have been updated'}), true);
+        twitch.sendChatAdminMessage(formatMessage({ defaultMessage: '7TV channel emotes have been updated' }), true);
         watcher.emit('emotes.updated');
       })
       .catch((error) => {
-        twitch.sendChatAdminMessage(formatMessage({defaultMessage: 'Error loading 7TV channel emotes'}), true);
+        twitch.sendChatAdminMessage(formatMessage({ defaultMessage: 'Error loading 7TV channel emotes' }), true);
         console.error('BTTV: Error loading 7TV channel emotes:', error);
       });
   }
