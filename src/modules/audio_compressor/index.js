@@ -1,7 +1,7 @@
-import {PlatformTypes, SettingIds} from '../../constants.js';
+import { PlatformTypes, SettingIds } from '../../constants.js';
 import domObserver from '../../observers/dom.js';
 import settings from '../../settings.js';
-import {loadModuleForPlatforms} from '../../utils/modules.js';
+import { loadModuleForPlatforms } from '../../utils/modules.js';
 import playerButtonManager from '../../utils/player-button-manager.js';
 import watcher from '../../watcher.js';
 
@@ -301,7 +301,7 @@ class AudioCompressor {
       }
 
       if (newCompressorData && !newCompressorData.isActive) {
-        const {source, compressor, context} = newCompressorData;
+        const { source, compressor, context } = newCompressorData;
         source.disconnect(context.destination);
         source.connect(compressor);
         compressor.connect(context.destination);
@@ -316,7 +316,7 @@ class AudioCompressor {
       return true;
     } else {
       console.log('BTTV: Existing compressor found, toggling state');
-      const {source, compressor, context, isActive} = compressorData;
+      const { source, compressor, context, isActive } = compressorData;
 
       if (context.state === 'suspended') {
         console.log('BTTV: AudioContext suspended, resuming after user interaction');
@@ -363,13 +363,16 @@ class AudioCompressor {
     video.addEventListener('play', async () => {
       console.log('BTTV: Video play event, checking compressor state:', this.isCompressorActive);
 
+      // Ensure compressor icon exists when video plays (in case of stream restart)
+      this.ensureCompressorIcon();
+
       const compressorStateSetting = settings.get(SettingIds.AUDIO_COMPRESSOR_STATE);
 
       if (this.isCompressorActive && compressorStateSetting) {
         console.log('BTTV: Auto-enabling compressor on play');
         const compressorData = this.videoElements.get(video);
         if (compressorData && !compressorData.isActive) {
-          const {source, compressor, context} = compressorData;
+          const { source, compressor, context } = compressorData;
           source.disconnect(context.destination);
           source.connect(compressor);
           compressor.connect(context.destination);
@@ -414,7 +417,7 @@ class AudioCompressor {
         console.log('BTTV: Auto-enabling compressor on metadata load');
         const compressorData = this.videoElements.get(video);
         if (compressorData && !compressorData.isActive) {
-          const {source, compressor, context} = compressorData;
+          const { source, compressor, context } = compressorData;
           source.disconnect(context.destination);
           source.connect(compressor);
           compressor.connect(context.destination);
@@ -442,7 +445,7 @@ class AudioCompressor {
         console.log('BTTV: Auto-enabling compressor on canplay');
         const compressorData = this.videoElements.get(video);
         if (compressorData && !compressorData.isActive) {
-          const {source, compressor, context} = compressorData;
+          const { source, compressor, context } = compressorData;
           source.disconnect(context.destination);
           source.connect(compressor);
           compressor.connect(context.destination);
@@ -547,7 +550,7 @@ class AudioCompressor {
     videos.forEach((video) => {
       const compressorData = this.videoElements.get(video);
       if (compressorData) {
-        const {source, compressor, context} = compressorData;
+        const { source, compressor, context } = compressorData;
 
         if (this.isCompressorActive && !compressorData.isActive) {
           console.log('BTTV: Activating compressor for video');
@@ -696,11 +699,33 @@ class AudioCompressor {
           document.querySelector('.persistent-player');
 
         if (hasPlayer) {
-          this.addCompressorIcon();
-          // Update UI after adding icon
-          setTimeout(() => {
-            this.updateUI();
-          }, 100);
+          const added = this.addCompressorIcon();
+          if (added) {
+            // Update UI after adding icon
+            setTimeout(() => {
+              this.updateUI();
+            }, 100);
+          } else {
+            console.log('BTTV: Volume slider not ready, retrying compressor button addition in 200ms');
+            setTimeout(() => {
+              if (!document.querySelector('.bttv-compressor-container')) {
+                const retryAdded = this.addCompressorIcon();
+                if (retryAdded) {
+                  setTimeout(() => this.updateUI(), 100);
+                } else {
+                  console.log('BTTV: Volume slider still not ready, retrying in 500ms');
+                  setTimeout(() => {
+                    if (!document.querySelector('.bttv-compressor-container')) {
+                      const finalAdded = this.addCompressorIcon();
+                      if (finalAdded) {
+                        setTimeout(() => this.updateUI(), 100);
+                      }
+                    }
+                  }, 500);
+                }
+              }
+            }, 200);
+          }
         }
       } else {
         this.updateUI();
@@ -735,6 +760,13 @@ class AudioCompressor {
 
     watcher.on('load.player', () => {
       this.ensureCompressorIcon();
+    });
+
+    domObserver.on('.volume-slider', () => {
+      console.log('BTTV: Volume slider detected, ensuring compressor icon');
+      setTimeout(() => {
+        this.ensureCompressorIcon();
+      }, 100);
     });
 
     domObserver.on('video', (video) => {
