@@ -1,14 +1,14 @@
-import {EmoteTypeFlags, SettingIds, UsernameFlags, PlatformTypes, BadgeTypes, ChatFlags} from '../../constants.js';
+import { EmoteTypeFlags, SettingIds, UsernameFlags, PlatformTypes, BadgeTypes, ChatFlags } from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import api from '../../utils/api.js';
 import cdn from '../../utils/cdn.js';
-import {getCurrentChannel} from '../../utils/channel.js';
+import { getCurrentChannel } from '../../utils/channel.js';
 import colors from '../../utils/colors.js';
-import {hasFlag} from '../../utils/flags.js';
-import {getProxyUrl} from '../../utils/proxy.js';
+import { hasFlag } from '../../utils/flags.js';
+import { getProxyUrl } from '../../utils/proxy.js';
 import twitch from '../../utils/twitch.js';
-import {getPlatform} from '../../utils/window.js';
+import { getPlatform } from '../../utils/window.js';
 import watcher from '../../watcher.js';
 import domObserver from '../../observers/dom.js';
 import nicknames from '../chat_nicknames/index.js';
@@ -17,7 +17,7 @@ import splitChat from '../split_chat/index.js';
 import subscribers from '../subscribers/index.js';
 import reyohohoBadges from '../reyohoho_badges/index.js';
 import seventvCosmetics from '../seventv/cosmetics.js';
-import {shouldMakeGiantEmote, extractRewardTitle} from '../../utils/giant-emotes.js';
+import { shouldMakeGiantEmote, extractRewardTitle } from '../../utils/giant-emotes.js';
 
 const STEAM_LOBBY_JOIN_REGEX = /^steam:\/\/joinlobby\/\d+\/\d+\/\d+$/;
 const EMOTES_TO_CAP = ['567b5b520e984428652809b6'];
@@ -76,12 +76,12 @@ export function formatChatUser(message) {
     return null;
   }
 
-  const {user} = message;
+  const { user } = message;
   if (user == null) {
     return null;
   }
 
-  let {badges} = message;
+  let { badges } = message;
   if (badges == null) {
     badges = {};
   }
@@ -101,10 +101,10 @@ export function formatChatUser(message) {
 
 const badgeUsers = new Map();
 const badgeDescriptions = {
-  [BadgeTypes.DEVELOPER]: formatMessage({defaultMessage: 'NightDev Developer'}),
-  [BadgeTypes.SUPPORT_VOLUNTEER]: formatMessage({defaultMessage: 'NightDev Support Volunteer'}),
-  [BadgeTypes.EMOTE_APPROVER]: formatMessage({defaultMessage: 'BetterTTV Emote Approver'}),
-  [BadgeTypes.TRANSLATOR]: formatMessage({defaultMessage: 'BetterTTV Translator'}),
+  [BadgeTypes.DEVELOPER]: formatMessage({ defaultMessage: 'NightDev Developer' }),
+  [BadgeTypes.SUPPORT_VOLUNTEER]: formatMessage({ defaultMessage: 'NightDev Support Volunteer' }),
+  [BadgeTypes.EMOTE_APPROVER]: formatMessage({ defaultMessage: 'BetterTTV Emote Approver' }),
+  [BadgeTypes.TRANSLATOR]: formatMessage({ defaultMessage: 'BetterTTV Translator' }),
 };
 const globalBots = ['nightbot', 'moobot'];
 let channelBots = [];
@@ -170,13 +170,13 @@ class ChatModule {
       }
       this.messageReplacer(element, null);
     });
-    watcher.on('channel.updated', ({bots}) => {
+    watcher.on('channel.updated', ({ bots }) => {
       channelBots = bots;
     });
     watcher.on('emotes.updated', (name) => {
       const messages = twitch.getChatMessages(name);
 
-      for (const {message, element} of messages) {
+      for (const { message, element } of messages) {
         const user = formatChatUser(message);
         if (!user) {
           continue;
@@ -195,7 +195,7 @@ class ChatModule {
     });
 
     api.get(`cached/badges`).then((badges) => {
-      badges.forEach(({providerId, badge}) => badgeUsers.set(providerId, badge));
+      badges.forEach(({ providerId, badge }) => badgeUsers.set(providerId, badge));
     });
   }
 
@@ -212,7 +212,7 @@ class ChatModule {
     }
   }
 
-  handleEmoteMouseEvent({target}) {
+  handleEmoteMouseEvent({ target }) {
     const currentTargets = [];
     if (currentMoveTarget !== target) {
       const closestTarget = target?.closest(EMOTE_SELECTOR);
@@ -281,10 +281,10 @@ class ChatModule {
           proxyBadgeUrl(subscriberBadge.url),
           subscriberBadge.startedAt
             ? formatMessage(
-                {defaultMessage: 'BetterTTV Pro since {date, date, medium}'},
-                {date: new Date(subscriberBadge.startedAt)}
-              )
-            : formatMessage({defaultMessage: 'BetterTTV Pro Subscriber'})
+              { defaultMessage: 'BetterTTV Pro since {date, date, medium}' },
+              { date: new Date(subscriberBadge.startedAt) }
+            )
+            : formatMessage({ defaultMessage: 'BetterTTV Pro Subscriber' })
         )
       );
     }
@@ -360,7 +360,7 @@ class ChatModule {
         }
 
         if (emoteModifiersEnabled && PREFIX_EMOTE_MODIFIERS_LIST.includes(part)) {
-          partMetadata[j] = {modifier: part, type: 'prefix'};
+          partMetadata[j] = { modifier: part, type: 'prefix' };
           hasModifiers = true;
         }
 
@@ -368,12 +368,12 @@ class ChatModule {
         let isEmoteOrSuffixModifier = false;
         let emote = emotes.getEligibleEmote(part, user);
         if (emote != null && !emote.modifier) {
-          partMetadata[j] = {emote};
+          partMetadata[j] = { emote };
           isEmoteOrSuffixModifier = true;
         }
 
         if (emoteModifiersEnabled && SUFFIX_EMOTE_MODIFIERS_LIST.includes(part)) {
-          partMetadata[j] = {modifier: part, type: 'suffix'};
+          partMetadata[j] = { modifier: part, type: 'suffix' };
           isEmoteOrSuffixModifier = true;
           hasModifiers = true;
         }
@@ -416,8 +416,8 @@ class ChatModule {
             // Store zero-width emote to attach to the next regular emote
             zeroWidthEmotes.push({
               emote,
-              modifiers: emoteHasModifiers ? modifiers.map(({modifier}) => modifier) : null,
-              classNames: emoteHasModifiers ? modifiers.map(({modifier}) => EMOTE_MODIFIERS[modifier]) : null,
+              modifiers: emoteHasModifiers ? modifiers.map(({ modifier }) => modifier) : null,
+              classNames: emoteHasModifiers ? modifiers.map(({ modifier }) => EMOTE_MODIFIERS[modifier]) : null,
             });
             parts[emoteIndex] = null; // Don't render zero-width emotes as separate elements
             continue;
@@ -427,14 +427,14 @@ class ChatModule {
             EMOTES_TO_CAP.includes(emote.id) && ++cappedEmoteCount > MAX_EMOTES_WHEN_CAPPED
               ? null
               : emote.render(
-                  emoteHasModifiers
-                    ? modifiers.filter(({type}) => type === 'prefix').map(({modifier}) => modifier)
-                    : null,
-                  emoteHasModifiers
-                    ? modifiers.filter(({type}) => type === 'suffix').map(({modifier}) => modifier)
-                    : null,
-                  emoteHasModifiers ? modifiers.map(({modifier}) => EMOTE_MODIFIERS[modifier]) : null
-                );
+                emoteHasModifiers
+                  ? modifiers.filter(({ type }) => type === 'prefix').map(({ modifier }) => modifier)
+                  : null,
+                emoteHasModifiers
+                  ? modifiers.filter(({ type }) => type === 'suffix').map(({ modifier }) => modifier)
+                  : null,
+                emoteHasModifiers ? modifiers.map(({ modifier }) => EMOTE_MODIFIERS[modifier]) : null
+              );
 
           // Attach any pending zero-width emotes to this emote
           if (renderedEmote && zeroWidthEmotes.length > 0) {
@@ -450,7 +450,7 @@ class ChatModule {
               }
 
               // Add zero-width emotes to the wrapper
-              zeroWidthEmotes.forEach(({emote: zeroWidthEmote, modifiers, classNames}) => {
+              zeroWidthEmotes.forEach(({ emote: zeroWidthEmote, modifiers, classNames }) => {
                 const zeroWidthElement = zeroWidthEmote.render(
                   modifiers ? modifiers.filter((m) => PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
                   modifiers ? modifiers.filter((m) => !PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
@@ -481,7 +481,7 @@ class ChatModule {
             wrapper.appendChild(emoteContainer);
           }
 
-          zeroWidthEmotes.forEach(({emote: zeroWidthEmote, modifiers, classNames}) => {
+          zeroWidthEmotes.forEach(({ emote: zeroWidthEmote, modifiers, classNames }) => {
             const zeroWidthElement = zeroWidthEmote.render(
               modifiers ? modifiers.filter((m) => PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
               modifiers ? modifiers.filter((m) => !PREFIX_EMOTE_MODIFIERS_LIST.includes(m)) : null,
@@ -571,7 +571,7 @@ class ChatModule {
     if ((globalBots.includes(user.name) || channelBots.includes(user.name)) && user.mod) {
       element
         .querySelector('img.chat-badge[alt="Moderator"]')
-        ?.replaceWith(badgeTemplate(cdn.url('tags/bot.png'), formatMessage({defaultMessage: 'Bot'})));
+        ?.replaceWith(badgeTemplate(cdn.url('tags/bot.png'), formatMessage({ defaultMessage: 'Bot' })));
     }
 
     const customBadges = this.customBadges(user);
@@ -607,7 +607,8 @@ class ChatModule {
       }
     }
 
-    if (!element.querySelector('.bttv-copy-message-button')) {
+    const chatSettings = settings.get(SettingIds.CHAT);
+    if (hasFlag(chatSettings, ChatFlags.COPY_BUTTON) && !element.querySelector('.bttv-copy-message-button')) {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'bttv-copy-message-button';
       copyBtn.setAttribute('aria-label', 'Скопировать сообщение');
@@ -653,11 +654,11 @@ class ChatModule {
             currentGroup.overlays.push(emote);
           } else {
             emote.classList.remove('bttv-emote-overlay');
-            currentGroup = {base: emote, overlays: []};
+            currentGroup = { base: emote, overlays: [] };
             emoteGroups.push(currentGroup);
           }
         } else {
-          currentGroup = {base: emote, overlays: []};
+          currentGroup = { base: emote, overlays: [] };
           emoteGroups.push(currentGroup);
         }
       }
@@ -723,13 +724,13 @@ class ChatModule {
               const title = extractRewardTitle(rewardText);
 
               if (title) {
-                reward = {title};
+                reward = { title };
               }
             }
           }
 
           if (reward) {
-            this.handleGiantEmotes(element, {ffz_reward: reward});
+            this.handleGiantEmotes(element, { ffz_reward: reward });
           }
         }
       }
@@ -770,7 +771,7 @@ class ChatModule {
       return;
     }
 
-    const reward = {title};
+    const reward = { title };
 
     if (!shouldMakeGiantEmote(reward)) {
       return;
@@ -806,7 +807,7 @@ class ChatModule {
       const title = extractRewardTitle(rewardText);
 
       if (title) {
-        const reward = {title};
+        const reward = { title };
 
         if (shouldMakeGiantEmote(reward)) {
           messageElement.ffz_reward = reward;
@@ -884,6 +885,6 @@ function fallbackCopy(text) {
     textArea.focus();
     textArea.select();
     document.execCommand('copy');
-  } catch (err) {}
+  } catch (err) { }
   document.body.removeChild(textArea);
 }
