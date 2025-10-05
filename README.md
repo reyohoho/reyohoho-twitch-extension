@@ -4,6 +4,11 @@
 
 > **Forked from [@night/betterttv](https://github.com/night/betterttv)**
 
+# Download:
+[Chromium](https://chromewebstore.google.com/detail/reyohoho-twitch-extension/peigjkggfaiddfnndocglngepppcfjia)
+
+[FF](https://addons.mozilla.org/ru/firefox/addon/reyohoho-twitch-extension/)
+
 ## Support the Original Authors
 
 This project is a fork of BetterTTV. Please consider supporting the original authors by visiting [betterttv.com](https://betterttv.com/) and using their official extension.
