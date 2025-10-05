@@ -691,44 +691,44 @@ class AudioCompressor {
     );
 
     if (iconSettingValue) {
-      if (!existingContainer) {
-        const hasPlayer =
-          document.querySelector('#channel-player') ||
-          document.querySelector('[data-a-target="player"]') ||
-          document.querySelector('[class*="video-player"]') ||
-          document.querySelector('.persistent-player');
+      if (existingContainer) {
+        console.log('BTTV: Removing existing compressor button to re-add it');
+        existingContainer.remove();
+      }
 
-        if (hasPlayer) {
-          const added = this.addCompressorIcon();
-          if (added) {
-            // Update UI after adding icon
-            setTimeout(() => {
-              this.updateUI();
-            }, 100);
-          } else {
-            console.log('BTTV: Volume slider not ready, retrying compressor button addition in 200ms');
-            setTimeout(() => {
-              if (!document.querySelector('.bttv-compressor-container')) {
-                const retryAdded = this.addCompressorIcon();
-                if (retryAdded) {
-                  setTimeout(() => this.updateUI(), 100);
-                } else {
-                  console.log('BTTV: Volume slider still not ready, retrying in 500ms');
-                  setTimeout(() => {
-                    if (!document.querySelector('.bttv-compressor-container')) {
-                      const finalAdded = this.addCompressorIcon();
-                      if (finalAdded) {
-                        setTimeout(() => this.updateUI(), 100);
-                      }
+      const hasPlayer =
+        document.querySelector('#channel-player') ||
+        document.querySelector('[data-a-target="player"]') ||
+        document.querySelector('[class*="video-player"]') ||
+        document.querySelector('.persistent-player');
+
+      if (hasPlayer) {
+        const added = this.addCompressorIcon();
+        if (added) {
+          setTimeout(() => {
+            this.updateUI();
+          }, 100);
+        } else {
+          console.log('BTTV: Volume slider not ready, retrying compressor button addition in 200ms');
+          setTimeout(() => {
+            if (!document.querySelector('.bttv-compressor-container')) {
+              const retryAdded = this.addCompressorIcon();
+              if (retryAdded) {
+                setTimeout(() => this.updateUI(), 100);
+              } else {
+                console.log('BTTV: Volume slider still not ready, retrying in 500ms');
+                setTimeout(() => {
+                  if (!document.querySelector('.bttv-compressor-container')) {
+                    const finalAdded = this.addCompressorIcon();
+                    if (finalAdded) {
+                      setTimeout(() => this.updateUI(), 100);
                     }
-                  }, 500);
-                }
+                  }
+                }, 500);
               }
-            }, 200);
-          }
+            }
+          }, 200);
         }
-      } else {
-        this.updateUI();
       }
     } else {
       if (existingContainer) {
