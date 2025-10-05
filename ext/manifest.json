@@ -1,31 +1,54 @@
 {
-  "version": "1.0.33",
+  "version": "1.0.34",
   "manifest_version": 3,
   "name": "ReYohoho Twitch Extension",
   "description": "ReYohoho Twitch Extension",
-  "permissions": ["scripting", "activeTab"],
-  "host_permissions": ["*://*.twitch.tv/*"],
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.twitch.tv/*"
+  ],
   "minimum_chrome_version": "111",
   "externally_connectable": {
-    "matches": ["https://*.twitch.tv/*"]
+    "matches": [
+      "https://*.twitch.tv/*"
+    ]
   },
-  "web_accessible_resources": [{
-    "resources": ["betterttv.js", "betterttv.css", "firefox_runtime_messaging.js"],
-    "matches": ["https://*.twitch.tv/*"]
-  }],
-  "content_scripts": [{
-    "all_frames": true,
-    "js": ["betterttv.js"],
-    "css": ["betterttv.css"],
-    "matches": ["*://*.twitch.tv/*"],
-    "exclude_matches": [
-      "*://*.twitch.tv/*.html",
-      "*://*.twitch.tv/*.html?*",
-      "*://*.twitch.tv/*.htm",
-      "*://*.twitch.tv/*.htm?*"
-    ],
-    "world": "MAIN"
-  }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "betterttv.js",
+        "betterttv.css",
+        "firefox_runtime_messaging.js"
+      ],
+      "matches": [
+        "https://*.twitch.tv/*"
+      ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "js": [
+        "betterttv.js"
+      ],
+      "css": [
+        "betterttv.css"
+      ],
+      "matches": [
+        "*://*.twitch.tv/*"
+      ],
+      "exclude_matches": [
+        "*://*.twitch.tv/*.html",
+        "*://*.twitch.tv/*.html?*",
+        "*://*.twitch.tv/*.htm",
+        "*://*.twitch.tv/*.htm?*"
+      ],
+      "world": "MAIN"
+    }
+  ],
   "action": {
     "default_title": "BetterTTV"
   },
