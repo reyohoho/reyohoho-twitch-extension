@@ -13,7 +13,6 @@ import watcher from '../../watcher.js';
 import domObserver from '../../observers/dom.js';
 import nicknames from '../chat_nicknames/index.js';
 import emotes from '../emotes/index.js';
-import splitChat from '../split_chat/index.js';
 import subscribers from '../subscribers/index.js';
 import reyohohoBadges from '../reyohoho_badges/index.js';
 import seventvCosmetics from '../seventv/cosmetics.js';
@@ -536,8 +535,6 @@ class ChatModule {
 
   _messageParser(element, messageObj, fromNode, badgesContainer, messageParts = []) {
     if (element.__bttvParsed) return;
-
-    splitChat.render(element, messageObj);
 
     const user = formatChatUser(messageObj);
     if (!user) return;

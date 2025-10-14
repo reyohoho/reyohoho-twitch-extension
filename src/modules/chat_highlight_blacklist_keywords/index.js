@@ -12,6 +12,7 @@ import {getCurrentUser} from '../../utils/user.js';
 import watcher from '../../watcher.js';
 import domObserver from '../../observers/dom.js';
 import './style.css';
+import splitChat from '../split_chat/index.js';
 
 const CHAT_LIST_SELECTOR =
   '.chat-list .chat-scrollable-area__message-container,.chat-list--default .chat-scrollable-area__message-container,.chat-list--other .chat-scrollable-area__message-container,.video-chat div[data-test-selector="video-chat-message-list-wrapper"]';
@@ -442,6 +443,8 @@ class ChatHighlightBlacklistKeywordsModule {
     const isMentioned =
       message.querySelector('.reply-line--mentioned') != null ||
       message.querySelector('.mention-fragment--recipient') != null;
+      
+    splitChat.render(message, messageObj);
 
     if (
       document.querySelector('.chat-input-tray__open') == null &&
