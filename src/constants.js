@@ -63,6 +63,8 @@ export const SettingIds = {
   GIANT_EMOTES: 'giantEmotes',
   PASTA_COMMAND: 'pastaCommand',
   ASCII_ART_FONT: 'asciiArtFont',
+  LINK_PREVIEW: 'linkPreview',
+  LINK_PREVIEW_HIDE_LINK: 'linkPreviewHideLink',
 };
 
 export const CategoryTypes = {
@@ -300,6 +302,8 @@ export const SettingDefaultValues = {
   [SettingIds.CHAT_SWIPE]: true,
   [SettingIds.PASTA_COMMAND]: true,
   [SettingIds.ASCII_ART_FONT]: false,
+  [SettingIds.LINK_PREVIEW]: true,
+  [SettingIds.LINK_PREVIEW_HIDE_LINK]: false,
 };
 
 export const FlagSettings = [

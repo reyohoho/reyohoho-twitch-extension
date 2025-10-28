@@ -1,0 +1,56 @@
+.bttv-link-preview-container {
+  display: block;
+  margin-top: 5px;
+  white-space: normal;
+}
+
+.bttv-link-preview-bracket {
+  margin: 0 4px;
+  color: #999;
+  font-size: 14px;
+}
+
+.bttv-link-preview-anchor {
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.bttv-link-preview-image {
+  max-height: 250px;
+  max-width: 300px;
+  height: auto;
+  width: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.bttv-link-preview-image:hover {
+  opacity: 0.8;
+}
+
+.bttv-link-preview-emote {
+  max-height: 112px;
+  max-width: 112px;
+  height: auto;
+  width: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.bttv-link-preview-emote:hover {
+  opacity: 0.8;
+}
+
+.bttv-link-preview-video {
+  max-height: 250px;
+  max-width: 300px;
+  height: auto;
+  width: auto;
+  border-radius: 4px;
+  background-color: #000;
+}
