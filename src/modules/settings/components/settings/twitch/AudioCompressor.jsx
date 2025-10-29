@@ -21,7 +21,7 @@ function AudioCompressor() {
     <Panel header={SETTING_NAME}>
       <div className={styles.settingRow}>
         <p className={styles.settingDescription}>
-          {formatMessage({defaultMessage: 'Show audio compressor button in the video player. The button state is remembered separately.'})}
+          {formatMessage({defaultMessage: 'Show audio compressor button in the video player. The button state is remembered separately. Press Alt+C to toggle.'})}
         </p>
         <Toggle checked={value} onChange={handleChange} />
       </div>

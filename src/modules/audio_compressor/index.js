@@ -26,6 +26,7 @@ class AudioCompressor {
     this.lastPageType = null;
     this.audioContextState = 'unknown';
     this.userInteractionRequired = false;
+    this.hotkeyListenerAttached = false;
 
     console.log('BTTV: Audio compressor initialized with icon setting:', this.isIconEnabled);
     console.log('BTTV: Audio compressor state setting:', this.isCompressorActive);
@@ -57,6 +58,66 @@ class AudioCompressor {
       this.updateAllVideos();
       this.updateUI();
     });
+  }
+
+  setupHotkeyListener() {
+    if (this.hotkeyListenerAttached || this.isClipPage()) {
+      return;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        console.log('BTTV: Alt+C hotkey pressed, toggling compressor');
+        this.toggleCompressorViaHotkey();
+      }
+    });
+
+    this.hotkeyListenerAttached = true;
+    console.log('BTTV: Hotkey listener attached for Alt+C');
+  }
+
+  async toggleCompressorViaHotkey() {
+    if (this.isClipPage() || this.isLoading) {
+      return;
+    }
+
+    await this.checkAudioContextState();
+
+    const video =
+      document.querySelector('.video-player__container video') ||
+      document.querySelector('.video-ref video') ||
+      document.querySelector('video');
+
+    if (!video) {
+      console.log('BTTV: No video element found for hotkey toggle');
+      return;
+    }
+
+    try {
+      if (this.userInteractionRequired && this.hasUserInteractedWithAudio()) {
+        console.log('BTTV: Firefox mode - attempting to resume AudioContext');
+        const testContext = new AudioContext();
+        if (testContext.state === 'suspended') {
+          try {
+            await testContext.resume();
+            console.log('BTTV: AudioContext resumed successfully');
+          } catch (resumeErr) {
+            console.warn('BTTV: Failed to resume AudioContext:', resumeErr);
+          }
+        }
+        await testContext.close();
+      }
+
+      const isCompressed = await this.toggleCompressor(video);
+      console.log('BTTV: Compressor toggled via hotkey:', isCompressed);
+
+      setTimeout(() => {
+        this.updateUI();
+      }, 50);
+    } catch (err) {
+      console.error('BTTV: Error toggling compressor via hotkey:', err);
+    }
   }
 
   isClipPage() {
@@ -486,7 +547,7 @@ class AudioCompressor {
         icon.classList.add('loading');
         icon.classList.remove('off');
         icon.setAttribute('disabled', 'disabled');
-        tooltip.textContent = 'Audio Compressor: Starting...';
+        tooltip.textContent = 'Audio Compressor: Starting... (Alt+C)';
         return;
       }
 
@@ -504,17 +565,17 @@ class AudioCompressor {
           icon.classList.add('off');
           icon.classList.remove('loading');
           icon.removeAttribute('disabled');
-          tooltip.textContent = 'Audio Compressor: Click to activate (requires user interaction)';
+          tooltip.textContent = 'Audio Compressor: Click to activate (Alt+C, requires user interaction)';
         } else if (this.userInteractionRequired && this.hasUserInteractedWithAudio()) {
           icon.classList.add('loading');
           icon.classList.remove('off');
           icon.setAttribute('disabled', 'disabled');
-          tooltip.textContent = 'Audio Compressor: Starting... (Firefox mode)';
+          tooltip.textContent = 'Audio Compressor: Starting... (Alt+C, Firefox mode)';
         } else {
           icon.classList.add('loading');
           icon.classList.remove('off');
           icon.setAttribute('disabled', 'disabled');
-          tooltip.textContent = 'Audio Compressor: Starting...';
+          tooltip.textContent = 'Audio Compressor: Starting... (Alt+C)';
         }
         return;
       }
@@ -533,7 +594,7 @@ class AudioCompressor {
       icon.classList.remove('loading');
       icon.classList.toggle('off', !isActive);
       icon.removeAttribute('disabled');
-      tooltip.textContent = `Audio Compressor: ${isActive ? 'On' : 'Off'}`;
+      tooltip.textContent = `Audio Compressor: ${isActive ? 'On' : 'Off'} (Alt+C)`;
       console.log(
         'BTTV: Updated UI - compressor state:',
         isActive,
@@ -622,7 +683,7 @@ class AudioCompressor {
     if (this.isClipPage()) {
       tooltip.textContent = 'Audio Compressor unavailable in clips due to CORS.';
     } else {
-      tooltip.textContent = `Audio Compressor: ${this.isCompressorActive ? 'On' : 'Off'}`;
+      tooltip.textContent = `Audio Compressor: ${this.isCompressorActive ? 'On' : 'Off'} (Alt+C)`;
     }
 
     iconContainer.appendChild(button);
@@ -758,6 +819,8 @@ class AudioCompressor {
       add: () => this.addCompressorIcon(),
     });
 
+    this.setupHotkeyListener();
+
     watcher.on('load.player', () => {
       this.ensureCompressorIcon();
     });
@@ -806,6 +869,7 @@ class AudioCompressor {
     });
 
     this.addCompressorIcon();
+    this.setupHotkeyListener();
 
     // Update UI after initialization to ensure correct state
     setTimeout(() => {
