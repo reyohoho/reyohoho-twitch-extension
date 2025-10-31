@@ -66,7 +66,7 @@ class AudioCompressor {
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.altKey && e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) {
+      if (e.altKey && e.code === 'KeyC' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         console.log('BTTV: Alt+C hotkey pressed, toggling compressor');
         this.toggleCompressorViaHotkey();
