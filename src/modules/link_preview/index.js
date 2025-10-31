@@ -4,9 +4,10 @@ import { loadModuleForPlatforms } from '../../utils/modules.js';
 import { getProxyUrl } from '../../utils/proxy.js';
 import watcher from '../../watcher.js';
 
-const IMG_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%]+(?:\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.tif|\.tiff|\.webp|\.jfif)/i;
-const VID_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%]+(?:\.mp4|\.mov)/i;
+const IMG_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.tif|\.tiff|\.webp|\.jfif)/i;
+const VID_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.mp4|\.mov)/i;
 const SEVENTV_EMOTE_REGEX = /https?:\/\/7tv\.app\/emotes\/([a-zA-Z0-9]+)/i;
+const IMGUR_REGEX = /https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)/i;
 
 class LinkPreviewModule {
   constructor() {
@@ -51,8 +52,12 @@ class LinkPreviewModule {
         const text = messagePart.textContent.trim();
         
         const seventvMatch = text.match(SEVENTV_EMOTE_REGEX);
+        const imgurMatch = text.match(IMGUR_REGEX);
+        
         if (seventvMatch) {
           this.replace7TVEmote(messagePart, seventvMatch[1]);
+        } else if (imgurMatch) {
+          this.replaceImgurImage(messagePart, imgurMatch[1]);
         } else if (IMG_REGEX.test(text)) {
           this.replaceImage(messagePart);
         } else if (VID_REGEX.test(text)) {
@@ -129,6 +134,50 @@ class LinkPreviewModule {
     }
     
     messagePart.dataset.linkPreviewProcessed = 'true';
+  }
+
+  replaceImgurImage(messagePart, imgurId) {
+    const originalUrl = messagePart.textContent.trim();
+    const imageUrl = `https://i.imgur.com/${imgurId}.jpg`;
+    
+    const img = new Image();
+    
+    img.onload = () => {
+      const previewContainer = document.createElement('span');
+      previewContainer.className = 'bttv-link-preview-container';
+      
+      const anchor = document.createElement('a');
+      anchor.href = originalUrl;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.className = 'bttv-link-preview-anchor';
+      
+      const imgElement = document.createElement('img');
+      imgElement.src = imageUrl;
+      imgElement.className = 'bttv-link-preview-image';
+      imgElement.alt = 'Imgur Preview';
+      
+      anchor.appendChild(imgElement);
+      previewContainer.appendChild(anchor);
+      
+      const hideLink = settings.get(SettingIds.LINK_PREVIEW_HIDE_LINK);
+      
+      if (hideLink) {
+        messagePart.innerHTML = '';
+        messagePart.appendChild(previewContainer);
+      } else {
+        messagePart.appendChild(document.createElement('br'));
+        messagePart.appendChild(previewContainer);
+      }
+      
+      messagePart.dataset.linkPreviewProcessed = 'true';
+    };
+    
+    img.onerror = () => {
+      messagePart.dataset.linkPreviewProcessed = 'true';
+    };
+    
+    img.src = imageUrl;
   }
 
   replace7TVEmote(messagePart, emoteId) {
