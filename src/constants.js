@@ -64,7 +64,7 @@ export const SettingIds = {
   PASTA_COMMAND: 'pastaCommand',
   ASCII_ART_FONT: 'asciiArtFont',
   LINK_PREVIEW: 'linkPreview',
-  LINK_PREVIEW_HIDE_LINK: 'linkPreviewHideLink',
+  LINK_PREVIEW_HIDE_LINK: 'linkPreviewHideLink2',
   LINK_PREVIEW_MAX_HEIGHT: 'linkPreviewMaxHeight',
   LINK_PREVIEW_MAX_WIDTH: 'linkPreviewMaxWidth',
 };
