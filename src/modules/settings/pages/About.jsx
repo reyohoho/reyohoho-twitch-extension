@@ -15,6 +15,7 @@ import { SETTINGS_STORAGE_KEY } from '../../../settings.js';
 import storage from '../../../storage.js';
 import { loadLegacySettings } from '../../../utils/legacy-settings.js';
 import CloseButton from '../components/CloseButton.jsx';
+import SubscriptionStatus from '../components/SubscriptionStatus.jsx';
 import styles from '../styles/about.module.css';
 import header from '../styles/header.module.css';
 
@@ -85,6 +86,7 @@ function About({ onClose }) {
     <>
       <div className={header.content}>
         <PanelGroup>
+          <SubscriptionStatus />
           <Panel header={formatMessage({ defaultMessage: 'ReYohoho' })}>
             <div className={styles.socials}>
               <ul>

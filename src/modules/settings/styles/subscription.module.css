@@ -1,0 +1,92 @@
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.error {
+  padding: 1rem;
+  text-align: center;
+}
+
+.error p {
+  margin-bottom: 1rem;
+  color: #ff6b6b;
+}
+
+.activeSubscription {
+  padding: 1rem 0;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+.tierLabel {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.info {
+  margin-bottom: 1rem;
+}
+
+.info p {
+  margin: 0.5rem 0;
+}
+
+.active {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.noSubscription {
+  padding: 1rem 0;
+}
+
+.noSubscription p {
+  margin: 0.5rem 0;
+}
+
+.benefits {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits li {
+  padding: 0.5rem 0;
+  opacity: 0.9;
+}
+
+
+
+

@@ -184,9 +184,9 @@ function EmotesModule() {
               <Checkbox
                 key="seventvCosmetics"
                 value={EmoteTypeFlags.SEVENTV_COSMETICS}>
-                <p className={styles.heading}>{formatMessage({defaultMessage: '7TV Cosmetics'})}</p>
+                <p className={styles.heading}>{formatMessage({defaultMessage: '7TV/RTE Cosmetics'})}</p>
                 <p className={styles.settingDescription}>
-                  {formatMessage({defaultMessage: 'Enables cosmetics (paints) from the third party 7TV extension'})}
+                  {formatMessage({defaultMessage: 'Enables cosmetics (paints) from RTE and the third party 7TV extension'})}
                 </p>
               </Checkbox>
             </>

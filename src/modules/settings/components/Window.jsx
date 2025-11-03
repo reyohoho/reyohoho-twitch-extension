@@ -8,6 +8,7 @@ import Changelog from '../pages/Changelog.jsx';
 import ChannelSettings from '../pages/ChannelSettings.jsx';
 import ChatSettings from '../pages/ChatSettings.jsx';
 import DirectorySettings from '../pages/DirectorySettings.jsx';
+import PaintsGallery from '../pages/PaintsGallery.jsx';
 import ChatWindow from './ChatWindow.jsx';
 import Sidenav from './Sidenav.jsx';
 import styles from './Window.module.css';
@@ -22,6 +23,8 @@ function Page(props) {
       return <DirectorySettings {...restProps} />;
     case PageTypes.CHANNEL_SETTINGS:
       return <ChannelSettings {...restProps} />;
+    case PageTypes.PAINTS_GALLERY:
+      return <PaintsGallery {...restProps} />;
     case PageTypes.CHANGELOG:
       return <Changelog {...restProps} />;
     case PageTypes.ABOUT:

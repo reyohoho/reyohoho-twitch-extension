@@ -65,6 +65,8 @@ export const SettingIds = {
   ASCII_ART_FONT: 'asciiArtFont',
   LINK_PREVIEW: 'linkPreview',
   LINK_PREVIEW_HIDE_LINK: 'linkPreviewHideLink',
+  LINK_PREVIEW_MAX_HEIGHT: 'linkPreviewMaxHeight',
+  LINK_PREVIEW_MAX_WIDTH: 'linkPreviewMaxWidth',
 };
 
 export const CategoryTypes = {
@@ -153,6 +155,7 @@ export const PageTypes = {
   CHANNEL_SETTINGS: 3,
   CHANGELOG: 4,
   ABOUT: 5,
+  PAINTS_GALLERY: 6,
 };
 
 export const NavigationModeTypes = {
@@ -303,7 +306,9 @@ export const SettingDefaultValues = {
   [SettingIds.PASTA_COMMAND]: true,
   [SettingIds.ASCII_ART_FONT]: false,
   [SettingIds.LINK_PREVIEW]: true,
-  [SettingIds.LINK_PREVIEW_HIDE_LINK]: false,
+  [SettingIds.LINK_PREVIEW_HIDE_LINK]: true,
+  [SettingIds.LINK_PREVIEW_MAX_HEIGHT]: 200,
+  [SettingIds.LINK_PREVIEW_MAX_WIDTH]: 200,
 };
 
 export const FlagSettings = [

@@ -3,6 +3,7 @@ import settings from '../../settings.js';
 import {SettingIds, EmoteTypeFlags} from '../../constants.js';
 import {getProxyUrl} from '../../utils/proxy.js';
 import debug from '../../utils/debug.js';
+import {getUserPaint} from '../../utils/subscription-api.js';
 
 const SEVENTV_GQL_ENDPOINT = 'https://7tv.io/v3/gql';
 
@@ -169,6 +170,23 @@ class SevenTVCosmetics {
     }
   }
 
+  async fetchAllPaints() {
+    try {
+      const response = await fetch('https://starege.rhhhhhhh.live/api/paints');
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      debug.log(`Loaded ${data.count} paints from backend cache`);
+      return data.paints || [];
+    } catch (error) {
+      debug.error('Failed to fetch paints from backend:', error);
+      return [];
+    }
+  }
+
   async fetchUserPaint(userId) {
     if (!this.isEnabled()) return null;
 
@@ -178,36 +196,60 @@ class SevenTVCosmetics {
       return cached.data;
     }
 
-    const query = `
-      query GetUserPaint($id: String!) {
-        userByConnection(id: $id, platform: TWITCH) {
-          style {
-            paint {
-              id
-              name
-              color
-              function
-              angle
-              shape
-              image_url
-              repeat
-              stops {
-                at
+    try {
+      const localPaint = await getUserPaint(userId);
+      
+      if (localPaint.has_paint && localPaint.paint_id) {
+        debug.log(`Using local paint ID for user ${userId}: ${localPaint.paint_id}`);
+        
+        const paints = await this.fetchPaintData([localPaint.paint_id]);
+        const paint = paints.length > 0 ? paints[0] : null;
+        
+        if (paint) {
+          const paintWithMeta = {
+            paint,
+            source: 'local',
+          };
+          
+          this.userPaintCache.set(cacheKey, {
+            data: paintWithMeta,
+            timestamp: Date.now(),
+          });
+          return paintWithMeta;
+        }
+      }
+
+      debug.log(`Fetching paint from 7TV API for user ${userId}`);
+      
+      const query = `
+        query GetUserPaint($id: String!) {
+          userByConnection(id: $id, platform: TWITCH) {
+            style {
+              paint {
+                id
+                name
                 color
-              }
-              shadows {
-                x_offset
-                y_offset
-                radius
-                color
+                function
+                angle
+                shape
+                image_url
+                repeat
+                stops {
+                  at
+                  color
+                }
+                shadows {
+                  x_offset
+                  y_offset
+                  radius
+                  color
+                }
               }
             }
           }
         }
-      }
-    `;
+      `;
 
-    try {
       const proxyUrl = getProxyUrl();
       const response = await fetch(`${proxyUrl}${SEVENTV_GQL_ENDPOINT}`, {
         method: 'POST',
@@ -228,14 +270,21 @@ class SevenTVCosmetics {
       const data = await response.json();
       const paint = data.data.userByConnection?.style?.paint || null;
 
+      const paintWithMeta = paint
+        ? {
+            paint,
+            source: '7tv',
+          }
+        : null;
+
       this.userPaintCache.set(cacheKey, {
-        data: paint,
+        data: paintWithMeta,
         timestamp: Date.now(),
       });
 
-      return paint;
+      return paintWithMeta;
     } catch (error) {
-      debug.error('Failed to fetch 7TV user paint:', error);
+      debug.error('Failed to fetch user paint:', error);
       return null;
     }
   }
@@ -337,7 +386,7 @@ class SevenTVCosmetics {
     return css;
   }
 
-  applyPaintToElement(element, paint, className = 'seventv-paint') {
+  applyPaintToElement(element, paint, className = 'seventv-paint', paintMeta = null) {
     if (!element || !paint) return;
 
     const uniqueClassName = `${className}-${paint.id}`;
@@ -347,6 +396,14 @@ class SevenTVCosmetics {
 
     element.classList.add(className);
     element.classList.add(uniqueClassName);
+
+    if (paintMeta) {
+      const sourceName = paintMeta.source === 'local' ? 'RTE Custom Paint' : '7TV Paint';
+      const tooltip = `${sourceName}: ${paint.name}`;
+      element.setAttribute('title', tooltip);
+      element.setAttribute('data-paint-source', paintMeta.source);
+      element.setAttribute('data-paint-name', paint.name);
+    }
 
     if (!this.paintCache.has(paint.id)) {
       const style = document.createElement('style');
@@ -360,11 +417,13 @@ class SevenTVCosmetics {
   async applyUserPaint(element, userId) {
     if (!this.isEnabled() || !element || !userId) return;
 
+    element.setAttribute('data-paint-user-id', userId);
+
     const cacheKey = `${userId}:TWITCH`;
     const cached = this.userPaintCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       if (cached.data) {
-        this.applyPaintToElement(element, cached.data);
+        this.applyPaintToElement(element, cached.data.paint, 'seventv-paint', cached.data);
       }
       return;
     }
@@ -377,15 +436,48 @@ class SevenTVCosmetics {
     this.pendingRequests.add(userId);
 
     try {
-      const paint = await this.fetchUserPaint(userId);
-      if (paint) {
-        this.applyPaintToElement(element, paint);
+      const paintData = await this.fetchUserPaint(userId);
+      if (paintData) {
+        this.applyPaintToElement(element, paintData.paint, 'seventv-paint', paintData);
       }
     } catch (error) {
       debug.error('Failed to apply user paint:', error);
     } finally {
       this.pendingRequests.delete(userId);
     }
+  }
+
+  async refreshAllUserPaints() {
+    if (!this.isEnabled()) return;
+
+    debug.log('Refreshing all user paints on the page...');
+
+    this.userPaintCache.clear();
+
+    const paintedElements = document.querySelectorAll('[data-paint-user-id]');
+
+    debug.log(`Found ${paintedElements.length} painted elements to refresh`);
+
+    for (const element of paintedElements) {
+      const userId = element.getAttribute('data-paint-user-id');
+
+      if (userId) {
+        const classes = Array.from(element.classList);
+        classes.forEach((cls) => {
+          if (cls.startsWith('seventv-paint')) {
+            element.classList.remove(cls);
+          }
+        });
+
+        element.removeAttribute('title');
+        element.removeAttribute('data-paint-source');
+        element.removeAttribute('data-paint-name');
+
+        await this.applyUserPaint(element, userId);
+      }
+    }
+
+    debug.log('Finished refreshing user paints');
   }
 
   clearCache() {

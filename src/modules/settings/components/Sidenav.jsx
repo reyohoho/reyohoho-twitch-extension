@@ -4,6 +4,7 @@ import * as faCommentAlt from '@fortawesome/free-solid-svg-icons/faCommentAlt';
 import * as faCompass from '@fortawesome/free-solid-svg-icons/faCompass';
 import * as faHouseUser from '@fortawesome/free-solid-svg-icons/faHouseUser';
 import * as faInfoCircle from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import * as faPalette from '@fortawesome/free-solid-svg-icons/faPalette';
 import { Icon } from '@rsuite/icons';
 import React from 'react';
 import Nav from 'rsuite/Nav';
@@ -35,6 +36,11 @@ function BTTVSidenav({ value, onChange }) {
               eventKey={PageTypes.CHANNEL_SETTINGS}
               icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faHouseUser} />}>
               <p>{formatMessage({ defaultMessage: 'Channel Settings' })}</p>
+            </Nav.Item>
+            <Nav.Item
+              eventKey={PageTypes.PAINTS_GALLERY}
+              icon={<Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faPalette} />}>
+              <p>{formatMessage({ defaultMessage: 'Paints Gallery' })}</p>
             </Nav.Item>
             {/* <Nav.Item
               href="https://betterttv.com/dashboard/emotes"

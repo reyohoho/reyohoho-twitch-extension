@@ -185,6 +185,19 @@ class ChatModule {
       }
     });
 
+    watcher.on('reyohoho_badge.updated', (userId) => {
+      const messages = twitch.getChatMessages(userId);
+
+      for (const { message, element } of messages) {
+        const user = formatChatUser(message);
+        if (!user) {
+          continue;
+        }
+
+        this.updateUserBadges(element, user);
+      }
+    });
+
     domObserver.on('div[data-test-selector="user-notice-line"]', (element) => {
       this.handleChannelPointsMessage(element);
     });
@@ -294,6 +307,33 @@ class ChatModule {
     }
 
     return badges;
+  }
+
+  updateUserBadges(element, user) {
+    let badgesContainer = element.querySelector('.chat-badge')?.closest('span');
+    if (badgesContainer == null) {
+      badgesContainer = element.querySelector('span.chat-line__username')?.previousSibling;
+      if (badgesContainer?.nodeName !== 'SPAN') {
+        badgesContainer = element.querySelector('.seventv-chat-user-badge-list');
+      }
+    }
+
+    if (badgesContainer == null) {
+      return;
+    }
+
+    const oldReyohohoBadges = badgesContainer.querySelectorAll('.bttv-chat-badge-container .bttv-chat-badge');
+    for (const oldBadge of oldReyohohoBadges) {
+      const tooltip = oldBadge.parentElement?.querySelector('.bttv-tooltip');
+      if (tooltip && tooltip.innerText === 'ReYohoho Badge') {
+        oldBadge.parentElement.remove();
+      }
+    }
+
+    const reyohohoBadge = reyohohoBadges.getBadge(user.id);
+    if (reyohohoBadge && reyohohoBadge.url) {
+      badgesContainer.appendChild(badgeTemplate(reyohohoBadge.url, reyohohoBadge.description));
+    }
   }
 
   asciiOnly(enabled) {
