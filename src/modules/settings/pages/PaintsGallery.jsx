@@ -95,7 +95,7 @@ function PaintsGallery({onClose}) {
         setPaints(allPaints);
         
         if (currentUser?.id) {
-          const userPaintData = await getUserPaint(currentUser.id);
+          const userPaintData = await getUserPaint(currentUser.id, true);
           if (userPaintData.has_paint && userPaintData.paint_id) {
             setCurrentPaintId(userPaintData.paint_id);
           }

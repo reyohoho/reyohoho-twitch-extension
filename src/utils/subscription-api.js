@@ -20,9 +20,12 @@ export function openSubscriptionPage() {
   window.open('https://ext.rhhhhhhh.live', '_blank');
 }
 
-export async function getUserPaint(twitchId) {
+export async function getUserPaint(twitchId, noCache = false) {
   try {
-    const response = await fetch(`${API_BASE_URL}/paint/${twitchId}?timestamp=${Date.now()}`);
+    const url = noCache 
+      ? `${API_BASE_URL}/paint/${twitchId}?timestamp=${Date.now()}`
+      : `${API_BASE_URL}/paint/${twitchId}`;
+    const response = await fetch(url);
     
     if (!response.ok) {
       console.error('Failed to get user paint:', response.statusText);
