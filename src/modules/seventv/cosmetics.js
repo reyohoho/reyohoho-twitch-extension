@@ -5,6 +5,8 @@ import {getProxyUrl} from '../../utils/proxy.js';
 import debug from '../../utils/debug.js';
 import {getUserPaint} from '../../utils/subscription-api.js';
 
+const API_BASE_URL = 'https://starege.rhhhhhhh.live/api';
+
 const SEVENTV_GQL_ENDPOINT = 'https://7tv.io/v3/gql';
 
 class SevenTVCosmetics {
@@ -115,59 +117,99 @@ class SevenTVCosmetics {
   }
 
   async fetchPaintData(paintIds) {
-    if (!this.isEnabled()) return {};
+    if (!this.isEnabled()) return [];
 
-    const query = `
-      query GetPaints($list: [ObjectID!]) {
-        cosmetics(list: $list) {
-          paints {
-            id
-            name
-            color
-            function
-            angle
-            shape
-            image_url
-            repeat
-            stops {
-              at
-              color
-            }
-            shadows {
-              x_offset
-              y_offset
-              radius
-              color
-            }
-          }
-        }
-      }
-    `;
-
-    try {
-      const proxyUrl = getProxyUrl();
-      const response = await fetch(`${proxyUrl}${SEVENTV_GQL_ENDPOINT}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          operationName: 'GetPaints',
-          variables: {list: paintIds},
-          query,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.data.cosmetics.paints || [];
-    } catch (error) {
-      debug.error('Failed to fetch 7TV paint data:', error);
+    if (!paintIds || paintIds.length === 0) {
       return [];
     }
+
+    const paints = [];
+    const missingPaintIds = [];
+
+    const backendPromises = paintIds.map(async (paintId) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/paints/${paintId}`);
+
+        if (response.ok) {
+          const paint = await response.json();
+          return {paintId, paint, found: true};
+        } else if (response.status === 404) {
+          return {paintId, paint: null, found: false};
+        } else {
+          debug.warn(`Failed to fetch paint ${paintId} from backend: ${response.status}`);
+          return {paintId, paint: null, found: false};
+        }
+      } catch (error) {
+        debug.warn(`Error fetching paint ${paintId} from backend:`, error);
+        return {paintId, paint: null, found: false};
+      }
+    });
+
+    const backendResults = await Promise.all(backendPromises);
+    
+    for (const result of backendResults) {
+      if (result.found && result.paint) {
+        paints.push(result.paint);
+      } else {
+        missingPaintIds.push(result.paintId);
+      }
+    }
+
+    if (missingPaintIds.length > 0) {
+      try {
+        const query = `
+          query GetPaints($list: [ObjectID!]) {
+            cosmetics(list: $list) {
+              paints {
+                id
+                name
+                color
+                function
+                angle
+                shape
+                image_url
+                repeat
+                stops {
+                  at
+                  color
+                }
+                shadows {
+                  x_offset
+                  y_offset
+                  radius
+                  color
+                }
+              }
+            }
+          }
+        `;
+
+        const proxyUrl = getProxyUrl();
+        const response = await fetch(`${proxyUrl}${SEVENTV_GQL_ENDPOINT}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            operationName: 'GetPaints',
+            variables: {list: missingPaintIds},
+            query,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const seventvPaints = data.data?.cosmetics?.paints || [];
+          paints.push(...seventvPaints);
+        } else {
+          debug.error(`Failed to fetch paints from 7TV API: ${response.status}`);
+        }
+      } catch (error) {
+        debug.error('Failed to fetch paints from 7TV API:', error);
+      }
+    }
+
+    return paints;
   }
 
   async fetchAllPaints() {
@@ -200,22 +242,28 @@ class SevenTVCosmetics {
       const localPaint = await getUserPaint(userId);
       
       if (localPaint.has_paint && localPaint.paint_id) {
-        debug.log(`Using local paint ID for user ${userId}: ${localPaint.paint_id}`);
+        debug.log(`User ${userId} has paint in our backend: ${localPaint.paint_id}`);
         
-        const paints = await this.fetchPaintData([localPaint.paint_id]);
-        const paint = paints.length > 0 ? paints[0] : null;
-        
-        if (paint) {
-          const paintWithMeta = {
-            paint,
-            source: 'local',
-          };
+        try {
+          const response = await fetch(`${API_BASE_URL}/paints/${localPaint.paint_id}`);
           
-          this.userPaintCache.set(cacheKey, {
-            data: paintWithMeta,
-            timestamp: Date.now(),
-          });
-          return paintWithMeta;
+          if (response.ok) {
+            const paint = await response.json();
+            const paintWithMeta = {
+              paint,
+              source: 'local',
+            };
+            
+            this.userPaintCache.set(cacheKey, {
+              data: paintWithMeta,
+              timestamp: Date.now(),
+            });
+            return paintWithMeta;
+          } else {
+            debug.warn(`Paint ${localPaint.paint_id} not found in backend, falling back to 7TV`);
+          }
+        } catch (error) {
+          debug.error(`Failed to fetch paint ${localPaint.paint_id} from backend:`, error);
         }
       }
 
