@@ -4,6 +4,8 @@ import * as faTimes from '@fortawesome/free-solid-svg-icons/faTimes';
 import {Icon} from '@rsuite/icons';
 import React, {useState, useEffect, useRef} from 'react';
 import Button from 'rsuite/Button';
+import Checkbox from 'rsuite/Checkbox';
+import CheckboxGroup from 'rsuite/CheckboxGroup';
 import Input from 'rsuite/Input';
 import InputGroup from 'rsuite/InputGroup';
 import Loader from 'rsuite/Loader';
@@ -84,6 +86,7 @@ function PaintsGallery({onClose}) {
   const [settingPaintId, setSettingPaintId] = useState(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [selectedTypes, setSelectedTypes] = useState(['LINEAR_GRADIENT', 'RADIAL_GRADIENT', 'URL']);
   const currentUser = getCurrentUser();
 
   useEffect(() => {
@@ -233,10 +236,11 @@ function PaintsGallery({onClose}) {
 
   const filteredPaints = paints.filter((paint) => {
     const search = searchTerm.toLowerCase();
-    return (
+    const matchesSearch = 
       paint.name.toLowerCase().includes(search) ||
-      paint.id.toLowerCase().includes(search)
-    );
+      paint.id.toLowerCase().includes(search);
+    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(paint.function);
+    return matchesSearch && matchesType;
   });
 
   return (
@@ -266,6 +270,28 @@ function PaintsGallery({onClose}) {
                   <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faSearch} />
                 </InputGroup.Addon>
               </InputGroup>
+              
+              <div className={styles.filtersContainer}>
+                <p className={styles.filterLabel}>
+                  {formatMessage({defaultMessage: 'Type:'})}
+                </p>
+                <CheckboxGroup 
+                  inline 
+                  value={selectedTypes} 
+                  onChange={setSelectedTypes}
+                  className={styles.checkboxGroup}>
+                  <Checkbox value="LINEAR_GRADIENT">
+                    {formatMessage({defaultMessage: 'Linear Gradient'})}
+                  </Checkbox>
+                  <Checkbox value="RADIAL_GRADIENT">
+                    {formatMessage({defaultMessage: 'Radial Gradient'})}
+                  </Checkbox>
+                  <Checkbox value="URL">
+                    {formatMessage({defaultMessage: 'Image'})}
+                  </Checkbox>
+                </CheckboxGroup>
+              </div>
+
               <div className={styles.statsContainer}>
                 <p className={header.description}>
                   {formatMessage(

@@ -2,6 +2,27 @@
   margin-bottom: 1rem;
 }
 
+.filtersContainer {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-weight: 600;
+  color: var(--bttv-settings-text-color);
+  margin: 0;
+  font-size: 14px;
+}
+
+.checkboxGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .statsContainer {
   margin-top: 0.5rem;
   text-align: center;
