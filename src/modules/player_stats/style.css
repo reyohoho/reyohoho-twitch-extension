@@ -1,0 +1,102 @@
+.bttv-meta-tray {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bttv-player-stats-container {
+  display: contents;
+}
+
+.bttv-stat {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: inherit;
+  border-radius: var(--border-radius-medium);
+  padding: 0.5rem;
+  padding-left: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.5;
+  transition: background-color 0.1s ease-out, color 0.1s ease-out;
+  vertical-align: middle;
+}
+
+
+.bttv-stat-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bttv-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.bttv-stat-icon figure {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.bttv-stat-label {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.bttv-stat-icon:empty {
+  display: none;
+}
+
+.bttv-stat-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-background-tooltip, rgba(0, 0, 0, 0.9));
+  color: var(--color-text-tooltip, #fff);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  white-space: pre-line;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  min-width: max-content;
+}
+
+.bttv-stat-tooltip::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0.4rem solid transparent;
+  border-top-color: var(--color-background-tooltip, rgba(0, 0, 0, 0.9));
+}
+
+.bttv-stat-tooltip--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 768px) {
+  .bttv-player-stats-container {
+    display: none;
+  }
+}
+
