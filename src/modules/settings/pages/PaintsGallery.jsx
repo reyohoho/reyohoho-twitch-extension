@@ -4,8 +4,7 @@ import * as faTimes from '@fortawesome/free-solid-svg-icons/faTimes';
 import {Icon} from '@rsuite/icons';
 import React, {useState, useEffect, useRef} from 'react';
 import Button from 'rsuite/Button';
-import Checkbox from 'rsuite/Checkbox';
-import CheckboxGroup from 'rsuite/CheckboxGroup';
+import ButtonGroup from 'rsuite/ButtonGroup';
 import Input from 'rsuite/Input';
 import InputGroup from 'rsuite/InputGroup';
 import Loader from 'rsuite/Loader';
@@ -83,11 +82,13 @@ function PaintsGallery({onClose}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
   const [currentPaintId, setCurrentPaintId] = useState(null);
+  const [currentPaint, setCurrentPaint] = useState(null);
   const [settingPaintId, setSettingPaintId] = useState(null);
   const [isRemoving, setIsRemoving] = useState(false);
   const [message, setMessage] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState(['LINEAR_GRADIENT', 'RADIAL_GRADIENT', 'URL']);
   const currentUser = getCurrentUser();
+  const currentPaintPreviewRef = useRef(null);
 
   useEffect(() => {
     async function loadData() {
@@ -101,6 +102,8 @@ function PaintsGallery({onClose}) {
           const userPaintData = await getUserPaint(currentUser.id, true);
           if (userPaintData.has_paint && userPaintData.paint_id) {
             setCurrentPaintId(userPaintData.paint_id);
+            const paint = allPaints.find((p) => p.id === userPaintData.paint_id);
+            setCurrentPaint(paint || null);
           }
         }
         
@@ -120,6 +123,23 @@ function PaintsGallery({onClose}) {
       styleElements.forEach((el) => el.remove());
     };
   }, [currentUser?.id]);
+
+  useEffect(() => {
+    if (currentPaintPreviewRef.current && currentPaint) {
+      const className = `seventv-paint-current-preview-${currentPaint.id}`;
+      currentPaintPreviewRef.current.className = `${styles.currentPaintPreviewText} ${className}`;
+
+      const css = seventvCosmetics.generatePaintCSS(currentPaint, className);
+      let styleElement = document.querySelector(`style[data-paint-preview-id="current-${currentPaint.id}"]`);
+
+      if (!styleElement) {
+        styleElement = document.createElement('style');
+        styleElement.setAttribute('data-paint-preview-id', `current-${currentPaint.id}`);
+        styleElement.textContent = css;
+        document.head.appendChild(styleElement);
+      }
+    }
+  }, [currentPaint]);
 
   const handleSetPaint = async (paintId) => {
     if (!currentUser?.id) {
@@ -162,6 +182,8 @@ function PaintsGallery({onClose}) {
       
       if (result.success) {
         setCurrentPaintId(paintId);
+        const paint = paints.find((p) => p.id === paintId);
+        setCurrentPaint(paint || null);
         setMessage({
           type: 'success',
           text: formatMessage({defaultMessage: 'Paint set successfully! Updating...'}),
@@ -212,6 +234,7 @@ function PaintsGallery({onClose}) {
       
       if (result.success) {
         setCurrentPaintId(null);
+        setCurrentPaint(null);
         setMessage({
           type: 'success',
           text: formatMessage({defaultMessage: 'Paint removed successfully! Updating...'}),
@@ -259,6 +282,40 @@ function PaintsGallery({onClose}) {
               </Message>
             )}
 
+            {currentPaint && (
+              <div className={styles.currentPaintPreview}>
+                <div className={styles.currentPaintHeader}>
+                  <p className={styles.currentPaintTitle}>
+                    {formatMessage({defaultMessage: 'Current Paint'})}
+                  </p>
+                  <Button
+                    appearance="ghost"
+                    color="red"
+                    size="xs"
+                    onClick={handleRemovePaint}
+                    loading={isRemoving}
+                    disabled={isRemoving}>
+                    <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faTimes} />{' '}
+                    {formatMessage({defaultMessage: 'Remove'})}
+                  </Button>
+                </div>
+                <div className={styles.currentPaintContent}>
+                  <div ref={currentPaintPreviewRef} className={styles.currentPaintPreviewText}>
+                    {currentUser?.displayName || currentUser?.username || 'Username'}
+                  </div>
+                  <div className={styles.currentPaintDetails}>
+                    <p className={styles.currentPaintName}>{currentPaint.name}</p>
+                    <p className={styles.currentPaintMeta}>
+                      ID: {currentPaint.id} • {' '}
+                      {currentPaint.function === 'LINEAR_GRADIENT' && 'Linear Gradient'}
+                      {currentPaint.function === 'RADIAL_GRADIENT' && 'Radial Gradient'}
+                      {currentPaint.function === 'URL' && 'Image'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className={styles.searchContainer}>
               <InputGroup inside>
                 <Input
@@ -275,21 +332,44 @@ function PaintsGallery({onClose}) {
                 <p className={styles.filterLabel}>
                   {formatMessage({defaultMessage: 'Type:'})}
                 </p>
-                <CheckboxGroup 
-                  inline 
-                  value={selectedTypes} 
-                  onChange={setSelectedTypes}
-                  className={styles.checkboxGroup}>
-                  <Checkbox value="LINEAR_GRADIENT">
+                <ButtonGroup className={styles.filterButtons}>
+                  <Button
+                    appearance={selectedTypes.includes('LINEAR_GRADIENT') ? 'primary' : 'default'}
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTypes(prev => 
+                        prev.includes('LINEAR_GRADIENT') 
+                          ? prev.filter(t => t !== 'LINEAR_GRADIENT')
+                          : [...prev, 'LINEAR_GRADIENT']
+                      );
+                    }}>
                     {formatMessage({defaultMessage: 'Linear Gradient'})}
-                  </Checkbox>
-                  <Checkbox value="RADIAL_GRADIENT">
+                  </Button>
+                  <Button
+                    appearance={selectedTypes.includes('RADIAL_GRADIENT') ? 'primary' : 'default'}
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTypes(prev => 
+                        prev.includes('RADIAL_GRADIENT') 
+                          ? prev.filter(t => t !== 'RADIAL_GRADIENT')
+                          : [...prev, 'RADIAL_GRADIENT']
+                      );
+                    }}>
                     {formatMessage({defaultMessage: 'Radial Gradient'})}
-                  </Checkbox>
-                  <Checkbox value="URL">
+                  </Button>
+                  <Button
+                    appearance={selectedTypes.includes('URL') ? 'primary' : 'default'}
+                    size="sm"
+                    onClick={() => {
+                      setSelectedTypes(prev => 
+                        prev.includes('URL') 
+                          ? prev.filter(t => t !== 'URL')
+                          : [...prev, 'URL']
+                      );
+                    }}>
                     {formatMessage({defaultMessage: 'Image'})}
-                  </Checkbox>
-                </CheckboxGroup>
+                  </Button>
+                </ButtonGroup>
               </div>
 
               <div className={styles.statsContainer}>
@@ -299,24 +379,6 @@ function PaintsGallery({onClose}) {
                     {count: filteredPaints.length, total: paints.length}
                   )}
                 </p>
-                {currentPaintId && (
-                  <div className={styles.currentPaintContainer}>
-                    <p className={header.description}>
-                      {formatMessage({defaultMessage: 'Current paint: {id}'}, {id: currentPaintId})}
-                    </p>
-                    <Button
-                      appearance="ghost"
-                      color="red"
-                      size="xs"
-                      onClick={handleRemovePaint}
-                      loading={isRemoving}
-                      disabled={isRemoving}
-                      className={styles.removePaintButton}>
-                      <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faTimes} />{' '}
-                      {formatMessage({defaultMessage: 'Remove Paint'})}
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
 

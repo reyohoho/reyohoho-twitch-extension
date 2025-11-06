@@ -15,11 +15,13 @@
   color: var(--bttv-settings-text-color);
   margin: 0;
   font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
-.checkboxGroup {
+.filterButtons {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -156,5 +158,61 @@
 .removePaintButton {
   font-size: 12px;
   padding: 2px 8px;
+}
+
+.currentPaintPreview {
+  background: var(--bttv-settings-background-color);
+  border: 2px solid var(--rs-primary-500, #3498ff);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 0 2px rgba(52, 152, 255, 0.2);
+}
+
+.currentPaintHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.currentPaintTitle {
+  font-weight: 600;
+  color: var(--bttv-settings-text-color);
+  margin: 0;
+  font-size: 16px;
+}
+
+.currentPaintContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.currentPaintPreviewText {
+  font-size: 32px;
+  font-weight: bold;
+  flex-shrink: 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-color: currentColor;
+}
+
+.currentPaintDetails {
+  flex: 1;
+}
+
+.currentPaintName {
+  font-weight: 600;
+  color: var(--bttv-settings-text-color);
+  margin: 0 0 0.25rem 0;
+  font-size: 14px;
+}
+
+.currentPaintMeta {
+  font-size: 12px;
+  color: var(--bttv-settings-text-color-secondary);
+  margin: 0;
 }
 
