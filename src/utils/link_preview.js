@@ -22,11 +22,26 @@ export class LinkPreviewProcessor {
 
   processElement(element) {
     const text = element.textContent.trim();
+
+    const hideAll = settings.get(SettingIds.LINK_PREVIEW_HIDE_ALL);
+    const showPreview = settings.get(SettingIds.LINK_PREVIEW);
     
     const seventvMatch = text.match(SEVENTV_EMOTE_REGEX);
     const imgurMatch = text.match(IMGUR_REGEX);
     const kappaLolMatch = text.match(KAPPALOL_REGEX);
-    
+
+    if (hideAll) {
+      if (seventvMatch || imgurMatch || kappaLolMatch || IMG_REGEX.test(text) || VID_REGEX.test(text)) {
+        this.hideElement(element);
+        return true;
+      }
+      return false;
+    }
+
+    if (!showPreview) {
+      return false;
+    }
+
     if (seventvMatch) {
       this.replace7TVEmote(element, seventvMatch[1]);
       return true;
@@ -43,8 +58,13 @@ export class LinkPreviewProcessor {
       this.replaceVideo(element);
       return true;
     }
-    
+
     return false;
+  }
+
+  hideElement(element) {
+    element.dataset.linkPreviewProcessed = 'true';
+    element.style.display = 'none';
   }
 
   replaceImage(element) {
@@ -266,4 +286,3 @@ export class LinkPreviewProcessor {
     img.src = emoteImageUrl;
   }
 }
-
