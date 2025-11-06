@@ -1,7 +1,7 @@
 const STAREGE_DOMAINS = [
   'https://starege.rhhhhhhh.live',
-  'https://starege5.rhhhhhhh.live',
   'https://starege3.rhhhhhhh.live',
+  'https://starege5.rhhhhhhh.live',
   'https://starege4.rhhhhhhh.live',
 ];
 
@@ -12,7 +12,7 @@ async function checkDomainAvailability(domain) {
   try {
     const testUrl = `${domain}/https://google.com`;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1000);
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
 
     const response = await fetch(testUrl, {
       method: 'HEAD',
