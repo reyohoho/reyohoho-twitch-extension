@@ -1,5 +1,6 @@
 const STAREGE_DOMAINS = [
   'https://starege.rhhhhhhh.live',
+  'https://starege5.rhhhhhhh.live',
   'https://starege3.rhhhhhhh.live',
   'https://starege4.rhhhhhhh.live',
 ];
