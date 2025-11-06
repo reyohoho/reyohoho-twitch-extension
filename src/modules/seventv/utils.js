@@ -1,10 +1,12 @@
 import {hasFlag} from '../../utils/flags.js';
 import settings from '../../settings.js';
 import {SettingIds} from '../../constants.js';
+import {getStaregeDomain} from '../../utils/starege-domain.js';
 import Emote from '../emotes/emote.js';
 
 function emoteUrl(url, version, static_ = false) {
-  const proxyUrl = settings.get(SettingIds.PROXY_ENABLED) ? 'https://starege.rhhhhhhh.live/' : '';
+  const domain = settings.get(SettingIds.PROXY_ENABLED) ? getStaregeDomain() : null;
+  const proxyUrl = domain ? `${domain}/` : '';
   const finalUrl = url.startsWith('https://') ? `${proxyUrl}${url}` : `${proxyUrl}https:${url}`;
   return `${finalUrl}/${version}${static_ ? '_static' : ''}.webp`;
 }

@@ -29,7 +29,6 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
 
   updateGlobalEmotes() {
     this.emotes.clear();
-
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_EMOTES)) return;
 
     const proxyUrl = getProxyUrl();

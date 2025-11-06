@@ -1,8 +1,14 @@
-const API_BASE_URL = 'https://starege.rhhhhhhh.live/api';
+import {getStaregeApiUrl} from './starege-domain.js';
 
 export async function checkSubscription(twitchId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/subscription/check/${twitchId}`);
+    const apiUrl = getStaregeApiUrl(`/api/subscription/check/${twitchId}`);
+    if (!apiUrl) {
+      console.warn('BTTV: No working Starege domain available');
+      return { has_subscription: false, error: true };
+    }
+
+    const response = await fetch(apiUrl);
     
     if (!response.ok) {
       console.error('Failed to check subscription:', response.statusText);
@@ -22,10 +28,16 @@ export function openSubscriptionPage() {
 
 export async function getUserPaint(twitchId, noCache = false) {
   try {
-    const url = noCache 
-      ? `${API_BASE_URL}/paint/${twitchId}?timestamp=${Date.now()}`
-      : `${API_BASE_URL}/paint/${twitchId}`;
-    const response = await fetch(url);
+    const path = noCache 
+      ? `/api/paint/${twitchId}?timestamp=${Date.now()}`
+      : `/api/paint/${twitchId}`;
+    const apiUrl = getStaregeApiUrl(path);
+    if (!apiUrl) {
+      console.warn('BTTV: No working Starege domain available');
+      return { has_paint: false, error: true };
+    }
+
+    const response = await fetch(apiUrl);
     
     if (!response.ok) {
       console.error('Failed to get user paint:', response.statusText);
@@ -41,7 +53,13 @@ export async function getUserPaint(twitchId, noCache = false) {
 
 export async function setUserPaint(twitchId, paintId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/paint/set`, {
+    const apiUrl = getStaregeApiUrl('/api/paint/set');
+    if (!apiUrl) {
+      console.warn('BTTV: No working Starege domain available');
+      return { success: false, error: true };
+    }
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,7 +85,13 @@ export async function setUserPaint(twitchId, paintId) {
 
 export async function deleteUserPaint(twitchId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/paint/${twitchId}`, {
+    const apiUrl = getStaregeApiUrl(`/api/paint/${twitchId}`);
+    if (!apiUrl) {
+      console.warn('BTTV: No working Starege domain available');
+      return { success: false, error: true };
+    }
+
+    const response = await fetch(apiUrl, {
       method: 'DELETE',
     });
     

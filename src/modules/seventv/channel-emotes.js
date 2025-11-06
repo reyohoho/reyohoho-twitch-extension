@@ -3,6 +3,7 @@ import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import { hasFlag } from '../../utils/flags.js';
 import { getProxyUrl } from '../../utils/proxy.js';
+import { getStaregeDomain } from '../../utils/starege-domain.js';
 import { getCurrentChannel } from '../../utils/channel.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
@@ -43,7 +44,12 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     let wsUrl;
 
     if (proxyUrl && settings.get(SettingIds.PROXY_ENABLED)) {
-      wsUrl = 'wss://starege.rhhhhhhh.live/7tv-proxy';
+      const domain = getStaregeDomain();
+      if (domain) {
+        wsUrl = domain.replace('https://', 'wss://') + '/7tv-proxy';
+      } else {
+        wsUrl = 'wss://events.7tv.io/v3';
+      }
     } else {
       wsUrl = 'wss://events.7tv.io/v3';
     }

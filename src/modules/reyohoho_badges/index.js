@@ -1,6 +1,7 @@
 import {PlatformTypes} from '../../constants.js';
 import {loadModuleForPlatforms} from '../../utils/modules.js';
 import {getCurrentUser} from '../../utils/user.js';
+import {getStaregeApiUrl, initializeStaregeDomain} from '../../utils/starege-domain.js';
 import watcher from '../../watcher.js';
 import './style.css';
 
@@ -14,6 +15,12 @@ class ReyohohoBadgesModule {
     console.log('BTTV: Reyohoho badges module initialized (on-demand loading)');
     this.currentUserId = null;
 
+    this.initializeDomain();
+  }
+
+  async initializeDomain() {
+    await initializeStaregeDomain();
+    
     this.initializeCurrentUser();
 
     setTimeout(() => {
@@ -63,7 +70,13 @@ class ReyohohoBadgesModule {
     pendingRequests.add(userId);
 
     try {
-      const response = await fetch(`https://starege.rhhhhhhh.live/api/badge-users/${userId}`);
+      const apiUrl = getStaregeApiUrl(`/api/badge-users/${userId}`);
+      if (!apiUrl) {
+        console.warn('BTTV: No working Starege domain available');
+        return null;
+      }
+
+      const response = await fetch(apiUrl);
       
       if (response.ok) {
         const {userId: id, badgeUrl} = await response.json();
@@ -99,7 +112,13 @@ class ReyohohoBadgesModule {
 
   async registerUser(userId) {
     try {
-      const response = await fetch('https://starege.rhhhhhhh.live/api/badge-users', {
+      const apiUrl = getStaregeApiUrl('/api/badge-users');
+      if (!apiUrl) {
+        console.warn('BTTV: No working Starege domain available');
+        return;
+      }
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import formatMessage from '../../../i18n/index.js';
+import {getStaregeApiUrl, initializeStaregeDomain} from '../../../utils/starege-domain.js';
 import domObserver from '../../../observers/dom.js';
 import Modal from '../components/Window.jsx';
 
@@ -13,10 +14,27 @@ let mountedRoot;
 
 export default class SettingsModule {
   constructor() {
+    this.injectDynamicStyles();
     this.load();
     domObserver.on('a[data-test-selector="user-menu-dropdown__settings-link"],.tw-drop-down-menu-item-figure', () => {
       this.renderSettingsMenuOption();
     });
+  }
+
+  async injectDynamicStyles() {
+    await initializeStaregeDomain();
+    const badgeUrl = getStaregeApiUrl('/badge.webp');
+    
+    if (badgeUrl && !document.getElementById('bttv-dynamic-styles')) {
+      const style = document.createElement('style');
+      style.id = 'bttv-dynamic-styles';
+      style.textContent = `
+        .bttvSettingsIconDropDown {
+          background-image: url(${badgeUrl}) !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 
   async load() {

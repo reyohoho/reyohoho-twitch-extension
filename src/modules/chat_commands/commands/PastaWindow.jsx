@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client';
 import twitch from '../../../utils/twitch.js';
 import emotes from '../../emotes/index.js';
 import {getCurrentUser} from '../../../utils/user.js';
+import {getStaregeApiUrl} from '../../../utils/starege-domain.js';
 import styles from './pasta.module.css';
 
 const parseEmotesInText = (text) => {
@@ -72,7 +73,12 @@ const PastaModal = ({query, onClose}) => {
       setError(null);
       
       try {
-        const response = await fetch('https://starege.rhhhhhhh.live/api/pastas', {
+        const apiUrl = getStaregeApiUrl('/api/pastas');
+        if (!apiUrl) {
+          throw new Error('No working Starege domain available');
+        }
+
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

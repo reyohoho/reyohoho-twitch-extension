@@ -1,28 +1,9 @@
 import settings from '../settings.js';
 import {SettingIds} from '../constants.js';
+import {initializeStaregeDomain, getStaregeDomain} from './starege-domain.js';
 
 let proxyCheckPromise = null;
-let proxyAvailable = true;
-
-export async function checkProxyAvailability(proxyUrl) {
-  if (!proxyUrl) return false;
-
-  try {
-    const testUrl = `${proxyUrl}https://google.com`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    const response = await fetch(testUrl, {
-      method: 'HEAD',
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-    return response.ok;
-  } catch (error) {
-    return false;
-  }
-}
+let proxyAvailable = false;
 
 export async function initializeProxyCheck(force = false) {
   if (proxyCheckPromise && !force) return proxyCheckPromise;
@@ -37,28 +18,25 @@ export async function initializeProxyCheck(force = false) {
       return;
     }
 
-    const proxyUrl = settings.get(SettingIds.PROXY_URL);
-    if (!proxyUrl) {
-      proxyAvailable = false;
-      return;
-    }
-
-    proxyAvailable = await checkProxyAvailability(proxyUrl);
+    const domain = await initializeStaregeDomain(force);
+    proxyAvailable = !!domain;
 
     if (!proxyAvailable) {
-      try {
-        const {default: sendChatMessage} = await import('./send-chat-message.js');
-        const {default: formatMessage} = await import('../i18n/index.js');
+      setTimeout(async () => {
+        try {
+          const {default: sendChatMessage} = await import('./send-chat-message.js');
+          const {default: formatMessage} = await import('../i18n/index.js');
 
-        sendChatMessage(
-          formatMessage({
-            defaultMessage: 'Proxy is not available. Emotes may not load properly.',
-            id: 'proxyUnavailable',
-          })
-        );
-      } catch (error) {
-        console.warn('BTTV: Failed to send proxy availability message:', error);
-      }
+          sendChatMessage(
+            formatMessage({
+              defaultMessage: 'Proxy is not available. Emotes and internal API may not load properly.',
+              id: 'proxyUnavailable',
+            })
+          );
+        } catch (error) {
+          console.warn('BTTV: Failed to send proxy availability message:', error);
+        }
+      }, 3000);
     }
   })();
 
@@ -74,16 +52,6 @@ export function getProxyUrl() {
     return '';
   }
 
-  const proxyUrl = settings.get(SettingIds.PROXY_URL);
-  return proxyUrl || '';
-}
-
-export function getDefaultProxyUrl() {
-  return 'https://starege.rhhhhhhh.live/';
-}
-
-export function resetProxyUrl() {
-  settings.set(SettingIds.PROXY_URL, getDefaultProxyUrl());
-  proxyAvailable = true;
-  proxyCheckPromise = null;
+  const domain = getStaregeDomain();
+  return domain ? `${domain}/` : '';
 }

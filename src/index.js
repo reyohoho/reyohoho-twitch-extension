@@ -48,14 +48,14 @@
     const {default: playerButtonManager} = await import('./utils/player-button-manager.js');
     playerButtonManager.initialize();
 
-    // eslint-disable-next-line import/no-unresolved
-    await import('./modules/**/index.js');
-
-    // Initialize proxy check
+    // Initialize Starege domain and proxy check
     const {initializeProxyCheck} = await import('./utils/proxy.js');
-    initializeProxyCheck().catch((error) => {
+    await initializeProxyCheck().catch((error) => {
       debug.log('Failed to initialize proxy check:', error);
     });
+
+    // eslint-disable-next-line import/no-unresolved
+    await import('./modules/**/index.js');
 
     watcher.setup();
 

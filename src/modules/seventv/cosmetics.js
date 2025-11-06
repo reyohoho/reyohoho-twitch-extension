@@ -2,10 +2,9 @@ import {hasFlag} from '../../utils/flags.js';
 import settings from '../../settings.js';
 import {SettingIds, EmoteTypeFlags} from '../../constants.js';
 import {getProxyUrl} from '../../utils/proxy.js';
+import {getStaregeApiUrl} from '../../utils/starege-domain.js';
 import debug from '../../utils/debug.js';
 import {getUserPaint} from '../../utils/subscription-api.js';
-
-const API_BASE_URL = 'https://starege.rhhhhhhh.live/api';
 
 const SEVENTV_GQL_ENDPOINT = 'https://7tv.io/v3/gql';
 
@@ -128,7 +127,12 @@ class SevenTVCosmetics {
 
     const backendPromises = paintIds.map(async (paintId) => {
       try {
-        const response = await fetch(`${API_BASE_URL}/paints/${paintId}`);
+        const apiUrl = getStaregeApiUrl(`/api/paints/${paintId}`);
+        if (!apiUrl) {
+          return {paintId, paint: null, found: false};
+        }
+
+        const response = await fetch(apiUrl);
 
         if (response.ok) {
           const paint = await response.json();
@@ -214,7 +218,13 @@ class SevenTVCosmetics {
 
   async fetchAllPaints() {
     try {
-      const response = await fetch('https://starege.rhhhhhhh.live/api/paints');
+      const apiUrl = getStaregeApiUrl('/api/paints');
+      if (!apiUrl) {
+        debug.warn('No working Starege domain available for paints');
+        return [];
+      }
+
+      const response = await fetch(apiUrl);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -245,22 +255,27 @@ class SevenTVCosmetics {
         debug.log(`User ${userId} has paint in our backend: ${localPaint.paint_id}`);
         
         try {
-          const response = await fetch(`${API_BASE_URL}/paints/${localPaint.paint_id}`);
-          
-          if (response.ok) {
-            const paint = await response.json();
-            const paintWithMeta = {
-              paint,
-              source: 'local',
-            };
-            
-            this.userPaintCache.set(cacheKey, {
-              data: paintWithMeta,
-              timestamp: Date.now(),
-            });
-            return paintWithMeta;
+          const apiUrl = getStaregeApiUrl(`/api/paints/${localPaint.paint_id}`);
+          if (!apiUrl) {
+            debug.warn('No working Starege domain available, falling back to 7TV');
           } else {
-            debug.warn(`Paint ${localPaint.paint_id} not found in backend, falling back to 7TV`);
+            const response = await fetch(apiUrl);
+            
+            if (response.ok) {
+              const paint = await response.json();
+              const paintWithMeta = {
+                paint,
+                source: 'local',
+              };
+              
+              this.userPaintCache.set(cacheKey, {
+                data: paintWithMeta,
+                timestamp: Date.now(),
+              });
+              return paintWithMeta;
+            } else {
+              debug.warn(`Paint ${localPaint.paint_id} not found in backend, falling back to 7TV`);
+            }
           }
         } catch (error) {
           debug.error(`Failed to fetch paint ${localPaint.paint_id} from backend:`, error);
