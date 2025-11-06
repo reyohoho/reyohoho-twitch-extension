@@ -106,7 +106,6 @@ class ReyohohoBadgesModule {
         },
         body: JSON.stringify({userId}),
       });
-      await this.loadBadges();
     } catch (error) {
       console.error(`BTTV: Failed to register user ${userId}:`, error);
     }
