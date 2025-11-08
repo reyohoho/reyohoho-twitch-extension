@@ -79,6 +79,13 @@ class ReyohohoBadgesModule {
       const response = await fetch(apiUrl);
       
       if (response.ok) {
+        if (response.status === 204) {
+          badgeRequestCache.set(userId, {
+            badge: null,
+            timestamp: Date.now(),
+          });
+          return null;
+        }
         const {userId: id, badgeUrl} = await response.json();
         const badge = {
           url: badgeUrl,
@@ -94,12 +101,6 @@ class ReyohohoBadgesModule {
         watcher.emit('reyohoho_badge.updated', userId);
         
         return badge;
-      } else if (response.status === 404) {
-        badgeRequestCache.set(userId, {
-          badge: null,
-          timestamp: Date.now(),
-        });
-        return null;
       }
     } catch (error) {
       console.error(`BTTV: Failed to fetch badge for user ${userId}:`, error);
