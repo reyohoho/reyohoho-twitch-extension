@@ -14,7 +14,7 @@
 
 .error p {
   margin-bottom: 1rem;
-  color: #ff6b6b;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .activeSubscription {
@@ -27,9 +27,9 @@
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-  border: 2px solid rgba(102, 126, 234, 0.4);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
 .icon {
@@ -38,8 +38,8 @@
 
 .tierLabel {
   font-size: 1.2rem;
-  font-weight: 700;
-  color: #667eea;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .info {
@@ -51,7 +51,7 @@
 }
 
 .active {
-  color: #4caf50;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -72,8 +72,9 @@
 .benefits {
   margin: 1rem 0;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .benefits ul {
