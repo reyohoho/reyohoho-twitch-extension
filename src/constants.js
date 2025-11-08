@@ -67,6 +67,7 @@ export const SettingIds = {
   LINK_PREVIEW_MAX_HEIGHT: 'linkPreviewMaxHeight',
   LINK_PREVIEW_MAX_WIDTH: 'linkPreviewMaxWidth',
   PLAYER_STATS: 'playerStats',
+  CUSTOM_BADGES: 'customBadges',
 };
 
 export const CategoryTypes = {
@@ -309,6 +310,7 @@ export const SettingDefaultValues = {
   [SettingIds.LINK_PREVIEW_MAX_HEIGHT]: 200,
   [SettingIds.LINK_PREVIEW_MAX_WIDTH]: 200,
   [SettingIds.PLAYER_STATS]: true,
+  [SettingIds.CUSTOM_BADGES]: true,
 };
 
 export const FlagSettings = [

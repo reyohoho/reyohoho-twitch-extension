@@ -169,6 +169,7 @@ class ChatModule {
       }
       this.messageReplacer(element, null);
     });
+    settings.on(`changed.${SettingIds.CUSTOM_BADGES}`, (value) => this.handleCustomBadgesChanged(value));
     watcher.on('channel.updated', ({ bots }) => {
       channelBots = bots;
     });
@@ -273,7 +274,34 @@ class ChatModule {
     return colors.calculateColor(color, settings.get(SettingIds.DARKENED_MODE));
   }
 
+  getBadgesContainer(element) {
+    let badgesContainer = element.querySelector('.chat-badge')?.closest('span');
+    if (badgesContainer == null) {
+      badgesContainer = element.querySelector('span.chat-line__username')?.previousSibling;
+      if (badgesContainer?.nodeName !== 'SPAN') {
+        badgesContainer = element.querySelector('.seventv-chat-user-badge-list');
+      }
+    }
+    return badgesContainer;
+  }
+
+  removeCustomBadges(container) {
+    if (container == null) {
+      return;
+    }
+    const existing = container.querySelectorAll('.bttv-chat-badge-container');
+    for (const badge of existing) {
+      badge.remove();
+    }
+  }
+
   customBadges(user) {
+    if (!settings.get(SettingIds.CUSTOM_BADGES)) {
+      return [];
+    }
+    if (!hasFlag(settings.get(SettingIds.USERNAMES), UsernameFlags.BADGES)) {
+      return [];
+    }
     const badges = [];
 
     const badge = badgeUsers.get(user.id);
@@ -310,24 +338,14 @@ class ChatModule {
   }
 
   updateUserBadges(element, user) {
-    let badgesContainer = element.querySelector('.chat-badge')?.closest('span');
-    if (badgesContainer == null) {
-      badgesContainer = element.querySelector('span.chat-line__username')?.previousSibling;
-      if (badgesContainer?.nodeName !== 'SPAN') {
-        badgesContainer = element.querySelector('.seventv-chat-user-badge-list');
-      }
-    }
-
+    const badgesContainer = this.getBadgesContainer(element);
     if (badgesContainer == null) {
       return;
     }
 
-    const oldReyohohoBadges = badgesContainer.querySelectorAll('.bttv-chat-badge-container .bttv-chat-badge');
-    for (const oldBadge of oldReyohohoBadges) {
-      const tooltip = oldBadge.parentElement?.querySelector('.bttv-tooltip');
-      if (tooltip && tooltip.innerText === 'ReYohoho Badge') {
-        oldBadge.parentElement.remove();
-      }
+    this.removeCustomBadges(badgesContainer);
+    if (!settings.get(SettingIds.CUSTOM_BADGES) || !hasFlag(settings.get(SettingIds.USERNAMES), UsernameFlags.BADGES)) {
+      return;
     }
 
     const reyohohoBadge = reyohohoBadges.getBadge(user.id);
@@ -555,14 +573,7 @@ class ChatModule {
     const fromNode = element.querySelector('.chat-author__display-name,.chat-author__intl-login');
     const messageParts = getMessagePartsFromMessageElement(element);
 
-    let badgesContainer = element.querySelector('.chat-badge')?.closest('span');
-    if (badgesContainer == null) {
-      badgesContainer = element.querySelector('span.chat-line__username')?.previousSibling;
-      if (badgesContainer?.nodeName !== 'SPAN') {
-        badgesContainer = null;
-      }
-    }
-
+    const badgesContainer = this.getBadgesContainer(element);
     this._messageParser(element, messageObj, fromNode, badgesContainer, messageParts);
   }
 
@@ -903,6 +914,28 @@ class ChatModule {
     giantContainer.appendChild(giantEmote);
 
     element.appendChild(giantContainer);
+  }
+
+  handleCustomBadgesChanged(enabled) {
+    const messages = twitch.getChatMessages();
+    for (const { element, message } of messages) {
+      const badgesContainer = this.getBadgesContainer(element);
+      if (badgesContainer == null) {
+        continue;
+      }
+      this.removeCustomBadges(badgesContainer);
+      if (!enabled) {
+        continue;
+      }
+      const user = formatChatUser(message);
+      if (!user) {
+        continue;
+      }
+      const badges = this.customBadges(user);
+      for (const badge of badges) {
+        badgesContainer.appendChild(badge);
+      }
+    }
   }
 }
 
