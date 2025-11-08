@@ -33,13 +33,11 @@ class ChatSwipeModule {
     const isOwner = twitch.getCurrentUserIsOwner();
 
     if (!isModerator && !isOwner) {
-      console.debug('BTTV: ChatSwipe: User is not moderator or owner');
       return false;
     }
 
     const user = formatChatUser(messageObj);
     if (!user) {
-      console.debug('BTTV: ChatSwipe: Could not format chat user');
       return false;
     }
 
@@ -49,11 +47,9 @@ class ChatSwipeModule {
     }
 
     if (user.mod || messageObj.badges?.broadcaster || messageObj.badges?.moderator) {
-      console.debug('BTTV: ChatSwipe: Target user is mod/broadcaster, cannot moderate');
       return false;
     }
 
-    console.debug('BTTV: ChatSwipe: Can moderate user:', user.name);
     return true;
   }
 
