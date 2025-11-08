@@ -7,7 +7,7 @@ const VID_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.mp4|\.mov
 const SEVENTV_EMOTE_REGEX = /https?:\/\/7tv\.app\/emotes\/([a-zA-Z0-9]+)/i;
 const IMGUR_REGEX = /https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)/i;
 const KAPPALOL_REGEX = /https?:\/\/(?:www\.)?kappa\.lol\/([a-zA-Z0-9]+)/i;
-const DISCORD_CDN_REGEX = /https?:\/\/(?:cdn\.discordapp\.com|media\.discordapp\.net)\//i;
+const DISCORD_CDN_REGEX = /https?:\/\/(?:cdn\.discordapp\.com|media\.discordapp\.net|images-ext-\d+\.discordapp\.net)\//i;
 
 export class LinkPreviewProcessor {
   constructor() {
