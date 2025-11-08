@@ -23,14 +23,14 @@ function PaintsGallery({onClose}) {
             <div className={styles.redirectContainer}>
               <div className={styles.redirectIcon}>🎨</div>
               <h2 className={styles.redirectTitle}>
-                {formatMessage({defaultMessage: 'Установка расцветки ника и кастомного бейджика перенесена на сайт'})}
+                {formatMessage({defaultMessage: 'Установку расцветки ника и кастомного бейджика можно сделать через сайт'})}
               </h2>
               <Button
                 appearance="primary"
                 size="lg"
                 className={styles.redirectButton}
                 onClick={handleOpenWebsite}>
-                <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faExternalLinkAlt} />{' '}
+                <Icon as={FontAwesomeSvgIcon} fontAwesomeIcon={faExternalLinkAlt} />
                 {formatMessage({defaultMessage: 'Перейти на сайт'})}
               </Button>
             </div>
