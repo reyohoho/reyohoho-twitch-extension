@@ -12,7 +12,7 @@ async function checkDomainAvailability(domain) {
   try {
     const testUrl = `${domain}/https://google.com`;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
 
     const response = await fetch(testUrl, {
       method: 'HEAD',
