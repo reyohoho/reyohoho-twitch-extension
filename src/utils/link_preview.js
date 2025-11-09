@@ -8,6 +8,21 @@ const SEVENTV_EMOTE_REGEX = /https?:\/\/7tv\.app\/emotes\/([a-zA-Z0-9]+)/i;
 const IMGUR_REGEX = /https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)/i;
 const KAPPALOL_REGEX = /https?:\/\/(?:www\.)?kappa\.lol\/([a-zA-Z0-9]+)/i;
 const DISCORD_CDN_REGEX = /https?:\/\/(?:cdn\.discordapp\.com|media\.discordapp\.net|images-ext-\d+\.discordapp\.net)\//i;
+const YOUTUBE_IMG_REGEX = /https?:\/\/i\.ytimg\.com\//i;
+const IBB_CO_REGEX = /https?:\/\/i\.ibb\.co\//i;
+
+function shouldApplyProxy(url) {
+  if (url.includes('cdn.rhhhhhhh.live')) {
+    return false;
+  }
+  if (url.includes('starege.rhhhhhhh.live') || 
+      url.includes('starege3.rhhhhhhh.live') || 
+      url.includes('starege4.rhhhhhhh.live') || 
+      url.includes('starege5.rhhhhhhh.live')) {
+    return false;
+  }
+  return true;
+}
 
 export class LinkPreviewProcessor {
   constructor() {
@@ -54,8 +69,11 @@ export class LinkPreviewProcessor {
     
     const cdnUrl = getCdnUrl();
     let imageUrl = url;
-    if (cdnUrl && DISCORD_CDN_REGEX.test(url)) {
-      imageUrl = `${cdnUrl}${url}`;
+    
+    if (cdnUrl && shouldApplyProxy(url)) {
+      if (DISCORD_CDN_REGEX.test(url) || YOUTUBE_IMG_REGEX.test(url) || IBB_CO_REGEX.test(url)) {
+        imageUrl = `${cdnUrl}${url}`;
+      }
     }
     
     const img = new Image();
