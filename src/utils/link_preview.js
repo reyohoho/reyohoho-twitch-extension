@@ -1,6 +1,6 @@
 import { SettingIds } from '../constants.js';
 import settings from '../settings.js';
-import { getProxyUrl } from './proxy.js';
+import { getCdnUrl } from './proxy.js';
 
 const IMG_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.tif|\.tiff|\.webp|\.jfif)/i;
 const VID_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.mp4|\.mov)/i;
@@ -52,10 +52,10 @@ export class LinkPreviewProcessor {
     
     element.dataset.linkPreviewProcessed = 'true';
     
-    const proxyUrl = getProxyUrl();
+    const cdnUrl = getCdnUrl();
     let imageUrl = url;
-    if (proxyUrl && DISCORD_CDN_REGEX.test(url)) {
-      imageUrl = `${proxyUrl}${url}`;
+    if (cdnUrl && DISCORD_CDN_REGEX.test(url)) {
+      imageUrl = `${cdnUrl}${url}`;
     }
     
     const img = new Image();
@@ -176,8 +176,8 @@ export class LinkPreviewProcessor {
     
     element.dataset.linkPreviewProcessed = 'true';
     
-    const proxyUrl = getProxyUrl();
-    const imageUrl = proxyUrl ? `${proxyUrl}${originalUrl}` : originalUrl;
+    const cdnUrl = getCdnUrl();
+    const imageUrl = cdnUrl ? `${cdnUrl}${originalUrl}` : originalUrl;
     
     const img = new Image();
     
@@ -219,12 +219,12 @@ export class LinkPreviewProcessor {
   }
 
   replace7TVEmote(element, emoteId) {
-    const proxyUrl = getProxyUrl();
+    const cdnUrl = getCdnUrl();
     
     let emoteImageUrl = `https://cdn.7tv.app/emote/${emoteId}/2x.webp`;
     
-    if (proxyUrl) {
-      emoteImageUrl = `${proxyUrl}${emoteImageUrl}`;
+    if (cdnUrl) {
+      emoteImageUrl = `${cdnUrl}${emoteImageUrl}`;
     }
     
     element.dataset.linkPreviewProcessed = 'true';

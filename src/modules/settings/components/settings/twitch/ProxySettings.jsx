@@ -4,7 +4,7 @@ import Toggle from 'rsuite/Toggle';
 import useStorageState from '../../../../../common/hooks/StorageState.jsx';
 import {CategoryTypes, SettingIds} from '../../../../../constants.js';
 import formatMessage from '../../../../../i18n/index.js';
-import {initializeProxyCheck} from '../../../../../utils/proxy.js';
+import {initializeProxyCheck, initializeCdnCheck} from '../../../../../utils/proxy.js';
 import styles from '../../../styles/header.module.css';
 import {registerComponent} from '../../Store.jsx';
 
@@ -16,7 +16,10 @@ function ProxySettings() {
   const handleToggleChange = async (state) => {
     setEnabled(state);
     if (state) {
-      await initializeProxyCheck(true);
+      await Promise.all([
+        initializeProxyCheck(true),
+        initializeCdnCheck(true),
+      ]);
     }
   };
 

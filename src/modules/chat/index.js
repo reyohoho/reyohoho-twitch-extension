@@ -6,7 +6,7 @@ import cdn from '../../utils/cdn.js';
 import { getCurrentChannel } from '../../utils/channel.js';
 import colors from '../../utils/colors.js';
 import { hasFlag } from '../../utils/flags.js';
-import { getProxyUrl } from '../../utils/proxy.js';
+import { getCdnUrl } from '../../utils/proxy.js';
 import twitch from '../../utils/twitch.js';
 import { getPlatform } from '../../utils/window.js';
 import watcher from '../../watcher.js';
@@ -149,10 +149,10 @@ export function getMessagePartsFromMessageElement(message) {
 function proxyBadgeUrl(url) {
   if (!url || typeof url !== 'string') return url;
 
-  const proxyUrl = getProxyUrl();
-  if (!proxyUrl) return url;
+  const cdnUrl = getCdnUrl();
+  if (!cdnUrl) return url;
 
-  return `${proxyUrl}${url}`;
+  return `${cdnUrl}${url}`;
 }
 
 class ChatModule {

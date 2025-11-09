@@ -1,7 +1,7 @@
 import {hasFlag} from '../../utils/flags.js';
 import settings from '../../settings.js';
 import {SettingIds, EmoteTypeFlags} from '../../constants.js';
-import {getProxyUrl} from '../../utils/proxy.js';
+import {getProxyUrl, getCdnUrl} from '../../utils/proxy.js';
 import {getStaregeApiUrl} from '../../utils/starege-domain.js';
 import debug from '../../utils/debug.js';
 import {getUserPaint} from '../../utils/subscription-api.js';
@@ -376,7 +376,7 @@ class SevenTVCosmetics {
         break;
       }
       case 'URL': {
-        const imageUrl = paint.image_url ? `${getProxyUrl()}${paint.image_url}` : '';
+        const imageUrl = paint.image_url ? `${getCdnUrl()}${paint.image_url}` : '';
         result = `url(${imageUrl})`;
         break;
       }

@@ -49,10 +49,15 @@
     playerButtonManager.initialize();
 
     // Initialize Starege domain and proxy check
-    const {initializeProxyCheck} = await import('./utils/proxy.js');
-    await initializeProxyCheck().catch((error) => {
-      debug.log('Failed to initialize proxy check:', error);
-    });
+    const {initializeProxyCheck, initializeCdnCheck} = await import('./utils/proxy.js');
+    await Promise.all([
+      initializeProxyCheck().catch((error) => {
+        debug.log('Failed to initialize proxy check:', error);
+      }),
+      initializeCdnCheck().catch((error) => {
+        debug.log('Failed to initialize CDN check:', error);
+      }),
+    ]);
 
     // eslint-disable-next-line import/no-unresolved
     await import('./modules/**/index.js');

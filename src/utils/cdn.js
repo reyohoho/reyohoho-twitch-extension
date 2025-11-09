@@ -1,10 +1,10 @@
 import {EXT_VER, CDN_ENDPOINT} from '../constants.js';
-import {getProxyUrl} from './proxy.js';
+import {getCdnUrl} from './proxy.js';
 
 export default {
   url(path, breakCache = false) {
-    const proxyUrl = getProxyUrl();
-    const fullUrl = `${proxyUrl}${CDN_ENDPOINT}${path}${breakCache ? `?v=${EXT_VER}` : ''}`;
+    const cdnUrl = getCdnUrl();
+    const fullUrl = `${cdnUrl}${CDN_ENDPOINT}${path}${breakCache ? `?v=${EXT_VER}` : ''}`;
 
     return fullUrl;
   },

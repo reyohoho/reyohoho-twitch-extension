@@ -11,7 +11,7 @@ import FontAwesomeSvgIcon from '../../../common/components/FontAwesomeSvgIcon.js
 import formatMessage from '../../../i18n/index.js';
 import globalEmotes from '../../emotes/global-emotes.js';
 import watcher from '../../../watcher.js';
-import {initializeProxyCheck} from '../../../utils/proxy.js';
+import {initializeProxyCheck, initializeCdnCheck} from '../../../utils/proxy.js';
 import styles from './Header.module.css';
 
 function Header({value, onChange, toggleWhisper, selected, ...props}) {
@@ -40,7 +40,10 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
     setIsReloading(true);
 
     try {
-      await initializeProxyCheck(true);
+      await Promise.all([
+        initializeProxyCheck(true),
+        initializeCdnCheck(true),
+      ]);
       await Promise.all([globalEmotes.updateGlobalEmotes(), new Promise((resolve) => {
         watcher.emit('channel.updated');
         setTimeout(resolve, 100);

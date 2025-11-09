@@ -2,7 +2,7 @@ import twemoji from 'twemoji';
 import {CDN_ENDPOINT, EmoteCategories, EmoteProviders} from '../../constants.js';
 import formatMessage from '../../i18n/index.js';
 import blacklistedEmoji from '../../utils/emoji-blacklist.js';
-import {getProxyUrl} from '../../utils/proxy.js';
+import {getCdnUrl} from '../../utils/proxy.js';
 
 import AbstractEmotes from './abstract-emotes.js';
 // file gets created during bundle
@@ -65,8 +65,8 @@ class Emojis extends AbstractEmotes {
                 break;
             }
 
-            const proxyUrl = getProxyUrl();
-            url = ''.concat(proxyUrl, options.base, options.size, '/', icon, options.ext);
+            const cdnUrl = getCdnUrl();
+            url = ''.concat(cdnUrl, options.base, options.size, '/', icon, options.ext);
 
             return false;
           },

@@ -3,7 +3,7 @@ import formatMessage from '../../i18n/index.js';
 import settings from '../../settings.js';
 import api from '../../utils/api.js';
 import {hasFlag} from '../../utils/flags.js';
-import {getProxyUrl} from '../../utils/proxy.js';
+import {getCdnUrl} from '../../utils/proxy.js';
 import twitch from '../../utils/twitch.js';
 import watcher from '../../watcher.js';
 
@@ -19,13 +19,13 @@ const category = {
 function proxyImages(images) {
   if (!images) return images;
 
-  const proxyUrl = getProxyUrl();
+  const cdnUrl = getCdnUrl();
   const proxiedImages = {};
 
   Object.keys(images).forEach((key) => {
     const imageUrl = images[key];
     if (imageUrl && typeof imageUrl === 'string') {
-      proxiedImages[key] = `${proxyUrl}${imageUrl}`;
+      proxiedImages[key] = `${cdnUrl}${imageUrl}`;
     } else {
       proxiedImages[key] = imageUrl;
     }
