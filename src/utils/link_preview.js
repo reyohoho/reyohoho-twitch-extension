@@ -6,7 +6,7 @@ const IMG_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.jpg|\.jpe
 const VID_REGEX = /https?:\/\/[a-zA-Z0-9\.\/\-\_\%\@\?\&\=\:\+\~]+(?:\.mp4|\.mov)/i;
 const SEVENTV_EMOTE_REGEX = /https?:\/\/7tv\.app\/emotes\/([a-zA-Z0-9]+)/i;
 const IMGUR_REGEX = /https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)/i;
-const KAPPALOL_REGEX = /https?:\/\/(?:www\.)?kappa\.lol\/([a-zA-Z0-9]+)/i;
+const KAPPALOL_REGEX = /https?:\/\/(?:[a-zA-Z0-9]+\.)?kappa\.lol\/([a-zA-Z0-9]+)/i;
 const DISCORD_CDN_REGEX = /https?:\/\/(?:cdn\.discordapp\.com|media\.discordapp\.net|images-ext-\d+\.discordapp\.net)\//i;
 const YOUTUBE_IMG_REGEX = /https?:\/\/i\.ytimg\.com\//i;
 const IBB_CO_REGEX = /https?:\/\/i\.ibb\.co\//i;
@@ -94,6 +94,20 @@ export class LinkPreviewProcessor {
       imgElement.alt = 'Link Preview';
       imgElement.style.maxHeight = `${this.maxHeight}px`;
       imgElement.style.maxWidth = `${this.maxWidth}px`;
+      
+      imgElement.dataset.originalSrc = url;
+      
+      imgElement.addEventListener('contextmenu', () => {
+        imgElement.src = url;
+        setTimeout(() => {
+          imgElement.src = imageUrl;
+        }, 100);
+      });
+      
+      imgElement.addEventListener('copy', (e) => {
+        e.preventDefault();
+        e.clipboardData.setData('text/plain', url);
+      });
       
       anchor.appendChild(imgElement);
       previewContainer.appendChild(anchor);
@@ -216,6 +230,20 @@ export class LinkPreviewProcessor {
       imgElement.style.maxHeight = `${this.maxHeight}px`;
       imgElement.style.maxWidth = `${this.maxWidth}px`;
       
+      if (imageUrl !== originalUrl) {
+        imgElement.addEventListener('contextmenu', () => {
+          imgElement.src = originalUrl;
+          setTimeout(() => {
+            imgElement.src = imageUrl;
+          }, 100);
+        });
+        
+        imgElement.addEventListener('copy', (e) => {
+          e.preventDefault();
+          e.clipboardData.setData('text/plain', originalUrl);
+        });
+      }
+      
       anchor.appendChild(imgElement);
       previewContainer.appendChild(anchor);
       
@@ -239,10 +267,11 @@ export class LinkPreviewProcessor {
   replace7TVEmote(element, emoteId) {
     const cdnUrl = getCdnUrl();
     
-    let emoteImageUrl = `https://cdn.7tv.app/emote/${emoteId}/2x.webp`;
+    const originalEmoteUrl = `https://cdn.7tv.app/emote/${emoteId}/2x.webp`;
+    let emoteImageUrl = originalEmoteUrl;
     
     if (cdnUrl) {
-      emoteImageUrl = `${cdnUrl}${emoteImageUrl}`;
+      emoteImageUrl = `${cdnUrl}${originalEmoteUrl}`;
     }
     
     element.dataset.linkPreviewProcessed = 'true';
@@ -263,6 +292,20 @@ export class LinkPreviewProcessor {
       imgElement.src = emoteImageUrl;
       imgElement.className = 'bttv-link-preview-emote';
       imgElement.alt = '7TV Emote';
+      
+      if (cdnUrl) {
+        imgElement.addEventListener('contextmenu', () => {
+          imgElement.src = originalEmoteUrl;
+          setTimeout(() => {
+            imgElement.src = emoteImageUrl;
+          }, 100);
+        });
+        
+        imgElement.addEventListener('copy', (e) => {
+          e.preventDefault();
+          e.clipboardData.setData('text/plain', originalEmoteUrl);
+        });
+      }
       
       anchor.appendChild(imgElement);
       previewContainer.appendChild(anchor);
