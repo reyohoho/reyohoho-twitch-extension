@@ -64,6 +64,7 @@ export const SettingIds = {
   ASCII_ART_FONT: 'asciiArtFont',
   LINK_PREVIEW: 'linkPreview',
   LINK_PREVIEW_HIDE_LINK: 'linkPreviewHideLink2',
+  LINK_PREVIEW_HIDE_ALL: 'linkPreviewHideAll',
   LINK_PREVIEW_MAX_HEIGHT: 'linkPreviewMaxHeight',
   LINK_PREVIEW_MAX_WIDTH: 'linkPreviewMaxWidth',
   PLAYER_STATS: 'playerStats',
