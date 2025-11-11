@@ -48,7 +48,7 @@ class LinkPreviewModule {
   }
 
   processMessages() {
-    const querySelection = 'span[data-a-target="chat-line-message-body"]:has(a),span.seventv-chat-message-body:has(a)';
+    const querySelection = 'span[data-a-target="chat-line-message-body"]:has(a),span.seventv-chat-message-body:has(a),span.chat-line__message--deleted-detailed:has(a)';
     const messagesList = document.querySelectorAll(querySelection) ?? [];
 
     for (const messageBody of messagesList) {
@@ -57,6 +57,12 @@ class LinkPreviewModule {
 
         this.processor.processElement(messagePart);
       }
+    }
+
+    const linkFragments = document.querySelectorAll('a.link-fragment:not([data-link-preview-processed])') ?? [];
+    for (const linkElement of linkFragments) {
+      if (linkElement.dataset.linkPreviewProcessed) continue;
+      this.processor.processElement(linkElement);
     }
   }
 }
