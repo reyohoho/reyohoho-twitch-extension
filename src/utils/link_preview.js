@@ -10,6 +10,7 @@ const KAPPALOL_REGEX = /https?:\/\/(?:[a-zA-Z0-9]+\.)?kappa\.lol\/([a-zA-Z0-9]+)
 const DISCORD_CDN_REGEX = /https?:\/\/(?:cdn\.discordapp\.com|media\.discordapp\.net|images-ext-\d+\.discordapp\.net)\//i;
 const YOUTUBE_IMG_REGEX = /https?:\/\/i\.ytimg\.com\//i;
 const IBB_CO_REGEX = /https?:\/\/i\.ibb\.co\//i;
+const SEVENTV_CDN_REGEX = /https?:\/\/cdn\.7tv\.app\//i;
 
 function shouldApplyProxy(url) {
   if (url.includes('cdn.rhhhhhhh.live')) {
@@ -91,7 +92,7 @@ export class LinkPreviewProcessor {
     let imageUrl = url;
     
     if (cdnUrl && shouldApplyProxy(url)) {
-      if (DISCORD_CDN_REGEX.test(url) || YOUTUBE_IMG_REGEX.test(url) || IBB_CO_REGEX.test(url)) {
+      if (DISCORD_CDN_REGEX.test(url) || YOUTUBE_IMG_REGEX.test(url) || IBB_CO_REGEX.test(url) || SEVENTV_CDN_REGEX.test(url)) {
         imageUrl = `${cdnUrl}${url}`;
       }
     }
