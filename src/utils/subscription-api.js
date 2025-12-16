@@ -23,7 +23,7 @@ export async function checkSubscription(twitchId) {
 }
 
 export function openSubscriptionPage() {
-  window.open('https://ext.rhhhhhhh.live', '_blank');
+  window.open('https://ext.rte.net.ru', '_blank');
 }
 
 export async function getUserPaint(twitchId, noCache = false) {

@@ -1,8 +1,8 @@
 const STAREGE_DOMAINS = [
-  'https://starege.rhhhhhhh.live',
-  'https://starege3.rhhhhhhh.live',
-  'https://starege5.rhhhhhhh.live',
-  'https://starege4.rhhhhhhh.live',
+  'https://starege.rte.net.ru',
+  'https://starege3.rte.net.ru',
+  'https://starege5.rte.net.ru',
+  'https://starege4.rte.net.ru',
 ];
 
 let workingDomain = null;

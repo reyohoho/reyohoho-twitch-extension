@@ -13,13 +13,13 @@ const IBB_CO_REGEX = /https?:\/\/i\.ibb\.co\//i;
 const SEVENTV_CDN_REGEX = /https?:\/\/cdn\.7tv\.app\//i;
 
 function shouldApplyProxy(url) {
-  if (url.includes('cdn.rhhhhhhh.live')) {
+  if (url.includes('cdn.rte.net.ru')) {
     return false;
   }
-  if (url.includes('starege.rhhhhhhh.live') || 
-      url.includes('starege3.rhhhhhhh.live') || 
-      url.includes('starege4.rhhhhhhh.live') || 
-      url.includes('starege5.rhhhhhhh.live')) {
+  if (url.includes('starege.rte.net.ru') || 
+      url.includes('starege3.rte.net.ru') || 
+      url.includes('starege4.rte.net.ru') || 
+      url.includes('starege5.rte.net.ru')) {
     return false;
   }
   return true;

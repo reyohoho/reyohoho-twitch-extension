@@ -2,7 +2,7 @@ import settings from '../settings.js';
 import {SettingIds} from '../constants.js';
 import {initializeStaregeDomain, getStaregeDomain} from './starege-domain.js';
 
-const CDN_DOMAIN = 'https://cdn.rhhhhhhh.live';
+const CDN_DOMAIN = 'https://cdn.rte.net.ru';
 
 let proxyCheckPromise = null;
 let proxyAvailable = false;

@@ -82,7 +82,7 @@
     "react-merge-refs": "3.0.2",
     "react-string-replace": "1.1.1",
     "remove-files-webpack-plugin": "1.5.0",
-    "rsuite": "5.82.0",
+    "rsuite": "5.83.3",
     "safe-regex2": "5.0.0",
     "semver": "7.7.2",
     "string-replace-loader": "3.2.0",

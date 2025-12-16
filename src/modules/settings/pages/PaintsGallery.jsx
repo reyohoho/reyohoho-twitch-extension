@@ -12,7 +12,7 @@ import styles from '../styles/paints-gallery.module.css';
 
 function PaintsGallery({onClose}) {
   const handleOpenWebsite = () => {
-    window.open('https://ext.rhhhhhhh.live/paints', '_blank');
+    window.open('https://ext.rte.net.ru/paints', '_blank');
   };
 
   return (

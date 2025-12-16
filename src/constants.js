@@ -239,7 +239,7 @@ export const SettingDefaultValues = {
   [SettingIds.CHANNEL_POINTS_MESSAGE_HIGHLIGHTS]: true,
   [SettingIds.EMOTE_MENU]: EmoteMenuTypes.ENABLED,
   [SettingIds.AUTO_THEME_MODE]: false,
-  [SettingIds.DARKENED_MODE]: false,
+  [SettingIds.DARKENED_MODE]: true,
   [SettingIds.PRIME_PROMOTIONS]: true,
   [SettingIds.PLAYER_EXTENSIONS]: true,
   [SettingIds.CLICK_TO_PLAY]: false,
