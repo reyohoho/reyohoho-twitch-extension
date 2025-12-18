@@ -1,11 +1,10 @@
 # <img src="src/assets/logos/reyohoho_logo.png" height="40" style="margin-bottom: -1px;"> ReYohoho Twitch Extension | RTE
 
-[![Build Status](https://github.com/night/betterttv/actions/workflows/ci.yml/badge.svg)](https://github.com/night/betterttv/actions/workflows/ci.yml) [![Discord](https://img.shields.io/discord/229471495087194112?color=5865F2&label=discord)](https://discord.gg/nightdev) [![Crowdin](https://badges.crowdin.net/betterttv/localized.svg)](https://crowdin.com/project/betterttv)
-
 > **Forked from [@night/betterttv](https://github.com/night/betterttv)**
 
 # Download:
-[Chromium](https://chromewebstore.google.com/detail/reyohoho-twitch-extension/peigjkggfaiddfnndocglngepppcfjia)
+
+[Chromium](https://t.me/reyohoho_twitch_ext/92)
 
 [FF](https://addons.mozilla.org/ru/firefox/addon/reyohoho-twitch-extension/)
 
