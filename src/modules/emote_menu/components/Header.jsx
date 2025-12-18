@@ -10,7 +10,9 @@ import InputGroup from 'rsuite/InputGroup';
 import FontAwesomeSvgIcon from '../../../common/components/FontAwesomeSvgIcon.jsx';
 import formatMessage from '../../../i18n/index.js';
 import globalEmotes from '../../emotes/global-emotes.js';
-import watcher from '../../../watcher.js';
+import frankerfacezGlobalEmotes from '../../frankerfacez/global-emotes.js';
+import seventvGlobalEmotes from '../../seventv/global-emotes.js';
+import {forceUpdateChannel} from '../../../watchers/channel.js';
 import {initializeProxyCheck, initializeCdnCheck} from '../../../utils/proxy.js';
 import styles from './Header.module.css';
 
@@ -44,10 +46,17 @@ function Header({value, onChange, toggleWhisper, selected, ...props}) {
         initializeProxyCheck(true),
         initializeCdnCheck(true),
       ]);
-      await Promise.all([globalEmotes.updateGlobalEmotes(), new Promise((resolve) => {
-        watcher.emit('channel.updated');
-        setTimeout(resolve, 100);
-      })]);
+      // Update global emotes with force=true to bypass cache
+      await Promise.all([
+        globalEmotes.updateGlobalEmotes(true),
+        frankerfacezGlobalEmotes.updateGlobalEmotes(true),
+        seventvGlobalEmotes.updateGlobalEmotes(true),
+        new Promise((resolve) => {
+          // Force refresh channel emotes with cache bypass
+          forceUpdateChannel();
+          setTimeout(resolve, 100);
+        }),
+      ]);
     } catch (error) {
       console.error('[BTTV] Error reloading emotes:', error);
     } finally {

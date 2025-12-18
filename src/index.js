@@ -40,9 +40,14 @@
     const {default: extension} = await import('./utils/extension.js');
     await extension.setCurrentScript(currentScript);
 
+    const {default: globalCSS} = await import('./modules/global_css/index.js');
+    const globalCSSLoadPromise = globalCSS.loadGlobalCSS();
+
     const {default: debug} = await import('./utils/debug.js');
     const {default: watcher} = await import('./watcher.js');
     const {EXT_VER, NODE_ENV, GIT_REV} = await import('./constants.js');
+
+    await globalCSSLoadPromise;
 
     // Initialize player button manager
     const {default: playerButtonManager} = await import('./utils/player-button-manager.js');

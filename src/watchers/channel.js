@@ -4,23 +4,29 @@ import debug from '../utils/debug.js';
 
 let channel;
 let watcher;
-function updateChannel() {
+
+function updateChannel(force = false) {
   const currentChannel = getCurrentChannel();
-  if (!currentChannel || (channel && currentChannel.id === channel.id)) return;
+
+  if (!currentChannel || (!force && channel && currentChannel.id === channel.id)) return;
 
   debug.log(`Channel Observer: ${currentChannel.name} (${currentChannel.id}) loaded.`);
 
   channel = currentChannel;
 
   api
-    .get(`cached/users/${channel.provider}/${channel.id}`)
+    .get(`cached/users/${channel.provider}/${channel.id}`, {force})
     .catch((error) => ({
       bots: [],
       channelEmotes: [],
       sharedEmotes: [],
       status: error.status || 0,
     }))
-    .then((data) => watcher.emit('channel.updated', data));
+    .then((data) => watcher.emit('channel.updated', {...data, force}));
+}
+
+export function forceUpdateChannel() {
+  updateChannel(true);
 }
 
 export default function channelWatcher(watcher_) {

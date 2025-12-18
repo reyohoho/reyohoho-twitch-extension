@@ -47,13 +47,13 @@ class GlobalEmotes extends AbstractEmotes {
     return category;
   }
 
-  updateGlobalEmotes() {
+  updateGlobalEmotes(force = false) {
     this.emotes.clear();
 
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.FFZ_EMOTES)) return;
 
     api
-      .get('cached/frankerfacez/emotes/global')
+      .get('cached/frankerfacez/emotes/global', {force})
       .then((emotes) =>
         emotes.forEach(({id, user, code, images, animated, modifier}) => {
           this.emotes.set(

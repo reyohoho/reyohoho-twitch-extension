@@ -38,7 +38,7 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
   constructor() {
     super();
 
-    watcher.on('channel.updated', () => this.updateChannelEmotes());
+    watcher.on('channel.updated', (data) => this.updateChannelEmotes(data?.force));
     settings.on(`changed.${SettingIds.EMOTES}`, () => this.updateChannelEmotes());
   }
 
@@ -46,7 +46,7 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
     return category;
   }
 
-  updateChannelEmotes() {
+  updateChannelEmotes(force = false) {
     this.emotes.clear();
 
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.FFZ_EMOTES)) return;
@@ -55,7 +55,7 @@ class FrankerFaceZChannelEmotes extends AbstractEmotes {
     if (!currentChannel) return;
 
     api
-      .get(`cached/frankerfacez/users/${currentChannel.provider}/${currentChannel.id}`)
+      .get(`cached/frankerfacez/users/${currentChannel.provider}/${currentChannel.id}`, {force})
       .then((emotes) =>
         emotes.forEach(({id, user, code, images, animated, modifier}) => {
           this.emotes.set(

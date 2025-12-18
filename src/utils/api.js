@@ -4,11 +4,17 @@ import {getProxyUrl} from './proxy.js';
 const API_ENDPOINT = 'https://api.betterttv.net/3/';
 
 function request(method, path, options = {}) {
-  const {searchParams} = options;
+  const {searchParams, force} = options;
   delete options.searchParams;
+  delete options.force;
 
   const proxyUrl = getProxyUrl();
-  const fullUrl = `${proxyUrl}${API_ENDPOINT}${path}${searchParams ? `?${new URLSearchParams(searchParams).toString()}` : ''}`;
+  const params = new URLSearchParams(searchParams);
+  if (force) {
+    params.set('_t', Date.now());
+  }
+  const queryString = params.toString();
+  const fullUrl = `${proxyUrl}${API_ENDPOINT}${path}${queryString ? `?${queryString}` : ''}`;
 
   return fetch(fullUrl, {
     method,

@@ -27,12 +27,14 @@ class SevenTVGlobalEmotes extends AbstractEmotes {
     return category;
   }
 
-  updateGlobalEmotes() {
+  updateGlobalEmotes(force = false) {
     this.emotes.clear();
     if (!hasFlag(settings.get(SettingIds.EMOTES), EmoteTypeFlags.SEVENTV_EMOTES)) return;
 
     const proxyUrl = getProxyUrl();
-    const apiUrl = proxyUrl ? `${proxyUrl}https://7tv.io/v3/emote-sets/global` : 'https://7tv.io/v3/emote-sets/global';
+    const baseUrl = 'https://7tv.io/v3/emote-sets/global';
+    const timestamp = force ? `?_t=${Date.now()}` : '';
+    const apiUrl = proxyUrl ? `${proxyUrl}${baseUrl}${timestamp}` : `${baseUrl}${timestamp}`;
 
     fetch(apiUrl)
       .then((response) => {

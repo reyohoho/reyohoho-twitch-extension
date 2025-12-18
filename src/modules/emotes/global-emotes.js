@@ -25,9 +25,9 @@ class GlobalEmotes extends AbstractEmotes {
     return category;
   }
 
-  updateGlobalEmotes() {
+  updateGlobalEmotes(force = false) {
     api
-      .get('cached/emotes/global')
+      .get('cached/emotes/global', {force})
       .then((emotes) =>
         emotes.forEach(({id, code, animated, restrictions, modifier}) => {
           let restrictionCallback;

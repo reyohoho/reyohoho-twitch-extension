@@ -27,7 +27,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
   constructor() {
     super();
 
-    watcher.on('channel.updated', () => this.updateChannelEmotes());
+    watcher.on('channel.updated', (data) => this.updateChannelEmotes(data?.force));
     settings.on(`changed.${SettingIds.EMOTES}`, () => this.updateChannelEmotes());
   }
 
@@ -242,7 +242,7 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     watcher.emit('emotes.updated');
   }
 
-  updateChannelEmotes() {
+  updateChannelEmotes(force = false) {
     if (websocket) {
       websocket.close();
     }
@@ -262,9 +262,11 @@ class SevenTVChannelEmotes extends AbstractEmotes {
     if (!currentChannel) return;
 
     const proxyUrl = getProxyUrl();
+    const baseUrl = `https://7tv.io/v3/users/${encodeURIComponent(currentChannel.provider)}/${encodeURIComponent(currentChannel.id)}`;
+    const timestamp = force ? `?_t=${Date.now()}` : '';
     const apiUrl = proxyUrl
-      ? `${proxyUrl}https://7tv.io/v3/users/${encodeURIComponent(currentChannel.provider)}/${encodeURIComponent(currentChannel.id)}`
-      : `https://7tv.io/v3/users/${encodeURIComponent(currentChannel.provider)}/${encodeURIComponent(currentChannel.id)}`;
+      ? `${proxyUrl}${baseUrl}${timestamp}`
+      : `${baseUrl}${timestamp}`;
 
     fetch(apiUrl)
       .then((response) => {
