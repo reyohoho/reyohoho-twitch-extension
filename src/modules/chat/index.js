@@ -660,7 +660,7 @@ class ChatModule {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'bttv-copy-message-button';
       copyBtn.setAttribute('aria-label', 'Скопировать сообщение');
-      copyBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation"><path fill-rule="evenodd" d="M8 16V3h10v13H8zM2 11V0h10v2H4v11H2z" clip-rule="evenodd"></path></svg>`;
+      copyBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation"><path fill-rule="evenodd" d="M8 16V3h10v13H8zM2 11V0h10v2H4v11H2z" clip-rule="evenodd"></path></svg>`;
       copyBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
