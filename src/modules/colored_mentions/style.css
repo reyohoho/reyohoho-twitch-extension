@@ -1,0 +1,21 @@
+.bttv-colored-mention {
+  font-weight: 600;
+  position: relative;
+}
+
+.bttv-colored-mention .seventv-paint {
+  display: inline;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.bttv-colored-mention.mention-fragment,
+.bttv-colored-mention.mention-fragment--recipient {
+  background-color: transparent !important;
+}
+
+.bttv-colored-mention:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+

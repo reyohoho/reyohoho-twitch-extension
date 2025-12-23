@@ -47,6 +47,12 @@ function UsernamesModule() {
               {formatMessage({defaultMessage: 'Show chat badges next to usernames'})}
             </p>
           </Checkbox>
+          <Checkbox key="coloredMentions" value={UsernameFlags.COLORED_MENTIONS}>
+            <p className={styles.heading}>{formatMessage({defaultMessage: 'Colored Mentions'})}</p>
+            <p className={styles.settingDescription}>
+              {formatMessage({defaultMessage: 'Show @mentions in the color of the mentioned user with 7TV/RTE paint support'})}
+            </p>
+          </Checkbox>
         </CheckboxGroup>
       </div>
     </Panel>
@@ -57,5 +63,5 @@ registerComponent(UsernamesModule, {
   settingId: SettingIds.USERNAMES,
   name: SETTING_NAME,
   category: CategoryTypes.CHAT,
-  keywords: ['color', 'username', 'accessibility', 'readability'],
+  keywords: ['color', 'username', 'accessibility', 'readability', 'mention', 'paint', '7tv', 'rte'],
 });

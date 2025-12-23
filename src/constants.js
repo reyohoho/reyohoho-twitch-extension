@@ -145,6 +145,7 @@ export const UsernameFlags = {
   COLORS: 1 << 1,
   LOCALIZED: 1 << 2,
   BADGES: 1 << 3,
+  COLORED_MENTIONS: 1 << 4,
 };
 
 export const AutoClaimFlags = {
@@ -284,7 +285,7 @@ export const SettingDefaultValues = {
     0,
   ],
   [SettingIds.USERNAMES]: [
-    UsernameFlags.COLORS | UsernameFlags.LOCALIZED | UsernameFlags.READABLE | UsernameFlags.BADGES,
+    UsernameFlags.COLORS | UsernameFlags.LOCALIZED | UsernameFlags.READABLE | UsernameFlags.BADGES | UsernameFlags.COLORED_MENTIONS,
     0,
   ],
   [SettingIds.CHANNEL_POINTS]: [ChannelPointsFlags.CHANNEL_POINTS | ChannelPointsFlags.MESSAGE_HIGHLIGHTS, 0],
