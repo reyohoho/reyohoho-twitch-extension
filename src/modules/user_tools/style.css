@@ -1,0 +1,66 @@
+.bttv-user-tool-icon-wrapper {
+  display: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin: 0 0 0 2px;
+  border: 0 none transparent;
+  border-radius: 9000px;
+  background-color: rgb(24, 24, 27);
+  position: static;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-line__message:hover .bttv-user-tool-icon-wrapper,
+[data-a-target="chat-line"]:hover .bttv-user-tool-icon-wrapper,
+.chat-line__icons:hover .bttv-user-tool-icon-wrapper {
+  display: inline-flex;
+}
+
+.bttv-user-tool-button {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin: 0;
+  border: 0 none;
+  border-radius: 9000px;
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.1s ease;
+}
+
+.bttv-user-tool-button svg {
+  fill: rgb(255, 255, 255);
+  width: 16px;
+  height: 16px;
+}
+
+.bttv-user-tool-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.bttv-user-tool-follows .bttv-user-tool-button:hover {
+  background-color: rgba(145, 71, 255, 0.3);
+}
+
+.bttv-user-tool-follows .bttv-user-tool-button:hover svg {
+  fill: #bf94ff;
+}
+
+.bttv-user-tool-logs .bttv-user-tool-button:hover {
+  background-color: rgba(0, 212, 170, 0.3);
+}
+
+.bttv-user-tool-logs .bttv-user-tool-button:hover svg {
+  fill: #00d4aa;
+}

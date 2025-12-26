@@ -81,6 +81,14 @@ function ChatModule() {
               })}
             </p>
           </Checkbox>
+          <Checkbox key="copypastaButton" value={ChatFlags.COPYPASTA_BUTTON}>
+            <p className={styles.heading}>{formatMessage({ defaultMessage: 'Copypasta Button' })}</p>
+            <p className={styles.settingDescription}>
+              {formatMessage({
+                defaultMessage: 'Show button to instantly send message to chat (copypasta)',
+              })}
+            </p>
+          </Checkbox>
         </CheckboxGroup>
       </div>
     </Panel>
@@ -91,5 +99,5 @@ registerComponent(ChatModule, {
   settingId: SettingIds.CHAT,
   name: SETTING_NAME,
   category: CategoryTypes.CHAT,
-  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions', 'moderator', 'actions', 'copy'],
+  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions', 'moderator', 'actions', 'copy', 'copypasta'],
 });

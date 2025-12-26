@@ -656,6 +656,9 @@ class ChatModule {
     }
 
     const chatSettings = settings.get(SettingIds.CHAT);
+    const iconsContainer = element.querySelector('.chat-line__icons');
+    const messageText = element.getAttribute('data-original-text') || (messageObj && messageObj.messageBody) || '';
+
     if (hasFlag(chatSettings, ChatFlags.COPY_BUTTON) && !element.querySelector('.bttv-copy-message-button')) {
       const copyBtn = document.createElement('button');
       copyBtn.className = 'bttv-copy-message-button';
@@ -664,16 +667,14 @@ class ChatModule {
       copyBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const text = element.getAttribute('data-original-text') || (messageObj && messageObj.messageBody) || '';
-        if (!text) return;
+        if (!messageText) return;
         if (navigator.clipboard && window.isSecureContext) {
-          navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+          navigator.clipboard.writeText(messageText).catch(() => fallbackCopy(messageText));
         } else {
-          fallbackCopy(text);
+          fallbackCopy(messageText);
         }
       });
 
-      const iconsContainer = element.querySelector('.chat-line__icons');
       if (iconsContainer) {
         const iconWrapper = document.createElement('div');
         iconWrapper.className = 'bttv-copy-icon-wrapper';
@@ -682,6 +683,29 @@ class ChatModule {
         iconsContainer.appendChild(iconWrapper);
       } else {
         element.appendChild(copyBtn);
+      }
+    }
+
+    if (hasFlag(chatSettings, ChatFlags.COPYPASTA_BUTTON) && messageText && !element.querySelector('.bttv-copypasta-message-button')) {
+      const copypastaBtn = document.createElement('button');
+      copypastaBtn.className = 'bttv-copypasta-message-button';
+      copypastaBtn.setAttribute('aria-label', 'Отправить в чат');
+      copypastaBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 20 20" focusable="false" aria-hidden="true" role="presentation"><path fill-rule="evenodd" d="M8 16V3h10v13H8zM2 11V0h10v2H4v11H2z" clip-rule="evenodd"></path></svg>`;
+      copypastaBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!messageText) return;
+        twitch.sendChatMessage(messageText);
+      });
+
+      if (iconsContainer) {
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'bttv-copypasta-icon-wrapper';
+
+        iconWrapper.appendChild(copypastaBtn);
+        iconsContainer.appendChild(iconWrapper);
+      } else {
+        element.appendChild(copypastaBtn);
       }
     }
 

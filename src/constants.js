@@ -69,6 +69,7 @@ export const SettingIds = {
   LINK_PREVIEW_MAX_WIDTH: 'linkPreviewMaxWidth',
   PLAYER_STATS: 'playerStats',
   CUSTOM_BADGES: 'customBadges',
+  USER_TOOLS: 'userTools',
 };
 
 export const CategoryTypes = {
@@ -126,6 +127,7 @@ export const ChatFlags = {
   CHAT_MESSAGE_HISTORY: 1 << 6,
   MODERATOR_ACTIONS: 1 << 7,
   COPY_BUTTON: 1 << 8,
+  COPYPASTA_BUTTON: 1 << 9,
 };
 
 export const ChannelPointsFlags = {
@@ -277,7 +279,8 @@ export const SettingDefaultValues = {
     ChatFlags.VIEWER_GREETING |
     ChatFlags.CHAT_MESSAGE_HISTORY |
     ChatFlags.MODERATOR_ACTIONS |
-    ChatFlags.COPY_BUTTON,
+    ChatFlags.COPY_BUTTON |
+    ChatFlags.COPYPASTA_BUTTON,
     0,
   ],
   [SettingIds.AUTO_PLAY]: [
@@ -313,6 +316,7 @@ export const SettingDefaultValues = {
   [SettingIds.LINK_PREVIEW_MAX_WIDTH]: 200,
   [SettingIds.PLAYER_STATS]: true,
   [SettingIds.CUSTOM_BADGES]: true,
+  [SettingIds.USER_TOOLS]: false,
 };
 
 export const FlagSettings = [

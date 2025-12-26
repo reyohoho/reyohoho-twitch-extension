@@ -174,8 +174,59 @@
 .chat-line__icons:hover .bttv-copy-message-button,
 .chat-line__message:hover .bttv-copy-icon-wrapper,
 [data-a-target="chat-line"]:hover .bttv-copy-icon-wrapper,
-.chat-line__icons:hover .bttv-copy-icon-wrapper {
+.chat-line__icons:hover .bttv-copy-icon-wrapper,
+.chat-line__message:hover .bttv-copypasta-message-button,
+[data-a-target="chat-line"]:hover .bttv-copypasta-message-button,
+.chat-line__icons:hover .bttv-copypasta-message-button,
+.chat-line__message:hover .bttv-copypasta-icon-wrapper,
+[data-a-target="chat-line"]:hover .bttv-copypasta-icon-wrapper,
+.chat-line__icons:hover .bttv-copypasta-icon-wrapper {
   display: inline-flex;
+}
+
+.bttv-copypasta-message-button {
+  display: none;
+  width: 24px;
+  height: 24px;
+  padding: 0px;
+  margin: 0px;
+  border: 0px none rgb(239, 239, 241);
+  border-radius: 9000px;
+  background-color: rgba(0, 0, 0, 0);
+  color: #eb4560;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: center;
+  vertical-align: middle;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+.bttv-copypasta-message-button svg {
+  fill: #eb4560;
+  width: 16px;
+  height: 16px;
+}
+
+.bttv-copypasta-message-button:hover {
+  background-color: rgba(235, 69, 96, 0.2);
+}
+
+.bttv-copypasta-icon-wrapper {
+  display: none;
+  width: 24px;
+  height: 24px;
+  padding: 0px;
+  margin: 0px 0px 0px 2px;
+  border: 0px none transparent;
+  border-radius: 9000px;
+  background-color: rgb(24, 24, 27);
+  position: static;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .chat-line__icons {
