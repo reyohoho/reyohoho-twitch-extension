@@ -476,7 +476,9 @@ class ChatHighlightBlacklistKeywordsModule {
     const emotes = Array.from(messageContainer.querySelectorAll(VOD_CHAT_MESSAGE_EMOTE_SELECTOR)).map((emote) =>
       emote.getAttribute('alt')
     );
-    const messageContent = `${messageContainer.textContent.replace(/^:/, '')} ${emotes.join(' ')}`;
+    const messageContainerClone = messageContainer.cloneNode(true);
+    messageContainerClone.querySelectorAll('.bttv-tooltip').forEach((tooltip) => tooltip.remove());
+    const messageContent = `${messageContainerClone.textContent.replace(/^:/, '')} ${emotes.join(' ')}`;
     const badges = [...message.querySelectorAll(CHAT_BADGE_SELECTOR)].map((badge) => badge.getAttribute('alt') || '');
 
     const replyElement = message.querySelector('.reply-line');
