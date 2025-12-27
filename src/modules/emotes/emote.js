@@ -72,6 +72,8 @@ export default class Emote {
 
       container.appendChild(tooltip);
 
+      container.__bttvEmote = this;
+
       return container;
     }
 
@@ -153,6 +155,8 @@ export default class Emote {
     tooltip.appendChild(tooltipText);
 
     container.appendChild(tooltip);
+
+    container.__bttvEmote = this;
 
     return container;
   }

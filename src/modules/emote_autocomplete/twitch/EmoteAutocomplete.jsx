@@ -22,7 +22,7 @@ function serializeEmoteId(emote) {
   return `${EMOTE_ID_BETTERTTV_PREFIX}${btoa(encodeURIComponent(data))}`;
 }
 
-function deserializeEmoteFromURL(url) {
+export function deserializeEmoteFromURL(url) {
   const emoteData = url.split(EMOTE_ID_BETTERTTV_PREFIX)[1]?.split('/')[0];
   if (emoteData == null) {
     return null;
@@ -152,6 +152,11 @@ function patchEmoteImage(image, isConnected) {
   const emote = emotes.getEligibleEmote(deseralizedEmote.code, getCurrentUser());
   if (emote == null) {
     return;
+  }
+
+  const emoteButton = image.closest('div[data-test-selector="emote-button"]');
+  if (emoteButton) {
+    emoteButton.__bttvEmote = emote;
   }
 
   const emotesSettingValue = settings.get(SettingIds.EMOTES);

@@ -1,0 +1,136 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal {
+  background-color: #18181b;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #3a3a3d;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #3a3a3d;
+}
+
+.header h2 {
+  margin: 0;
+  color: #efeff1;
+  font-size: 18px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #efeff1;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background-color: #3a3a3d;
+}
+
+.content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emoteImageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #1f1f23;
+  border-radius: 8px;
+}
+
+.emoteImage {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.infoLabel {
+  color: #adadb8;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.infoValue {
+  color: #efeff1;
+  font-size: 14px;
+  text-align: right;
+  word-break: break-word;
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.pageButton {
+  background-color: #9147ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pageButton:hover {
+  background-color: #772ce8;
+}
+
+.pageButton:active {
+  background-color: #5c16c5;
+}
+
