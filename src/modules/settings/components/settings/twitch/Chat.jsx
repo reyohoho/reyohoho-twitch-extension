@@ -89,6 +89,14 @@ function ChatModule() {
               })}
             </p>
           </Checkbox>
+          <Checkbox key="mentionTabNotifications" value={ChatFlags.MENTION_TAB_NOTIFICATIONS}>
+            <p className={styles.heading}>{formatMessage({ defaultMessage: 'Mention Tab Notifications' })}</p>
+            <p className={styles.settingDescription}>
+              {formatMessage({
+                defaultMessage: 'Show notifications in the browser tab title when you are mentioned in chat',
+              })}
+            </p>
+          </Checkbox>
         </CheckboxGroup>
       </div>
     </Panel>
@@ -99,5 +107,5 @@ registerComponent(ChatModule, {
   settingId: SettingIds.CHAT,
   name: SETTING_NAME,
   category: CategoryTypes.CHAT,
-  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions', 'moderator', 'actions', 'copy', 'copypasta'],
+  keywords: ['bits', 'highlights', 'community', 'chat', 'replies', 'clips', 'subs', 'subscriptions', 'moderator', 'actions', 'copy', 'copypasta', 'mention', 'notification', 'tab'],
 });

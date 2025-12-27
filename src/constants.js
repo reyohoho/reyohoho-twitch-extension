@@ -128,6 +128,7 @@ export const ChatFlags = {
   MODERATOR_ACTIONS: 1 << 7,
   COPY_BUTTON: 1 << 8,
   COPYPASTA_BUTTON: 1 << 9,
+  MENTION_TAB_NOTIFICATIONS: 1 << 10,
 };
 
 export const ChannelPointsFlags = {
@@ -280,7 +281,8 @@ export const SettingDefaultValues = {
     ChatFlags.CHAT_MESSAGE_HISTORY |
     ChatFlags.MODERATOR_ACTIONS |
     ChatFlags.COPY_BUTTON |
-    ChatFlags.COPYPASTA_BUTTON,
+    ChatFlags.COPYPASTA_BUTTON |
+    ChatFlags.MENTION_TAB_NOTIFICATIONS,
     0,
   ],
   [SettingIds.AUTO_PLAY]: [

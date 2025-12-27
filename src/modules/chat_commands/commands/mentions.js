@@ -3,11 +3,111 @@ import {getCurrentUser} from '../../../utils/user.js';
 import twitch from '../../../utils/twitch.js';
 import watcher from '../../../watcher.js';
 import commandStore, {PermissionLevels} from '../store.js';
+import settings from '../../../settings.js';
+import {SettingIds, ChatFlags} from '../../../constants.js';
+import {hasFlag} from '../../../utils/flags.js';
 
 console.log('[mentions] Module loaded');
 
-const mentions = new Map();
+const mentions = new Map(); // Map<username, {timestamp, displayName}>
 const MENTION_TIMEOUT = 5 * 60 * 1000; // 5 min
+
+let originalTitle = document.title.replace(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/, '').replace(/^\(\d+\)\s*/, '');
+let mentionCount = 0;
+let isPageVisible = !document.hidden;
+let titleObserver = null;
+
+function getCleanTitle() {
+  return document.title.replace(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/, '').replace(/^\(\d+\)\s*/, '');
+}
+
+function updateTabTitle() {
+  const isEnabled = hasFlag(settings.get(SettingIds.CHAT), ChatFlags.MENTION_TAB_NOTIFICATIONS);
+  if (!isEnabled) {
+    if (document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/)) {
+      document.title = originalTitle;
+    }
+    return;
+  }
+
+  cleanOldMentions();
+  const currentMentions = Array.from(mentions.entries());
+  mentionCount = currentMentions.length;
+  
+  const currentCleanTitle = getCleanTitle();
+  if (currentCleanTitle !== originalTitle && !document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/)) {
+    originalTitle = currentCleanTitle;
+  }
+  
+  if (mentionCount > 0 && !isPageVisible) {
+    const sortedMentions = currentMentions.sort((a, b) => b[1].timestamp - a[1].timestamp);
+    const latestMention = sortedMentions[0];
+    const latestUsername = latestMention[1].displayName || latestMention[0];
+    
+    let notificationText;
+    if (mentionCount === 1) {
+      notificationText = `● @${latestUsername}`;
+    } else {
+      notificationText = `● (${mentionCount}) @${latestUsername}`;
+    }
+    
+    const newTitle = `${notificationText} - ${originalTitle}`;
+    if (document.title !== newTitle) {
+      document.title = newTitle;
+    }
+  } else {
+    if (document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/)) {
+      document.title = originalTitle;
+    }
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  isPageVisible = !document.hidden;
+  
+  if (isPageVisible) {
+    if (document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/)) {
+      document.title = originalTitle;
+    }
+    originalTitle = getCleanTitle();
+    
+    mentions.clear();
+    
+    updateTabTitle();
+  } else {
+    if (document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/)) {
+      originalTitle = getCleanTitle();
+    } else {
+      originalTitle = document.title;
+    }
+    updateTabTitle();
+  }
+});
+
+if (typeof MutationObserver !== 'undefined') {
+  const titleElement = document.querySelector('title');
+  if (titleElement) {
+    titleObserver = new MutationObserver(() => {
+      const cleanTitle = getCleanTitle();
+      if (!document.title.match(/^●\s*(\(\d+\)\s*)?@[\w-]+\s*-\s*/) && cleanTitle !== originalTitle) {
+        originalTitle = cleanTitle;
+        updateTabTitle();
+      }
+    });
+    
+    titleObserver.observe(titleElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  }
+}
+
+originalTitle = getCleanTitle();
+
+settings.on(`changed.${SettingIds.CHAT}`, () => {
+  updateTabTitle();
+});
 
 function messageTextFromAST(ast) {
   if (!ast || !Array.isArray(ast)) {
@@ -73,8 +173,8 @@ function isUserMentioned(messageElement, messageObj, currentUser) {
 
 function cleanOldMentions() {
   const now = Date.now();
-  for (const [username, timestamp] of mentions.entries()) {
-    if (now - timestamp > MENTION_TIMEOUT) {
+  for (const [username, mentionData] of mentions.entries()) {
+    if (now - mentionData.timestamp > MENTION_TIMEOUT) {
       mentions.delete(username);
     }
   }
@@ -113,12 +213,18 @@ function onChatMessage(messageElement, messageObj) {
       for (const username of mentionedUsers) {
         mentions.delete(username);
       }
+      updateTabTitle();
     }
     return;
   }
 
   if (isUserMentioned(messageElement, messageObj, currentUser)) {
-    mentions.set(fromLower, timestamp || Date.now());
+    const displayName = user?.userDisplayName || from;
+    mentions.set(fromLower, {
+      timestamp: timestamp || Date.now(),
+      displayName: displayName,
+    });
+    updateTabTitle();
   }
 }
 
@@ -210,4 +316,8 @@ try {
 }
 
 watcher.on('chat.message', onChatMessage);
+
+setInterval(() => {
+  updateTabTitle();
+}, 10000);
 
