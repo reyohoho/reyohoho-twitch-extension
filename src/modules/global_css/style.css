@@ -101,3 +101,29 @@
 .chat-image__container:not(.bttv-emote):not(.bttv-emote-overlay):not([class*="bttv-"]) img {
   vertical-align: middle !important;
 }
+
+/* Fix wide emotes in chat input field */
+/* Force ALL containers in the emote wrapper to expand for wide emotes */
+.wysiwig-chat-input-emote,
+.wysiwig-chat-input-emote > span,
+.wysiwig-chat-input-emote .chat-line__message--emote-button,
+.wysiwig-chat-input-emote [class*="InjectLayout"],
+.wysiwig-chat-input-emote [data-a-target="emote-name"],
+.wysiwig-chat-input-emote .chat-image__container {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  vertical-align: middle !important;
+}
+
+/* Ensure images display at correct size with proper aspect ratio */
+.wysiwig-chat-input-emote img.chat-line__message--emote,
+.wysiwig-chat-input-emote img.chat-image {
+  max-height: 28px !important;
+  max-width: none !important;
+  width: auto !important;
+  height: auto !important;
+  vertical-align: middle !important;
+}
+
