@@ -281,7 +281,6 @@ export const SettingDefaultValues = {
     ChatFlags.CHAT_MESSAGE_HISTORY |
     ChatFlags.MODERATOR_ACTIONS |
     ChatFlags.COPY_BUTTON |
-    ChatFlags.COPYPASTA_BUTTON |
     ChatFlags.MENTION_TAB_NOTIFICATIONS,
     0,
   ],

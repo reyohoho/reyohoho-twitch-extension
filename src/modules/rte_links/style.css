@@ -1,0 +1,14 @@
+.rte_links {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rte_links a {
+  color: rgb(173, 173, 184) !important;
+  text-decoration: none;
+}
+
+.rte_links a:hover {
+  color: rgb(239, 239, 241) !important;
+}
+
