@@ -319,6 +319,10 @@ function fieldContainsKeyword(keywords, from, field, onColorChange) {
   return false;
 }
 
+function isReply(message) {
+  return message.closest('.chat-input-tray__open') != null;
+}
+
 function messageTextFromAST(ast) {
   return ast
     .map((node) => {
@@ -430,7 +434,8 @@ class ChatHighlightBlacklistKeywordsModule {
       fieldContainsKeyword(blacklistKeywords, from, messageText) ||
       (reply != null &&
         (fieldContainsKeyword(blacklistUsers, from, reply.parentUserLogin) ||
-          fieldContainsKeyword(blacklistKeywords, from, reply.parentMessageBody)))
+          fieldContainsKeyword(blacklistKeywords, from, reply.parentMessageBody) ||
+          fieldContainsKeyword(blacklistKeywords, from, `@${reply.threadParentDisplayName}`)))
     ) {
       this.markBlacklisted(message);
       return;
@@ -443,19 +448,21 @@ class ChatHighlightBlacklistKeywordsModule {
     const isMentioned =
       message.querySelector('.reply-line--mentioned') != null ||
       message.querySelector('.mention-fragment--recipient') != null;
-      
+
     splitChat.render(message, messageObj);
 
     if (
-      document.querySelector('.chat-input-tray__open') == null &&
-      (badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
-        fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
-        fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
-        isMentioned)
+      badges.some((value) => fieldContainsKeyword(highlightBadges, from, value, handleColorChange)) ||
+      fieldContainsKeyword(highlightUsers, from, from, handleColorChange) ||
+      fieldContainsKeyword(highlightKeywords, from, messageText, handleColorChange) ||
+      (reply != null &&
+        (fieldContainsKeyword(highlightKeywords, from, reply.parentMessageBody, handleColorChange) ||
+          fieldContainsKeyword(highlightKeywords, from, `@${reply.threadParentDisplayName}`)) ||
+          isMentioned)
     ) {
       this.markHighlighted(message, color);
 
-      if (isDuplicateHighlight({date, from, message: messageText})) {
+      if (isReply(message) || isDuplicateHighlight({date, from, message: messageText})) {
         return;
       }
 
@@ -517,6 +524,10 @@ class ChatHighlightBlacklistKeywordsModule {
       this.markHighlighted(message, color);
 
       if (!isDuplicateHighlight({from, message: messageContent, date: new Date()})) {
+        if (settings.get(SettingIds.HIGHLIGHT_FEEDBACK)) {
+          this.handleHighlightSound();
+        }
+
         this.pinHighlight({from, message: messageContent, date: new Date()});
       }
     }
