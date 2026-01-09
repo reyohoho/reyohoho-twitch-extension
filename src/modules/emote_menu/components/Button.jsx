@@ -144,8 +144,9 @@ export default function Button({
             focusable="false"
             class="ScIconSVG-sc-1q25cff-1 kXuCmW">
             <g>
-              <path d="M7 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-4 4a2 2 0 0 0 2-2H8a2 2 0 0 0 2 2z"></path>
+              <path fill="currentColor" d="M7 11a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm7-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-4 4a2 2 0 0 0 2-2H8a2 2 0 0 0 2 2z"></path>
               <path
+                fill="currentColor"
                 d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-2 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0z"
                 fill-rule="evenodd"></path>
             </g>
