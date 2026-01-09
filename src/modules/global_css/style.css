@@ -117,13 +117,33 @@
   vertical-align: middle !important;
 }
 
-/* Ensure images display at correct size with proper aspect ratio */
+/* Ensure ALL images in chat input display at correct size */
+.wysiwig-chat-input-emote img,
 .wysiwig-chat-input-emote img.chat-line__message--emote,
 .wysiwig-chat-input-emote img.chat-image {
+  display: inline !important;
   max-height: 28px !important;
   max-width: none !important;
   width: auto !important;
   height: auto !important;
+  min-height: 20px !important;
+  min-width: 20px !important;
   vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix BTTV emoji display in chat input field */
+.wysiwig-chat-input-emote .bttv-emoji-container {
+  display: inline !important;
+  vertical-align: middle !important;
+}
+
+.wysiwig-chat-input-emote .bttv-emoji-image {
+  display: inline !important;
+  max-height: 28px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
 }
 
